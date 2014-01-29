@@ -1,0 +1,6 @@
+# d/dt [Ca2+]: calcium dynamics
+alphacaf=.002; 		# uM 1/(ms uA) cm2
+c0=0; tauca=80;		# ms
+cai' = alphacaf.*ICaf-(cai-c0)/tauca;
+cai(0) = rand(Npop,1);
+cai => cai

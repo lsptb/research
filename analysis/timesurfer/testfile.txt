@@ -1,0 +1,5 @@
+type	latency	condition	duration
+Trigger	26568	2	1
+Trigger	41762	2	1
+Trigger	63057	3	1
+Trigger	73710	3	1

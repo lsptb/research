@@ -1,0 +1,50 @@
+% -----------------------------------------------------------------------------------------------------
+% LeakyIntegrator
+% ---------------
+%"LeakyIntegrator",400,{'stim2D' 'decay'},{'decayrate' '1' 'X_IC' [0]},"X'=term+input.*(2-X)"
+%"LeakyIntegrator",400,{'stim2D' 'decay' 'connect'},{'decayrate' '1' 'X_IC' [0] 'g' [1] 'Ntype' 'fanout' 'Nspan' [0] 'selfconn' [0] 'Wtype' 'gaussian'},"X'=term+input.*(2-X)"
+%"LeakyIntegrator",400,{'stim2D' 'decay' 'connect'},{'decayrate' '1' 'X_IC' [0] 'g' 1 'Ntype' 'fanout' 'Nspan' [.5] 'Wtype' 'gaussian'},"X'=term+input.*(2-X)"
+%"LeakyIntegrator",400,{'stim2D' 'decay' 'connect'},{'decayrate' '1' 'X_IC' [0] 'g' 1 'Ntype' 'fanout' 'Nspan' [1] 'Wtype' 'gaussian' 'Wspan' [.2]},"X'=term+input.*(2-X)"
+%"LeakyIntegrator",400,{'stim2D' 'decay' 'connect'},{'decayrate' '1' 'X_IC' [0] 'g' 5 'Ntype' 'fanout' 'Nspan' [1] 'Wtype' 'gaussian' 'Wspan' [1]},"X'=term+input.*(2-X)"
+%"LeakyIntegrator",400,{'rtstim2D' 'decay' 'connect'},{'decayrate' '1' 'X_IC' [0] 'g' 5 'Ntype' 'fanout' 'Nspan' [.1] 'Wtype' 'gaussian' 'Wspan' [1]},"X'=term+input.*(2-X)"
+%"LeakyIntegrator",400,{'rtstim2D' 'decay' 'connect' 'stim2D'},{'a' .2 'decayrate' '1' 'X_IC' [0] 'g' 5 'Ntype' 'fanout' 'Nspan' [1] 'Wtype' 'gaussian' 'Wspan' [.01]},"X'=term+input.*(2-X)"
+%"LeakyIntegrator",400,{'rtstim2D' 'decay' 'connect' 'stim2D'},{'a' 0 'rtamp' 2 'decayrate' '1' 'X_IC' [0] 'g' 10 'Ntype' 'fanout' 'Nspan' [.49] 'Wtype' 'gaussian' 'Wspan' [.1]},"X'=term+input.*(2-X)"
+%"LeakyIntegrator",400,{'rtstim2D' 'decay' 'connect' 'stim2D'},{'a' 0 'rtamp' 2 'decayrate' '1' 'X_IC' [0] 'g' 10 'E' 0 'Ntype' 'fanout' 'Nspan' [.49] 'Wtype' 'gaussian' 'Wspan' [.5]},"X'=term+input.*(2-X)"
+% 	- E=0 makes it inhibitory; E=2 is excitatory
+%"LeakyIntegrator",400,{'rtstim2D' 'decay' 'connect' 'stim2D'},{'a' 0 'rtamp' 2 'decayrate' '1' 'X_IC' [0] 'g' 10 'E' 0 'Ntype' 'fanout' 'Nspan' [1] 'Wtype' 'gaussian' 'Wspan' [.5]},"X'=term+input.*(2-X)"
+% 	- slow edge detector
+%"LeakyIntegrator",400,{'rtstim2D' 'decay' 'connect' 'stim2D'},{'a' 0 'rtamp' 2 'decayrate' '1' 'X_IC' [1] 'g' 10 'E' 0 'Ntype' 'fanout' 'Nspan' [1] 'Wtype' 'gaussian' 'Wspan' [.5]},"X'=term+input.*(2-X)"
+%"LeakyIntegrator",400,{'rtstim2D' 'decay' 'connect' 'stim2D'},{'a' 0 'rtamp' 2 'decayrate' '1' 'X_IC' [1] 'g' 10 'E' 0 'Ntype' 'random' 'Nspan' [1] 'p' .25 'Wtype' 'gaussian' 'Wspan' [.5]},"X'=term+input.*(2-X)"
+% 	- random connectivity with gaussian weights
+%"LeakyIntegrator",400,{'rtstim2D' 'decay' 'connect' 'stim2D'},{'a' 1 'rtamp' 2 'decayrate' '1' 'X_IC' [1] 'g' 10 'E' 0 'Ntype' 'random' 'Nspan' [1] 'p' .25 'Wtype' 'gaussian' 'Wspan' [.5]},"X'=term+input.*(2-X)"
+%"LeakyIntegrator",400,{'rtstim2D' 'decay' 'connect' 'stim2D'},{'a' 1 'rtamp' 2 'decayrate' '1' 'X_IC' [1] 'g' 10 'E' 0 'Ntype' 'random' 'Nspan' [1] 'p' .25 'Wtype' '1' 'Wspan' [.5]},"X'=term+input.*(2-X)"
+
+%"LeakyIntegrator",400,{'rtstim2D' 'decay' 'connect' 'stim2D'},{'a' 1 'rtamp' 2 'decayrate' '1' 'X_IC' [1] 'g' 10 'E' 0 'Ntype' 'random' 'Nspan' [1] 'p' .25 'Wtype' '1' 'Wspan' [.5]},"X'=term+input.*(2-X)"
+
+%"LeakyIntegrator",400,{'stim2D' 'decay' 'connect'},{'decayrate' '1' 'X_IC' [0] 'Ntype' 'fanout' 'Nspan' [1] 'Wtype' 'gaussian'},"X'=term+input.*(2-X)"
+%"LeakyIntegrator",400,{'stim2D' 'decay' 'connect'},{'decayrate' '1' 'X_IC' [0] 'Ntype' '1' 'Wtype' 'gaussian'},"X'=term+input.*(2-X)"
+%"LeakyIntegrator",400,{'rtstim2D' 'decay' 'connect'},{'decayrate' '1' 'X_IC' [0] 'Ntype' 1 'Wtype' 'gaussian'},"X'=term+input.*(2-X)"
+%"LeakyIntegrator",400,{'rtstim2D' 'decay' 'connect'},{'decayrate' '1' 'X_IC' [0] 'Ntype' 'random' 'prob' [.5] 'Wtype' 1},"X'=term+input.*(2-X)"
+%"LeakyIntegrator",400,{'rtstim2D' 'decay' 'connect'},{'decayrate' '1' 'X_IC' [0] 'Ntype' 'fanout' 'Nspan' [.5] 'prob' [.5] 'Wtype' '1'},"X'=term+input.*(2-X)"
+%"LeakyIntegrator",400,{'rtstim2D' 'decay' 'connect'},{'decayrate' '1' 'X_IC' [0] 'Ntype' 1 'Wtype' 'distributed' 'poisrnd' 'lambda' 1},"X'=term+input.*(2-X)"
+%"LeakyIntegrator",400,{'rtstim2D' 'decay' 'connect'},{'decayrate' '1' 'X_IC' [0] 'Ntype' 'smallworld' 'Wtype' 1},"X'=term+input.*(2-X)"
+%"LeakyIntegrator",400,{'rtimage' 'decay' 'connect'},{'decayrate' '1' 'X_IC' [0] 'img' 'grating' 'Ntype' 1 'Wtype' 'gaussian'},"X'=term+input.*(2-X)"
+
+% -----------------------------------------------------------------------------------------------------
+% RateNeuron
+% ----------
+
+% -----------------------------------------------------------------------------------------------------
+% SpikingNeuron
+% -------------
+%"SpikingNeuron",100,"{'ileak' 'iNa' 'iK' 'noise' 'connectsyn'}","{'g' 0 'E' 0 'Ntype' 'random' 'Nspan' [1] 'p' .25 'Wtype' '1' 'Wspan' [.5] 'Cm' [1] 'E_l' [-55] 'gKf' [36] 'EKf' [-75] 'gNa' [50] 'ENa' [50] 'V_noise' [0] 'V_IC' [-65] 'V_IC_noise' [0]}","V'=(current)./Cm"
+%"SN",100,"{'ileak' 'iNa' 'iK' 'noise' 'connectsyn' 'stim2D'}","{'a' 100 'g' 10 'E' 0 'Ntype' 'random' 'Nspan' [1] 'p' .25 'Wtype' '1' 'Wspan' [.5] 'E_l' [-55] 'gKf' [36] 'EKf' [-75] 'gNa' [50] 'ENa' [50] 'V_noise' [0] 'V_IC' [-65] 'V_IC_noise' [0]}","V'=current+input"
+%"SN",400,"{'ileak' 'iNa' 'iK' 'noise' 'connectsyn' 'stim2D'}","{'a' 100 'g' 10 'E' -80 'Ntype' 'random' 'Nspan' [1] 'p' .25 'Wtype' '1' 'Wspan' [.5] 'E_l' [-55] 'gKf' [36] 'EKf' [-75] 'gNa' [50] 'ENa' [50] 'V_noise' [0] 'V_IC' [-65] 'V_IC_noise' [0]}","V'=current+input"
+%"SN",400,"{'ileak' 'iNa' 'iK' 'noise' 'connectsyn' 'stim2D' 'rtstim2D'}","{'rtamp' 100 'a' 100 'g' 10 'E' -80 'Ntype' 'random' 'Nspan' [1] 'p' .25 'Wtype' '1' 'Wspan' [.5] 'E_l' [-55] 'gKf' [36] 'EKf' [-75] 'gNa' [50] 'ENa' [50] 'V_noise' [0] 'V_IC' [-65] 'V_IC_noise' [0]}","V'=current+input"
+
+%"SN",100,"{'itonic' 'noise' 'iNaF' 'iKDR' 'iAR'}","{'rtamp' 100 'Ntype' 'random' 'Nspan' [1] 'p' .25 'Wtype' '1' 'Wspan' [.5] 'stim' 20 'V_noise' [8] 'IC_noise' [.01] 'E_l' -70 'g_l' 1 'Cm' .9 'gKDR' 20 'KDR_V1' 29.5 'KDR_d1' 10 'KDR_v2' 10 'KDR_d2' 10 'E_KDR' -95 'gNaF' 200 'NaF_V0' 34.5 'NaF_V1' 59.4 'NaF_d1' 10.7 'NaF_V2' 33.5 'NaF_d2' 15 'E_NaF' 50 'AR_V0' 87.5 'AR_V12' -87.5 'E_AR' -35 'gAR' 25 'c_ARaM' 1.75 'c_ARbM' .5}","V'=(current)./Cm"
+
+"SN",100,"{'noise' 'iNaF' 'iKDR' 'iAR'}","{'a' 20 'rtamp' 50 'g' 0 'E' -80 'Ntype' 'random' 'Nspan' [1] 'p' .25 'Wtype' '1' 'Wspan' [.5] 'stim' 20 'V_noise' [8] 'IC_noise' [.01] 'E_l' -70 'g_l' 1 'Cm' .9 'gKDR' 20 'KDR_V1' 29.5 'KDR_d1' 10 'KDR_v2' 10 'KDR_d2' 10 'E_KDR' -95 'gNaF' 200 'NaF_V0' 34.5 'NaF_V1' 59.4 'NaF_d1' 10.7 'NaF_V2' 33.5 'NaF_d2' 15 'E_NaF' 50 'AR_V0' 87.5 'AR_V12' -87.5 'E_AR' -35 'gAR' 25 'c_ARaM' 1.75 'c_ARbM' .5}","V'=current./Cm"
+
+% BROKEN (NEED TO FIX for (1)INPUTS and (2)CONNECTIONS):
+%"SN",100,"{'stim2D' 'rtstim2D' 'noise' 'iNaF' 'iKDR' 'iAR'}","{'a' 20 'rtamp' 50 'g' 0 'E' -80 'Ntype' 'random' 'Nspan' [1] 'p' .25 'Wtype' '1' 'Wspan' [.5] 'stim' 20 'V_noise' [8] 'IC_noise' [.01] 'E_l' -70 'g_l' 1 'Cm' .9 'gKDR' 20 'KDR_V1' 29.5 'KDR_d1' 10 'KDR_v2' 10 'KDR_d2' 10 'E_KDR' -95 'gNaF' 200 'NaF_V0' 34.5 'NaF_V1' 59.4 'NaF_d1' 10.7 'NaF_V2' 33.5 'NaF_d2' 15 'E_NaF' 50 'AR_V0' 87.5 'AR_V12' -87.5 'E_AR' -35 'gAR' 25 'c_ARaM' 1.75 'c_ARbM' .5}","V'=input+current./Cm"

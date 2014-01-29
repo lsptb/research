@@ -1,0 +1,89 @@
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/lib/libnspike/ext/libcfu-0.03/src
+END
+cfuopt.c
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/lib/libnspike/ext/libcfu-0.03/src/cfuopt.c
+END
+cfuhash.c
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/lib/libnspike/ext/libcfu-0.03/src/cfuhash.c
+END
+libcfu.a
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/lib/libnspike/ext/libcfu-0.03/src/libcfu.a
+END
+cfuconf.c
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/lib/libnspike/ext/libcfu-0.03/src/cfuconf.c
+END
+TODO
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/lib/libnspike/ext/libcfu-0.03/src/TODO
+END
+cfustring.c
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/lib/libnspike/ext/libcfu-0.03/src/cfustring.c
+END
+libcfu-config.c
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/lib/libnspike/ext/libcfu-0.03/src/libcfu-config.c
+END
+cfulist.c
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/lib/libnspike/ext/libcfu-0.03/src/cfulist.c
+END
+cfuthread_queue.c
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/lib/libnspike/ext/libcfu-0.03/src/cfuthread_queue.c
+END
+liblibcfu.a
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/lib/libnspike/ext/libcfu-0.03/src/liblibcfu.a
+END
+dummy.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/lib/libnspike/ext/libcfu-0.03/src/dummy.cpp
+END
+CMakeLists.txt
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/lib/libnspike/ext/libcfu-0.03/src/CMakeLists.txt
+END
+cfutime.c
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/lib/libnspike/ext/libcfu-0.03/src/cfutime.c
+END
+cfu.c
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/lib/libnspike/ext/libcfu-0.03/src/cfu.c
+END

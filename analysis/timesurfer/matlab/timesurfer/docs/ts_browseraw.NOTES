@@ -1,0 +1,24 @@
+TO DO:
+fstools
+fs_calc_cluster_thresh.m
+fs_thresh_surfstats.m
+
+export/import using spreadsheet
+
+% browser
+ts_browse_raw - improve speed
+- plotting offscreen channels
+
+
+
+%let it accept epoch data
+%eeglab takes epoch data
+
+% flag for process_fif_data
+- read events & header
+launch browser
+set rejections interactively
+save out & use in processing
+manual artifact rejection
+
+- examples in ~mmildev/megstream/test_run/browse_data.m

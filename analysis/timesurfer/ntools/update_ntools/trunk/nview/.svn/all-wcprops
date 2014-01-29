@@ -1,0 +1,107 @@
+K 25
+svn:wc:ra_dav:version-url
+V 40
+/s_bijan/nsuite/!svn/ver/140/trunk/nview
+END
+hw_defn_nyusom.m
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/s_bijan/nsuite/!svn/ver/81/trunk/nview/hw_defn_nyusom.m
+END
+Main.m
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/s_bijan/nsuite/!svn/ver/140/trunk/nview/Main.m
+END
+Spectral.fig
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/s_bijan/nsuite/!svn/ver/137/trunk/nview/Spectral.fig
+END
+nview.m
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/s_bijan/nsuite/!svn/ver/107/trunk/nview/nview.m
+END
+nview_notchfilter.m
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/s_bijan/nsuite/!svn/ver/138/trunk/nview/nview_notchfilter.m
+END
+spectrumscope.m
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/s_bijan/nsuite/!svn/ver/137/trunk/nview/spectrumscope.m
+END
+Main.fig
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/s_bijan/nsuite/!svn/ver/138/trunk/nview/Main.fig
+END
+nview_configure_channels_256.m
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/s_bijan/nsuite/!svn/ver/30/trunk/nview/nview_configure_channels_256.m
+END
+nview_configure_channels_nyucns.m
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/s_bijan/nsuite/!svn/ver/1/trunk/nview/nview_configure_channels_nyucns.m
+END
+analyze.m
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/s_bijan/nsuite/!svn/ver/1/trunk/nview/analyze.m
+END
+hw_defn_nyucns.m
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/s_bijan/nsuite/!svn/ver/81/trunk/nview/hw_defn_nyucns.m
+END
+exp_defn_jonathan_test.m
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/s_bijan/nsuite/!svn/ver/1/trunk/nview/exp_defn_jonathan_test.m
+END
+exp_defn_adam.m
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/s_bijan/nsuite/!svn/ver/1/trunk/nview/exp_defn_adam.m
+END
+init_exp_defn.m
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/s_bijan/nsuite/!svn/ver/140/trunk/nview/init_exp_defn.m
+END
+launch-nview.sh
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/s_bijan/nsuite/!svn/ver/10/trunk/nview/launch-nview.sh
+END
+launch-timecode.sh
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/s_bijan/nsuite/!svn/ver/53/trunk/nview/launch-timecode.sh
+END
+exp_defn_template.m
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/s_bijan/nsuite/!svn/ver/135/trunk/nview/exp_defn_template.m
+END

@@ -1,0 +1,131 @@
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/s_bijan/nsuite/!svn/ver/81/trunk/nstream/lib/libnspike
+END
+daqengine.cc
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/lib/libnspike/daqengine.cc
+END
+nspike.h
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/s_bijan/nsuite/!svn/ver/81/trunk/nstream/lib/libnspike/nspike.h
+END
+ringbuffer.h
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/lib/libnspike/ringbuffer.h
+END
+daqengine.h
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/lib/libnspike/daqengine.h
+END
+udpsocket.cc
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/lib/libnspike/udpsocket.cc
+END
+masterdsp.cc
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/lib/libnspike/masterdsp.cc
+END
+udpsocket.h
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/lib/libnspike/udpsocket.h
+END
+masterdsp.h
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/lib/libnspike/masterdsp.h
+END
+auxdsp.cc
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/lib/libnspike/auxdsp.cc
+END
+auxdsp.h
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/lib/libnspike/auxdsp.h
+END
+channel.cc
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/lib/libnspike/channel.cc
+END
+channel.h
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/lib/libnspike/channel.h
+END
+netkeepalive.cc
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/lib/libnspike/netkeepalive.cc
+END
+hw_defines.h
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/lib/libnspike/hw_defines.h
+END
+netkeepalive.h
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/lib/libnspike/netkeepalive.h
+END
+libnspike.h
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/lib/libnspike/libnspike.h
+END
+dsp.cc
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/lib/libnspike/dsp.cc
+END
+dsp.h
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/lib/libnspike/dsp.h
+END
+CMakeLists.txt
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/lib/libnspike/CMakeLists.txt
+END
+nspike.cc
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/s_bijan/nsuite/!svn/ver/81/trunk/nstream/lib/libnspike/nspike.cc
+END
+ringbuffer.cc
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/lib/libnspike/ringbuffer.cc
+END

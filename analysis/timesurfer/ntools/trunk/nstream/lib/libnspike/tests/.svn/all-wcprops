@@ -1,0 +1,77 @@
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/lib/libnspike/tests
+END
+check_masterdsp.c
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/lib/libnspike/tests/check_masterdsp.c
+END
+check_auxdsp.c
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/lib/libnspike/tests/check_auxdsp.c
+END
+suites.h
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/lib/libnspike/tests/suites.h
+END
+check_channel.c
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/lib/libnspike/tests/check_channel.c
+END
+fakehw.c
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/lib/libnspike/tests/fakehw.c
+END
+check_nspike.c
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/lib/libnspike/tests/check_nspike.c
+END
+check_ringbuffer.c
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/lib/libnspike/tests/check_ringbuffer.c
+END
+check_daqengine.c
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/lib/libnspike/tests/check_daqengine.c
+END
+testmacros.h
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/lib/libnspike/tests/testmacros.h
+END
+fakehw.h
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/lib/libnspike/tests/fakehw.h
+END
+CMakeLists.txt
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/lib/libnspike/tests/CMakeLists.txt
+END
+check_libnspike.c
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/lib/libnspike/tests/check_libnspike.c
+END

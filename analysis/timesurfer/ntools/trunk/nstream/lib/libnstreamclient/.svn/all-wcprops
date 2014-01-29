@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/s_bijan/nsuite/!svn/ver/101/trunk/nstream/lib/libnstreamclient
+END
+nstreamclient.c
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/s_bijan/nsuite/!svn/ver/81/trunk/nstream/lib/libnstreamclient/nstreamclient.c
+END
+CMakeLists.txt
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/lib/libnstreamclient/CMakeLists.txt
+END
+nstreamclient.h
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/s_bijan/nsuite/!svn/ver/101/trunk/nstream/lib/libnstreamclient/nstreamclient.h
+END

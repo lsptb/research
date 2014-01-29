@@ -1,0 +1,56 @@
+The TimeSurfer package has now been organized into a set of subdirectories.  Installation instructions for the new package, as well as a description of the directory structure, is found below
+
+===========================
+= Installation
+===========================
+
+** IT IS HIGHLY RECOMMENDED THAT YOU MAKE A LOCAL COPY OF THIS PACKAGE **
+
+By making a local copy, you will always have a stable version of the TimeSurfer package, and won't have your processing stream broken by changes made to the package at later dates. 
+
+LOCAL COPY INSTALLATION:
+----------------------------
+1. archive your old timesurfer installation
+     mv ~/matlab/timesurfer/ ~/matlab/timesurfer.old
+	 
+2. copy the new package (NOTE: RECURSIVE COPY IS NECESSARY!)
+    cp -r ~mmildev/matlab/timesurfer/ ~/matlab/timesurfer/
+	
+3. add the necessary paths to your MATLAB startup.m file.
+   add the line
+addpath(genpath('~/matlab/timesurfer')); 
+   to the bottom of your startup.m file.
+
+
+
+"Dynamic" Installation
+(for users who always want to
+  be using the latest TimeSurfer code;
+  NOT RECOMMENDED!)
+----------------------------
+In your MATLAB startup.m file (usually located at ~/matlab/startup.m),
+  - Add 
+addpath(genpath('~mmildev/matlab/timesurfer')); 
+    to the bottom of your startup.m file.
+
+
+
+===========================
+= Directory Structure
+===========================
+
+For end-users:
+timesurfer                   - Contains the basic processing functions for end-users
+timesurfer/docs              - documentation for the package
+timesurfer/plots             - Functions for visualizing data (raw and processed)
+timesurfer/samples           - Sample scripts!
+
+For advanced users:
+timesurfer/functions         - TimeSurfer programmer's interface
+timesurfer/formats           - read/write/convert between different data formats
+timesurfer/mxhuang           - BEM code from mxhuang
+timesurfer/tsext             - user-submitted TimeSurfer extensions
+timesurfer/matext            - generic functions (MATLAB extensions)
+timesurfer/mmil_util         - utility functions
+timesurfer/fstools           - freesurfer tools
+

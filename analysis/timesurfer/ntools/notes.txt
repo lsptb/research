@@ -1,0 +1,34 @@
+Repository: https://secure2.svnrepository.com/s_bijan/nsuite
+Username: matthew.davidson
+Password: laa4dee$
+
+Checkout repository (on ip84.ucsd.edu):
+svn co https://secure2.svnrepository.com/s_bijan/nsuite/trunk
+svn export https://secure2.svnrepository.com/s_bijan/nsuite/trunk
+
+Files to look at:
+/home/jsherfey/svn/dev/ntools/trunk/ntools/gen/ntools_gen_epoch_data.m
+/home/jsherfey/svn/dev/ntools/trunk/ntools/gen/ntools_gen_cont_data.m
+/home/jsherfey/svn/dev/ntools/trunk/ntools/gen/ntools_gen_ft_data.m
+
+
+Commit changes to the repository (on ip84.ucsd.edu):
+svn commit -m "message"
+
+
+
+----------------------------------------------
+Misc notes from emails and such
+----------------------------------------------
+From Matthew:
+Yes. This is exactly the situation I described in my email a while
+ago. We want to edit the post-commit hook to automatically update a
+public working copy.
+
+If people want, they can use my strip_svn_dirs and strip_path_dirs
+functions to quickly remove the .svn directories from their matlab
+paths (not that it does any real harm to leave them in; it just slows
+down searching the path). Or, we could just do an svn export instead
+of an svn update. It won't have the .svn directories, but it also
+won't know anything about which dirs/files are updated, so it'll
+export the whole thing every time.

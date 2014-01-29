@@ -1,0 +1,3 @@
+add_subdirectory(libutil)
+add_subdirectory(libnspike)
+add_subdirectory(libnstreamclient)

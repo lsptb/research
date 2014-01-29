@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/lib/libutil
+END
+exception.cc
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/lib/libutil/exception.cc
+END
+exception.h
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/lib/libutil/exception.h
+END
+CMakeLists.txt
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/lib/libutil/CMakeLists.txt
+END

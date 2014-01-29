@@ -1,0 +1,191 @@
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/s_bijan/nsuite/!svn/ver/142/trunk/ntools/elec
+END
+ntools_elec_savetxt.m
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/s_bijan/nsuite/!svn/ver/142/trunk/ntools/elec/ntools_elec_savetxt.m
+END
+ntools_elec_locpos.m
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/s_bijan/nsuite/!svn/ver/141/trunk/ntools/elec/ntools_elec_locpos.m
+END
+ntools_elec_cal.m
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/s_bijan/nsuite/!svn/ver/132/trunk/ntools/elec/ntools_elec_cal.m
+END
+ntools_elec_dartel_warp.m
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/s_bijan/nsuite/!svn/ver/142/trunk/ntools/elec/ntools_elec_dartel_warp.m
+END
+ntools_elec_223.m
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/s_bijan/nsuite/!svn/ver/141/trunk/ntools/elec/ntools_elec_223.m
+END
+ntools_elec_calc_grid.m
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/s_bijan/nsuite/!svn/ver/142/trunk/ntools/elec/ntools_elec_calc_grid.m
+END
+ntools_elec_outer_brain.m
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/s_bijan/nsuite/!svn/ver/141/trunk/ntools/elec/ntools_elec_outer_brain.m
+END
+ntools_elec_mgh_plot.m
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/s_bijan/nsuite/!svn/ver/142/trunk/ntools/elec/ntools_elec_mgh_plot.m
+END
+ntools_elec_view.m
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/s_bijan/nsuite/!svn/ver/141/trunk/ntools/elec/ntools_elec_view.m
+END
+ntools_elec_projection.m
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/s_bijan/nsuite/!svn/ver/142/trunk/ntools/elec/ntools_elec_projection.m
+END
+ntools_elec_plot.m
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/s_bijan/nsuite/!svn/ver/142/trunk/ntools/elec/ntools_elec_plot.m
+END
+ntools_elec_grid.m
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/s_bijan/nsuite/!svn/ver/132/trunk/ntools/elec/ntools_elec_grid.m
+END
+ntools_elec_calc_depth.m
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/s_bijan/nsuite/!svn/ver/142/trunk/ntools/elec/ntools_elec_calc_depth.m
+END
+tripatch.m
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/s_bijan/nsuite/!svn/ver/141/trunk/ntools/elec/tripatch.m
+END
+ntools_elec_make_tri_file.m
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/s_bijan/nsuite/!svn/ver/132/trunk/ntools/elec/ntools_elec_make_tri_file.m
+END
+ch2_mni_corrected_lh.mat
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/s_bijan/nsuite/!svn/ver/141/trunk/ntools/elec/ch2_mni_corrected_lh.mat
+END
+immatch.m
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/s_bijan/nsuite/!svn/ver/141/trunk/ntools/elec/immatch.m
+END
+ntools_elec_bemproj.m
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/s_bijan/nsuite/!svn/ver/132/trunk/ntools/elec/ntools_elec_bemproj.m
+END
+ch2_mni_corrected_rh.mat
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/s_bijan/nsuite/!svn/ver/141/trunk/ntools/elec/ch2_mni_corrected_rh.mat
+END
+fastmarch_mex.mexa64
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/s_bijan/nsuite/!svn/ver/141/trunk/ntools/elec/fastmarch_mex.mexa64
+END
+ntools_elec_position.m
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/s_bijan/nsuite/!svn/ver/132/trunk/ntools/elec/ntools_elec_position.m
+END
+ntools_elec_interp_grid.m
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/s_bijan/nsuite/!svn/ver/141/trunk/ntools/elec/ntools_elec_interp_grid.m
+END
+ntools_elec_get_elec_name.m
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/s_bijan/nsuite/!svn/ver/132/trunk/ntools/elec/ntools_elec_get_elec_name.m
+END
+ntools_elec_read_struct_data.m
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/s_bijan/nsuite/!svn/ver/132/trunk/ntools/elec/ntools_elec_read_struct_data.m
+END
+ntools_elec_xyz2mni.m
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/s_bijan/nsuite/!svn/ver/141/trunk/ntools/elec/ntools_elec_xyz2mni.m
+END
+ntools_elec_locgui.m
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/s_bijan/nsuite/!svn/ver/142/trunk/ntools/elec/ntools_elec_locgui.m
+END
+fastmarch.m
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/s_bijan/nsuite/!svn/ver/141/trunk/ntools/elec/fastmarch.m
+END
+ntools_elec_calc_strip.m
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/s_bijan/nsuite/!svn/ver/142/trunk/ntools/elec/ntools_elec_calc_strip.m
+END
+ntools_elec_savebin.m
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/s_bijan/nsuite/!svn/ver/142/trunk/ntools/elec/ntools_elec_savebin.m
+END
+ntools_elec_autocoreg.m
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/s_bijan/nsuite/!svn/ver/142/trunk/ntools/elec/ntools_elec_autocoreg.m
+END
+ntools_elec_convert_format.m
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/s_bijan/nsuite/!svn/ver/132/trunk/ntools/elec/ntools_elec_convert_format.m
+END

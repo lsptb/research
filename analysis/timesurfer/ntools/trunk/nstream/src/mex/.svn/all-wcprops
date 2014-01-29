@@ -1,0 +1,233 @@
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/s_bijan/nsuite/!svn/ver/101/trunk/nstream/src/mex
+END
+nstream_gettime_nspike.c
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/src/mex/nstream_gettime_nspike.c
+END
+nstream_getraw_nspike_16.c
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/src/mex/nstream_getraw_nspike_16.c
+END
+nstream_add_masterdsp.c
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/s_bijan/nsuite/!svn/ver/81/trunk/nstream/src/mex/nstream_add_masterdsp.c
+END
+nstream_get_dataglove_ts.c
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/src/mex/nstream_get_dataglove_ts.c
+END
+nstream_enable_dataglove.c
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/src/mex/nstream_enable_dataglove.c
+END
+nstream_getmu_nspike_4.c
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/s_bijan/nsuite/!svn/ver/22/trunk/nstream/src/mex/nstream_getmu_nspike_4.c
+END
+nstream_gettime_comedi.c
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/src/mex/nstream_gettime_comedi.c
+END
+nstream_getrawint_comedi_decimate.c
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/s_bijan/nsuite/!svn/ver/101/trunk/nstream/src/mex/nstream_getrawint_comedi_decimate.c
+END
+nstream_getdio_ts.c
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/src/mex/nstream_getdio_ts.c
+END
+nstream_set_filters.c
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/src/mex/nstream_set_filters.c
+END
+nstream_stop_record.c
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/src/mex/nstream_stop_record.c
+END
+nstream_getraw_nspike_4.c
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/s_bijan/nsuite/!svn/ver/22/trunk/nstream/src/mex/nstream_getraw_nspike_4.c
+END
+nstream_getmuint_nspike_4.c
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/s_bijan/nsuite/!svn/ver/22/trunk/nstream/src/mex/nstream_getmuint_nspike_4.c
+END
+nstream_getraw_nspike_all.c
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/src/mex/nstream_getraw_nspike_all.c
+END
+nstream_start_record.c
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/s_bijan/nsuite/!svn/ver/101/trunk/nstream/src/mex/nstream_start_record.c
+END
+nstream_getrawint_nspike_4.c
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/s_bijan/nsuite/!svn/ver/22/trunk/nstream/src/mex/nstream_getrawint_nspike_4.c
+END
+nstream_getraw_comedi_all.c
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/src/mex/nstream_getraw_comedi_all.c
+END
+nstream_getraw_nspike.c
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/src/mex/nstream_getraw_nspike.c
+END
+CMakeLists.txt
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/s_bijan/nsuite/!svn/ver/81/trunk/nstream/src/mex/CMakeLists.txt
+END
+nstream_getraw_comedi_decimate.c
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/s_bijan/nsuite/!svn/ver/101/trunk/nstream/src/mex/nstream_getraw_comedi_decimate.c
+END
+nstream_get_dataglove.c
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/src/mex/nstream_get_dataglove.c
+END
+nstream_start_acquire.c
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/src/mex/nstream_start_acquire.c
+END
+nstream_getrawint_nspike_decimate.c
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/src/mex/nstream_getrawint_nspike_decimate.c
+END
+nstream_exit.c
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/src/mex/nstream_exit.c
+END
+nstream_getraw_comedi.c
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/src/mex/nstream_getraw_comedi.c
+END
+nstream_getdio.c
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/src/mex/nstream_getdio.c
+END
+nstream_getmuint_nspike_16.c
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/src/mex/nstream_getmuint_nspike_16.c
+END
+nstream_add_auxdsp.c
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/src/mex/nstream_add_auxdsp.c
+END
+nstream_getrawint_nspike.c
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/src/mex/nstream_getrawint_nspike.c
+END
+nstream_set_verbose.c
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/src/mex/nstream_set_verbose.c
+END
+nstream_getjoy_comedi.c
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/src/mex/nstream_getjoy_comedi.c
+END
+nstream_set_channel.c
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/src/mex/nstream_set_channel.c
+END
+nstream_getrawint_nspike_16.c
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/src/mex/nstream_getrawint_nspike_16.c
+END
+nstream_getrawint_comedi.c
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/s_bijan/nsuite/!svn/ver/70/trunk/nstream/src/mex/nstream_getrawint_comedi.c
+END
+nstream_set_dac_channel.c
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/s_bijan/nsuite/!svn/ver/81/trunk/nstream/src/mex/nstream_set_dac_channel.c
+END
+nstream_getraw_nspike_decimate.c
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/src/mex/nstream_getraw_nspike_decimate.c
+END
+nstream_getmu_nspike_16.c
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/src/mex/nstream_getmu_nspike_16.c
+END
+nstream_set_dac_gain.c
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/s_bijan/nsuite/!svn/ver/81/trunk/nstream/src/mex/nstream_set_dac_gain.c
+END

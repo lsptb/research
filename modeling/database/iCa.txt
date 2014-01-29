@@ -1,0 +1,7 @@
+# ICa: calcium current
+ECaf=120; 	# mV
+gCaf=.25; 	# mS/cm2
+minf(V)=1./(1+exp(-(V+20)/9));
+ICaf(V)=gCaf*minf(V).^2.*(V-ECaf);
+current => -ICaf(V) 	# for entity dynamics
+ICaf => ICaf(V)				# for other mech dynamics

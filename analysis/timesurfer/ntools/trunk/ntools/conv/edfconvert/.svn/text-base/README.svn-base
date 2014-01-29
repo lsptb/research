@@ -1,0 +1,53 @@
+nstream/nspike output data to EDF converter
+Adam Weiss (adam@cns.nyu.edu)
+05/22/09
+===========================================
+
+Building
+========
+
+Prerequsites: This program requires the libxml2-dev and libxml2 packages to
+be installed.
+
+Type "make."
+
+Usage
+=====
+
+./edfconvert hdrxmlfile
+
+The converter will produce a file with the same name as the binary input file
+with an edf extension.  The following values are used in the EDF header and
+can be tweaked at the top of edfconvert.h:
+
+/* defaults for main header */
+#define EH_DEFAULT_VERSION "0" 
+#define EH_DEFAULT_START_DATE "01.01.70"
+#define EH_DEFAULT_START_TIME "00.00.00" 
+
+/* defaults for signal header */
+#define EH_S_DEFAULT_TRANSDUCER	"Active electrode"
+#define EH_S_DEFAULT_PHYS_DIM "uV"
+#define EH_S_DEFAULT_PHYS_MIN "-3276"
+#define EH_S_DEFAULT_PHYS_MAX "3276" 
+#define EH_S_DEFAULT_DIG_MIN "-32768" 
+#define EH_S_DEFAULT_DIG_MAX "32767" 
+#define EH_S_DEFAULT_PREFILTER "No Filter" 
+#define EH_S_DEFAULT_RESERVED "" 
+
+Notes
+=====
+
+The EDF data record length is hardcoded to 1/10th of a second.  This seems
+reasonable.  It can be changed in edfconvert.h if needbe.
+
+Bugs
+====
+
+The EDF file length is truncated to floor(duration).
+
+There are a lot of places where memory is not freed.  If anyone ever wants to
+convert this to a program which runs over multiple files, they'll need to free
+the XML data structures, and the EDF header data structures.  In it's current
+form, where it is run once per file, it is fine.
+ 

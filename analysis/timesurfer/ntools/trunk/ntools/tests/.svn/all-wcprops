@@ -1,0 +1,11 @@
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/s_bijan/nsuite/!svn/ver/112/trunk/ntools/tests
+END
+run_all_tests.m
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/s_bijan/nsuite/!svn/ver/76/trunk/ntools/tests/run_all_tests.m
+END

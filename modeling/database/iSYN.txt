@@ -1,0 +1,28 @@
+# iSYN: fast threshold modulation
+
+# constants
+g_SYN=.5; E_SYN=-80; tauDx=1; tauRx=.25; fanout=inf;
+IC=.1; IC_noise=0
+NoSelfConn=0; % 1 or 0, whether not to connect to cell at same position (self if pop x to pop x)
+
+# precompute linear positions (index)
+UB = max(Npre,Npost)
+Xpre = linspace(1,UB,Npre)'*ones(1,Npost)
+Xpost = (linspace(1,UB,Npost)'*ones(1,Npre))'
+# Npre,Npost are reserved variables = entity multiplicities
+
+# compute mask
+mask = abs(Xpre-Xpost)<=fanout
+#mask = mask - NoSelfConn*diag(diag(mask))
+
+# gating dynamics
+sSYNpre' = -sSYNpre./tauDx + ((1-sSYNpre)/tauRx).*(1+tanh(Vpre/10))
+
+# initial conditions
+sSYNpre(0)=IC+IC_noise.*rand(Npre,1)
+
+# synaptic current
+ISYN(V,s) = (g_SYN.*(s'*mask)'.*(V-E_SYN))
+
+# interface statement
+current => -ISYN(Vpost,sSYNpre)

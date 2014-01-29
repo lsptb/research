@@ -1,0 +1,53 @@
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/misc/mex
+END
+closeserial.m
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/misc/mex/closeserial.m
+END
+openserial.c
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/misc/mex/openserial.c
+END
+closeserial.c
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/misc/mex/closeserial.c
+END
+setparallel.c
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/misc/mex/setparallel.c
+END
+writeserial.c
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/misc/mex/writeserial.c
+END
+openserial.m
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/misc/mex/openserial.m
+END
+readserial.c
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/misc/mex/readserial.c
+END
+CMakeLists.txt
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/misc/mex/CMakeLists.txt
+END

@@ -1,0 +1,49 @@
+// *************************************
+// 	CTF Head Model:Dipole Parameter File 
+// *************************************
+
+// Codes:
+// dipole colour: 
+//   YELLOW = 0, GREEN = 1, RED = 2, CYAN = 3,
+// 	 CYAN = 3, MAGENTA = 4, WHITE = 5, BLACK = 6 
+// dipole shape: 
+//   FILLED_CIRCLE = 0, FILLED_SQUARE = 1, FILLED_TRIANGLE = 2,
+//   HOLLOW_CIRCLE = 3, HOLLOW_SQUARE = 4, HOLLOW_TRIANGLE = 5
+// display flags:
+//   true = 1, false = 0
+// position/moment/orientation constraint flags: 
+//   FREE = 0,  FIXED = 1, RANGED = 2,  RADIAL = 3, TANGENTIAL = 4
+//   CO-LOCATED = 5, MIRROR SYMMETRIC = 6, ORTHOGONAL_TO_DIPOLE = 7 
+
+File_Info
+{
+	VERSION:		CTF_HEAD_MODEL_FILE_VERSION_4.1
+	DATE:			Tue Jul 20 18:17:17 2004
+	PATIENT:		
+}
+
+Model
+{
+	MODEL_TYPE:		MEG_ONLY
+	MRI_FILE:		/home/common/meg_mri/fonteijn_h/fonteijn_h.mri
+}
+
+MEG_Sphere
+{
+	ORIGIN_X:		0.605
+	ORIGIN_Y:		-0.022
+	ORIGIN_Z:		5.606
+	RADIUS:			6.958
+
+}
+
+Fid_Points
+{
+	// Fid. Pts	Sag	Cor	Axi
+	NASION:		86	55	122
+	LEFT_EAR:	30	143	163
+	RIGHT_EAR:	146	138	154
+
+}
+
+

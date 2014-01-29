@@ -1,0 +1,197 @@
+Tmu         	Code	TriNo	Comnt
+39676000       	11	0	Pattern 1                               
+42201299       	2	0	spike                                   
+89000000       	11	0	Pattern 1                               
+94383117       	2	0	sp                                      
+110110390      	2	0	sp                                      
+326510823      	2	0	sp, RCP 25, 26                          
+556427052      	2	0	synch                                   
+557404000      	11	0	Pattern 1                               
+557405403      	11	0	Pattern 1                               
+676937229      	2	0	sp                                      
+696852814      	2	0	sp                                      
+714744589      	2	0	sp                                      
+773508000      	11	0	Pattern 1                               
+806000000      	2	0	sp                                      
+905995671      	2	0	sp                                      
+986616883      	2	0	sp, definite                            
+1140997840     	3	0	Marker                                  
+1335164000     	11	0	Pattern 1                               
+1390432000     	11	0	Pattern 1                               
+1423298701     	2	0	sp and wave                             
+1446114719     	2	0	sp                                      
+1527056000     	11	0	Pattern 1                               
+1546887446     	31	0	delta, RCP                              
+1581017316     	32	0	delta, RCP                              
+1649988000     	11	0	Pattern 1                               
+1652907156     	2	0	spike                                   
+1689958963     	3	0	Marker                                  
+1768668831     	2	0	sp or KC?                               
+1772155844     	31	0	delta, RCP                              
+1782425857     	2	0	asych bet RCP & RAF, phase rev at RCP34 
+1783208000     	11	0	Pattern 1                               
+1784991342     	2	0	sp or KC?                               
+1792151515     	32	0	delta, RCP                              
+1868021645     	31	0	delta, RCP                              
+1893724000     	11	0	Pattern 1                               
+1901969697     	32	0	delta, RCP                              
+1959878788     	31	0	delta, RCP                              
+2388203463     	32	0	delta, RCP                              
+2740389610     	2	0	sp                                      
+2750753247     	2	0	sp                                      
+2820004329     	2	0	sp, definite                            
+2831417749     	2	0	sp                                      
+2895564935     	2	0	sp                                      
+3009155844     	2	0	sp                                      
+3020374459     	2	0	sp                                      
+3046043290     	2	0	sp and wave                             
+3058549784     	2	0	sp and wave                             
+3086670996     	2	0	sp                                      
+3110070723     	11	0	Pattern 1                               
+3214024000     	11	0	Pattern 1                               
+3266948000     	11	0	Pattern 1                               
+3289595238     	2	0	sp                                      
+3313121212     	2	0	sp, definite                            
+3366068000     	11	0	Pattern 1                               
+3403727862     	3	0	Marker                                  
+3405292000     	11	0	Pattern 1                               
+3414318182     	2	0	sp                                      
+3562768000     	11	0	Pattern 1                               
+3748948052     	11	0	Pattern 1                               
+3785164502     	31	0	delta, RCP                              
+3795437229     	32	0	delta, RCP                              
+3853045455     	31	0	delta, RCP                              
+3862153680     	32	0	delta, RCP                              
+3899296000     	11	0	Pattern 1                               
+3903952381     	31	0	delta, RCP                              
+3904344000     	11	0	Pattern 1                               
+3912142857     	32	0	delta, RCP                              
+3940841991     	2	0	sp                                      
+3944489095     	11	0	Pattern 1                               
+3944629788     	15	0	Pattern 5                               
+3957703622     	11	0	Pattern 1                               
+3989784000     	11	0	Pattern 1                               
+4014708000     	11	0	Pattern 1                               
+4071420000     	11	0	Pattern 1                               
+4077068000     	11	0	Pattern 1                               
+4079788000     	11	0	Pattern 1                               
+4101803030     	31	0	delta, RCP                              
+4109277056     	32	0	delta, RCP                              
+4119028000     	11	0	Pattern 1                               
+4156019481     	31	0	delta, RCP                              
+4161145022     	32	0	delta, RCP                              
+4195132000     	11	0	Pattern 1                               
+4258619900     	11	0	Pattern 1                               
+4327040000     	11	0	Pattern 1                               
+4375376000     	11	0	Pattern 1                               
+4400652000     	11	0	Pattern 1                               
+4500029545     	11	0	Pattern 1                               
+4604544000     	11	0	Pattern 1                               
+4682232000     	11	0	Pattern 1                               
+4685396734     	12	0	Pattern 2                               
+4799196000     	11	0	Pattern 1                               
+4828913695     	11	0	Pattern 1                               
+4829682094     	11	0	Pattern 1                               
+4832522678     	11	0	Pattern 1                               
+4901520000     	11	0	Pattern 1                               
+4969196000     	11	0	Pattern 1                               
+5047720000     	11	0	Pattern 1                               
+5049436000     	11	0	Pattern 1                               
+5053380000     	11	0	Pattern 1                               
+5057317495     	11	0	Pattern 1                               
+5063648000     	11	0	Pattern 1                               
+5078588000     	11	0	Pattern 1                               
+5240900000     	11	0	Pattern 1                               
+5269616000     	11	0	Pattern 1                               
+5348168467     	11	0	Pattern 1                               
+5359824000     	11	0	Pattern 1                               
+5503490281     	11	0	Pattern 1                               
+5821868000     	11	0	Pattern 1                               
+6029604000     	11	0	Pattern 1                               
+6216572000     	11	0	Pattern 1                               
+6744412000     	11	0	Pattern 1                               
+6752043197     	11	0	Pattern 1                               
+6919316000     	11	0	Pattern 1                               
+6938526998     	2	0	KC with propa                           
+6938969762     	11	0	Pattern 1                               
+6976161563     	15	0	Pattern 5                               
+6976330454     	11	0	Pattern 1                               
+6980836887     	15	0	Pattern 5                               
+7646192000     	11	0	Pattern 1                               
+8075432000     	11	0	Pattern 1                               
+8107404000     	11	0	Pattern 1                               
+8206300000     	11	0	Pattern 1                               
+8575276000     	11	0	Pattern 1                               
+8757863900     	12	0	Pattern 2                               
+8958700000     	11	0	Pattern 1                               
+9067628000     	11	0	Pattern 1                               
+9070157545     	12	0	Pattern 2                               
+9341556000     	11	0	Pattern 1                               
+9759564000     	11	0	Pattern 1                               
+9892498117     	11	0	Pattern 1                               
+10130252700    	11	0	Pattern 1                               
+10160354723    	11	0	Pattern 1                               
+10335045356    	11	0	Pattern 1                               
+10339740000    	11	0	Pattern 1                               
+10545213823    	11	0	Pattern 1                               
+10696291577    	3	0	Marker                                  
+10697067876    	11	0	Pattern 1                               
+10705696000    	11	0	Pattern 1                               
+10705701944    	11	0	Pattern 1                               
+10716353545    	11	0	Pattern 1                               
+11824708000    	11	0	Pattern 1                               
+12782297241    	2	0	two KC in diff areas                    
+12893908000    	11	0	Pattern 1                               
+12985904000    	11	0	Pattern 1                               
+13014764000    	11	0	Pattern 1                               
+13040836000    	11	0	Pattern 1                               
+13042175069    	11	0	Pattern 1                               
+13456947349    	12	0	Pattern 2                               
+13493660092    	12	0	Pattern 2                               
+13568370675    	3	0	Marker                                  
+13568822298    	11	0	Pattern 1                               
+13577764000    	11	0	Pattern 1                               
+13577770243    	12	0	Pattern 2                               
+13649324455    	2	0	same morphology RCP and RAF             
+13650125320    	11	0	Pattern 1                               
+13753284282    	11	0	Pattern 1                               
+13783182770    	3	0	Marker                                  
+13783493701    	11	0	Pattern 1                               
+13790088000    	11	0	Pattern 1                               
+13921288000    	11	0	Pattern 1                               
+13953670891    	31	0	asynch KC                               
+13954081258    	13	0	Pattern 3                               
+13955593137    	32	0	asynch KC                               
+13980016000    	11	0	Pattern 1                               
+14001899833    	11	0	Pattern 1                               
+14058301561    	11	0	Pattern 1                               
+14062156852    	11	0	Pattern 1                               
+14101720567    	11	0	Pattern 1                               
+14101760000    	11	0	Pattern 1                               
+14123759444    	11	0	Pattern 1                               
+14161828000    	11	0	Pattern 1                               
+14206540000    	11	0	Pattern 1                               
+14206562900    	11	0	Pattern 1                               
+14223385794    	11	0	Pattern 1                               
+14259850157    	11	0	Pattern 1                               
+14340124000    	11	0	Pattern 1                               
+14340126615    	12	0	Pattern 2                               
+14560413872    	12	0	Pattern 2                               
+14563796000    	11	0	Pattern 1                               
+14582356000    	11	0	Pattern 1                               
+14582370675    	11	0	Pattern 1                               
+14895856000    	11	0	Pattern 1                               
+14895858796    	12	0	Pattern 2                               
+14986944000    	11	0	Pattern 1                               
+15030362036    	3	0	Marker                                  
+15030556000    	11	0	Pattern 1                               
+15477620000    	11	0	Pattern 1                               
+15518100697    	12	0	Pattern 2                               
+15520869286    	12	0	Pattern 2                               
+15579303248    	2	0	gen synch KC                            
+15580171971    	11	0	Pattern 1                               
+15609568000    	11	0	Pattern 1                               
+15776058792    	2	0	KC only RAF                             
+15776900000    	11	0	Pattern 1                               
+15796852317    	12	0	Pattern 2                               
+16075216000    	11	0	Pattern 1                               

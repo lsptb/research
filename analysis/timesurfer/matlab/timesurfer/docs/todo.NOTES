@@ -1,0 +1,47 @@
+todo: ts_fif2avg: for converting online average to avg_data struct
+
+
+ts_avg_fif_data.m:%% todo: find a way to get info from fif file for these fields
+ts_avg_fif_data.m:%% todo: precalculate number of samples per event needed for noise covariance
+ts_avg_fif_data.m:  % todo: optional notch filter
+ts_avg_fif_data.m:      %% todo: modify filtfft to use tbands
+ts_browseraw.m:%% todo: make xgrid spacing a function of winlength
+ts_browseraw.m:%% todo: add checkbox to hold reading/drawing
+ts_browseraw.m:%% todo: scan through file (autoadvance)
+ts_browseraw.m:%% todo: add back zoom?
+ts_browseraw.m:%% todo: skip to events
+ts_browseraw.m:%% todo: replace "spacing" with something more intuitive
+ts_browseraw.m:%% todo: hotkeys for things like reject epoch
+ts_browseraw.m:%% todo: rereference (bipolar)
+ts_browseraw.m:  %% todo: add support for numeric or string codes?
+ts_browseraw.m: %% todo: do something about duplicate or overlapping events (e.g. rejects)?
+ts_browseraw.m:    %% todo: do something to let user know which channel caused rejection
+ts_browseraw.m:      %% todo: modify filtfft to use tbands
+ts_calc_bem_gainmat.m:%% todo: add EEG
+ts_calc_sph_gainmat.m:%% todo: add EEG
+ts_dSPM.m:%% todo: EEG (3-shell BEM/sphere, conductances)
+ts_dSPM.m:%% todo: option to read data from fif file (need ts_fif2avg)
+ts_dSPM.m:%% todo: extra dips (e.g. subcortical)
+ts_dSPM.m:  %%todo: is L supposed to be number of averages for data or for noise covar?
+ts_edit_events.m:% todo: check for errors in parameters
+ts_freqplot_avg.m:%% todo: chantype option
+ts_freqplot_avg.m:%% todo: use multiplotTFR
+ts_gain_xyz2norm.m:%% todo: make general for both MEG and EEG
+ts_multiplot_avg.m:%% todo: make labels an option
+ts_multiplot_avg.m:%% todo: make a way to show a subset of channels
+ts_multiplotER.m:%% todo: initially make plots small, then resize
+ts_postprocess_avg.m:      %% todo: modify filtfft to use tbands
+ts_process_fif_data.m:%% todo: option to launch ts_browseraw after reading and editing events
+ts_process_fif_data.m:%% todo: check for manually edited events, then open browseraw
+ts_process_fif_data.m:%% todo: from epochs, calculate average null, then subtract that from each
+ts_process_fif_data.m:%% todo: postprocessing of epochs
+ts_process_fif_data.m:%% todo: write epochs to fif?
+
+
+
+
+###############
+
+-NYU 4D sensor configuration for dSPM (from mxhuang)
+-load headpoints from fif (new function in Uutela's toolbox)
+-new version of topoplot from fieldtrip, show labels

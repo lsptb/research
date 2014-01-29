@@ -1,0 +1,3 @@
+rtamp=1; args = {'type',1,'dur',.1,'amp',rtamp}
+stim(points,t,tlast,args) = rtpulsestim([sqrt(Npop),sqrt(Npop)],points,t,tlast,args)
+input => stim(points,t,tlast,args)

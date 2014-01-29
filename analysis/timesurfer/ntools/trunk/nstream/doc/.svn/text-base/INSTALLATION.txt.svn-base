@@ -1,0 +1,36 @@
+1) comedi libraries
+2) dataglove libfglove library (installed on hospital machine, we might want to check in the dataglove library source, although we're not supposed to distribute it)
+3) cmake (apt-get install cmake)
+
+Compiling:
+
+1) Check out most recent version:
+svn co https://secure2.svnrepository.com/s_bijan/nsuite/trunk
+mv trunk nsuite
+
+2) Go into nstream and create new build directory:
+cd nstream && mkdir build && cd build
+
+
+3) Generate buildfiles:
+cmake ..
+
+4) Compile and install:
+make && make install
+
+Compiled bits will end up in ../pkg
+
+You might get a complaint when it goes to compile the mex files, if so, ensure that the matlab bin diectory is in the path.  (ie: export PATH=$PATH:/usr/local/matlab7.6/bin) 
+
+You must also reboot the machine because the sharedmemory needs to be reset.
+
+Compiling the dataglove libfglove library
+
+1) Unzip 5DT_Data_Glove_IRIX_SDK_v2.1.zip
+
+2) Compile the 64 bit library
+sudo gcc -fPIC -DUNIX -I./ -c fglove.cpp -o fglove -o -pthread
+sudo gcc -fPIC -DUNIX -I./ -c fgloveunix.cpp -o fgloveunix.o -pthread
+sudo gcc -fPC -shared -o libfglove.so fglove.o fgloveunix.o -pthread
+
+3) Copy libfglove to /user/lib/

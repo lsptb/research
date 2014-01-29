@@ -1,0 +1,8 @@
+a=1; % intensity scale
+L=4; % spatial frequency
+T=1000;  % ms, duration
+
+% stimulus
+Iext = getstim(sqrt(Npop),ceil(T/dt),L);
+stim(t) = a.*Iext(:,max(1,round(t/dt)))
+input => stim(t)

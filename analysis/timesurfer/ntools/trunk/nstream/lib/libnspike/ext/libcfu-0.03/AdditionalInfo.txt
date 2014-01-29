@@ -1,0 +1,5 @@
+.h.in-Files
+include/cfutypes.h.in
+include/cfu.h.in
+
+.in.in-Files

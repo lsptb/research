@@ -1,0 +1,40 @@
+8
+
+dir
+142
+https://secure2.svnrepository.com/s_bijan/nsuite/trunk/nstream/modules/analogstate/mex/cmake
+https://secure2.svnrepository.com/s_bijan/nsuite
+
+
+
+2008-10-23T02:51:53.695855Z
+1
+bijan
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+ff6fb3bc-ba1e-4aaa-8930-cabd43940b18
+
+FindMatlab.cmake
+file
+
+
+
+
+2011-02-09T19:42:54.000000Z
+a9d95adf886a1a3c4519f9a95177461b
+2008-10-23T02:51:53.695855Z
+1
+bijan
+

@@ -1,0 +1,5 @@
+# L: HH leak current
+g_l=.3; E_l=-55;
+Ileak(V) = g_l.*(V-E_l)
+current => -Ileak(V)
+# 'E_l' [-54.4] 'g_l' [0.3] 

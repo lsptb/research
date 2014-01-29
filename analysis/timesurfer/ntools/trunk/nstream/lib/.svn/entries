@@ -1,0 +1,49 @@
+8
+
+dir
+142
+https://secure2.svnrepository.com/s_bijan/nsuite/trunk/nstream/lib
+https://secure2.svnrepository.com/s_bijan/nsuite
+
+
+
+2009-03-15T21:44:28.429428Z
+101
+matthew.davidson
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+ff6fb3bc-ba1e-4aaa-8930-cabd43940b18
+
+libnstreamclient
+dir
+
+libnspike
+dir
+
+libutil
+dir
+
+CMakeLists.txt
+file
+
+
+
+
+2011-02-09T19:42:54.000000Z
+e98a3670451b4a6ba9b6c73ab51176c9
+2008-10-23T02:51:53.695855Z
+1
+bijan
+

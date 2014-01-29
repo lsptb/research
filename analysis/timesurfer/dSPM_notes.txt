@@ -1,0 +1,30 @@
+Source Space Analysis
+
+Required files:
+1.FreeSurfer reconstructed cortical surface (supply options "lh_dec_dips" & "rh_dec_dips" for dSPM)
+1."dip" files (for each hemisphere from tksurfer) - dipole coordinates & orientations
+2."dec" files (for each hemisphere from tksurfer) - mask specifying the subset of dipoles to use
+2.BEMs (watershed using FS)
+3.MRI to head registration (using mrilab or ts_pointreg)
+4.Averaged data from ts_process_fif_data
+
+Processing Stages:
+1.Resample subject to ico (fs_subj2ico.csh)
+2.Run dSPM
+
+Driver notes:
+n = 1 (# of subjects)
+avg_subj = 1 (average results over subject in ico-space)
+ico = 3 or 4
+subjdir_orig: directory containing all FS files
+
+
+
+Running:
+
+
+Outputs:
+1."stc" and "mgh" files --> source time courses. 
+2.Smoothed and resampled to icosahedral sphere
+
+

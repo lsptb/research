@@ -1,0 +1,53 @@
+8
+
+dir
+142
+https://secure2.svnrepository.com/s_bijan/nsuite/trunk/ntools/proc/mex
+https://secure2.svnrepository.com/s_bijan/nsuite
+
+
+
+2008-11-04T04:57:22.902154Z
+19
+bijan
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+ff6fb3bc-ba1e-4aaa-8930-cabd43940b18
+
+ntools_decimate
+file
+
+
+
+
+2011-02-25T04:03:39.000000Z
+f69039c8216e4722c838a17a42c87350
+2008-11-04T04:57:22.902154Z
+19
+bijan
+has-props
+
+ntools_decimate.c
+file
+
+
+
+
+2011-02-25T04:03:39.000000Z
+4b48221cc2279edf1c04505228cd4d3d
+2008-11-04T04:57:22.902154Z
+19
+bijan
+

@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/s_bijan/nsuite/!svn/ver/76/trunk/ntools/tests/@test_nspike_to_ieeg
+END
+set_up.m
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/s_bijan/nsuite/!svn/ver/76/trunk/ntools/tests/@test_nspike_to_ieeg/set_up.m
+END
+test_convert.m
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/s_bijan/nsuite/!svn/ver/76/trunk/ntools/tests/@test_nspike_to_ieeg/test_convert.m
+END
+tear_down.m
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/s_bijan/nsuite/!svn/ver/76/trunk/ntools/tests/@test_nspike_to_ieeg/tear_down.m
+END
+test_nspike_to_ieeg.m
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/s_bijan/nsuite/!svn/ver/76/trunk/ntools/tests/@test_nspike_to_ieeg/test_nspike_to_ieeg.m
+END

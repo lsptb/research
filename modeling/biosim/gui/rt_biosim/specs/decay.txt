@@ -1,0 +1,3 @@
+decayrate=1;
+decay(X) = -decayrate.*X
+term => decay(X)

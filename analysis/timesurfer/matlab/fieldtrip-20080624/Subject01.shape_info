@@ -1,0 +1,22 @@
+// *************************************
+// 	 Headshape File Information 
+// *************************************
+
+MRI_Info
+{
+	VERSION:	1.00
+
+	FILENAME:	/home/electromag/olejen/toolkitII/student1/data/Subject01.mri
+
+	// Fid. Points	Sag	Cor	Axi
+	NASION:			87.0	60.0	116.0
+	LEFT_EAR:		29.0	145.0	155.0
+	RIGHT_EAR:		144.0	142.0	158.0
+
+	MM_PER_VOXEL_SAGITTAL:		1.25000000
+	MM_PER_VOXEL_CORONAL:		1.25000000
+	MM_PER_VOXEL_AXIAL:			1.25000000
+
+	COORDINATES:	HEAD
+
+}

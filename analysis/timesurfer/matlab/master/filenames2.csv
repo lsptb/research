@@ -1,0 +1,242 @@
+"Function name","parameter",,"flag","abbrev"
+"ts_iEEG_ProcessEEG","saveepochs","{strcmp(this..""yes"")} {""epoch""}","yes","epoch"
+"ts_iEEG_ProcessEEG","reject",,,
+"ts_iEEG_ProcessEEG","auto_ica","{strcmp(this..""yes"")} {""ica""}","yes","ica"
+"ts_iEEG_ProcessEEG","refchan","{strcmp(parms.auto_ica..""yes"")} {this}","yes","value"
+"ts_iEEG_ProcessEEG","manual_ica",,,
+"ts_iEEG_ProcessEEG","stim_delay",,,
+"ts_iEEG_ProcessEEG","lpfilter",,,
+"ts_iEEG_ProcessEEG","lpfreq","{strcmp(parms.lpfilter..""yes"") && ~isempty(this)} {sprintf(""lp%g""..this)}",,
+"ts_iEEG_ProcessEEG","hpfilter",,,
+"ts_iEEG_ProcessEEG","hpfreq","{strcmp(parms.hpfilter..""yes"") && ~isempty(this)} {sprintf(""hp%g""..this)}",,
+"ts_iEEG_ProcessEEG","lnfilter",,,
+"ts_iEEG_ProcessEEG","lnfreq","{strcmp(parms.lnfilter..""yes"") && ~isempty(this)} {sprintf(""ln%g""..this)}",,
+"ts_iEEG_ProcessEEG","bpfilter",,,
+"ts_iEEG_ProcessEEG","bpfreq","{strcmp(parms.bpfilter..""yes"") && ~isempty(this)} {sprintf(""bp%g""..this)}",,
+"ts_iEEG_ProcessEEG","blc","{strcmp(this..""yes"")} {""blc""}",,
+"ts_iEEG_ProcessEEG","detrend",,,
+"ts_statistics","rejectfile","{~isempty(this)} {""rej""}","yes","rej"
+"ts_statistics","hpfilter",,,
+"ts_statistics","hpfreq","{strcmp(parms.hpfilter..""yes"") && ~isempty(this)} {sprintf(""hp%g""..this)}","yes","valuehp"
+"ts_statistics","lpfilter",,,
+"ts_statistics","lpfreq","{strcmp(parms.lpfilter..""yes"") && ~isempty(this)} {sprintf(""lp%g""..this)}","yes","valuelp"
+"ts_statistics","lnfilter",,,
+"ts_statistics","lnfreq","{strcmp(parms.lnfilter..""yes"") && ~isempty(this)} {sprintf(""ln%g""..this)}","yes","valueln"
+"ts_statistics","bpfilter",,,
+"ts_statistics","bpfreq","{strcmp(parms.bpfilter..""yes"") && ~isempty(this)} {sprintf(""bp%g""..this)}",,
+"ts_statistics","blc","{strcmp(this..""yes"")} {""blc""}",,
+"ts_statistics","function","""stats""","yes","stats"
+"ts_statistics","conditions",,,
+"ts_statistics","method","{this}","yes","value"
+"ts_statistics","statistic","{this}","yes","value"
+"ts_statistics","alpha",,,
+"ts_statistics","tail",,,
+"ts_statistics","clusterstatistic",,,
+"ts_statistics","clusterthreshold",,,
+"ts_statistics","clusteralpha",,,
+"ts_statistics","clustercrtival",,,
+"ts_statistics","clustertail",,,
+"ts_statistics","numrandomization","{sprintf(""iter%g""..this)}","yes","valueiter"
+"ts_statistics","neighbours",,,
+"ts_statistics","bl_window",,,
+"ts_statistics","channel",,,
+"ts_statistics","chantype",,,
+"ts_statistics","latency",,,
+"ts_statistics","events","{sprintf(""conds%g.%g""..this(1)..this(end))}","yes","valueconds"
+"ts_freqanalysis_fieldtrip","keeptrials",,,
+"ts_freqanalysis_fieldtrip","channels",,,
+"ts_freqanalysis_fieldtrip","rejectfile","""rej""","yes","rej"
+"ts_freqanalysis_fieldtrip","hpfilter",,,
+"ts_freqanalysis_fieldtrip","hpfreq","{strcmp(parms.hpfilter..""yes"") && ~isempty(this)} {sprintf(""hp%g""..this)}","yes","valuehp"
+"ts_freqanalysis_fieldtrip","lpfilter",,,
+"ts_freqanalysis_fieldtrip","lpfreq","{strcmp(parms.lpfilter..""yes"") && ~isempty(this)} {sprintf(""lp%g""..this)}","yes","valuelp"
+"ts_freqanalysis_fieldtrip","lnfilter",,,
+"ts_freqanalysis_fieldtrip","lnfreq","{strcmp(parms.lnfilter..""yes"") && ~isempty(this)} {sprintf(""ln%g""..this)}","yes","valueln"
+"ts_freqanalysis_fieldtrip","blc","{strcmp(this..""yes"")} {""blc""}",,
+"ts_freqanalysis_fieldtrip","function","""timefreq""","yes","timefreq"
+"ts_freqanalysis_fieldtrip","method","{this}","yes","value"
+"ts_freqanalysis_fieldtrip","foi","{~isempty(this)} {sprintf(""foi%g-%gHz""..this(1)..this(end))}","yes","valuefoi"
+"ts_freqanalysis_fieldtrip","toi","{~isempty(this)} {sprintf(""toi%g-%gsec""..this(1)..this(end))}","yes","valuetoi"
+"ts_freqanalysis_fieldtrip","conditions",,,
+"ts_freqanalysis_fieldtrip","chantype",,,
+"ts_freqanalysis_fieldtrip","event_codes","{sprintf(""conds%g""..this(1))}","yes","valuecond"
+"ts_freqanalysis_fieldtrip","events","{sprintf(""event%g""..this(1))}",,
+"ts_freqanalysis_fieldtrip","savecomplex_flag",,,
+"ts_freqanalysis_fieldtrip","savesingles_flag",,,
+"ts_freqanalysis_fieldtrip","visualreject_flag",,,
+"ts_freqanalysis_fieldtrip","reject_flag",,,
+"ts_freqanalysis_fieldtrip","trials_flag",,,
+"ts_freqanalysis_fieldtrip","makebaseline_flag",,,
+"ts_timefreq_statistics","function","timefreq.stats","yes","tfstat"
+"ts_timefreq_statistics","conditions",,,"valuecond"
+"ts_timefreq_statistics","method","{this}","yes","value"
+"ts_timefreq_statistics","statistic","{this}",,
+"ts_timefreq_statistics","correctm",,,
+"ts_timefreq_statistics","alpha",,,
+"ts_timefreq_statistics","tail",,,
+"ts_timefreq_statistics","clusterstatistic",,,
+"ts_timefreq_statistics","clusterthreshold",,,
+"ts_timefreq_statistics","clusteralpha",,,
+"ts_timefreq_statistics","clustercrtival",,,
+"ts_timefreq_statistics","clustertail",,,
+"ts_timefreq_statistics","actvsbl_method",,,
+"ts_timefreq_statistics","actvsbl_statistic",,,
+"ts_timefreq_statistics","numrandomization","{sprintf(""iter%g""..this)}","yes","valueiter"
+"ts_timefreq_statistics","neighbours",,,
+"ts_timefreq_statistics","bl_window",,,
+"ts_timefreq_statistics","channel",,,
+"ts_timefreq_statistics","chantype",,,
+"ts_timefreq_statistics","latency","{~isempty(this)} {sprintf(""toi%g-%gsec""..this(1)..this(end))}","yes","valuelatency"
+"ts_timefreq_statistics","events","{sprintf(""conds%g.%g""..this(1)..this(end))}","yes","valueconds"
+"ts_process_fif_data","ext",,,
+"ts_process_fif_data","datafile",,,
+"ts_process_fif_data","prefix",,,"value"
+"ts_process_fif_data","saveperevent",,,
+"ts_process_fif_data","reject_mag",,,
+"ts_process_fif_data","reject_grad",,,
+"ts_process_fif_data","reject_eog",,,
+"ts_process_fif_data","browseraw",,,
+"ts_process_fif_data","saveepochs_flag",,,
+"ts_process_fif_data","write_fif_flag",,,
+"ts_process_fif_data","trigchan",,,
+"ts_process_fif_data","event_recode_rules",,,
+"ts_process_fif_data","valid_event_codes",,,
+"ts_process_fif_data","code_excl",,,
+"ts_process_fif_data","time_excl_pre",,,
+"ts_process_fif_data","time_excl_post",,,
+"ts_process_fif_data","trig_minduration",,,
+"ts_process_fif_data","prestim_dur",,,
+"ts_process_fif_data","poststim_dur",,,
+"ts_process_fif_data","bandpass_flag",,,
+"ts_process_fif_data","bandpass_low_cf",,,
+"ts_process_fif_data","bandpass_low_tb",,,
+"ts_process_fif_data","bandpass_high_cf",,,
+"ts_process_fif_data","bandpass_high_tb",,,
+"ts_process_fif_data","dsfact",,,
+"ts_process_fif_data","detrend_flag",,,
+"ts_process_fif_data","baseline_flag",,,
+"ts_process_fif_data","baseline_start",,,
+"ts_process_fif_data","baseline_end",,,
+"ts_process_fif_data","post_stim_delay",,,
+"ts_process_fif_data","ICA_auto_flag",,,
+"ts_process_fif_data","ICA_ref_chan",,,
+"ts_process_fif_data","function",,"yes","epoch_data"
+"ts_MEGtopoplot","function",,"yes","topoplot.timefreq"
+"ts_MEGtopoplot","zscore",,"yes","zscore"
+"ts_MEGtopoplot","foi",,"yes","valuefoi"
+"ts_MEGtopoplot","toilim",,"yes","valuetoi"
+"ts_MEGtopoplot","event",,"yes","valueevent"
+"ts_MEGtopoplot","format",,"yes","value"
+"ts_multiplot_avg","function",,"yes","multiplot.epochs"
+"ts_multiplot_avg","event",,"yes","valueevent"
+"ts_multiplot_avg","conditions",,"yes","valuecond"
+"ts_multiplot_avg","format",,"yes","value"
+"make_plots","multiplot",,"yes","multiplot"
+"make_plots","topoplot",,"yes","topoplot"
+"make_plots","tsobject",,"yes","value"
+"make_plots","zscore",,"yes","zscore"
+"make_plots","event",,"yes","value"
+"make_plots","format",,"yes","value"
+"ts_ezplot","multiplot",,"yes","multiplot"
+"ts_ezplot","topoplot",,"yes","topoplot"
+"ts_ezplot","zscore",,"yes","zscore"
+"ts_ezplot","event",,"yes","value"
+"ts_ezplot","format",,"yes","value"
+"ts_combine_conditions","function","{isfield(parms..""itype"")} {sprintf(""%s_combos""..parms.itype)}","yes","combos"
+"ts_combine_conditions","combinations",,,
+"ts_combine_conditions","neweventcodes","{~isempty(this)} {strrep(num2str(this)..'  '..'_')}",,"valueevent"
+"ts_combine_conditions","calc",,,
+"ts_epoch2avg","function",,"yes","avg"
+"ts_iEEG_addavg","function",,"yes","addavg"
+"ts_autoICA","function","""ICA_epoch_data""","yes","epoch_data_ICA"
+"ts_autoICA","ICA_ref_chan","{this}","yes","value"
+"ts_manualICA","function","""ICA_epoch_data""","yes","epoch_data_ICA"
+"ts_manualICA",,,,
+"ts_manualICA",,,,
+"ts_PLV","function","""timefreq_metrics""","yes","sync"
+"ts_PLV","output","this{1}","{strrep([this{:}].."" "".."""")}","value"
+"ts_PLV","foi","{sprintf(""%s_""..this{:})}","yes","valuefoi"
+"ts_PLV","neweventcodes","{~isempty(this)} {sprintf(""event%s""..strrep(num2str(this)..""  ""..""_""))}",,
+"ts_PLV","events","{~isfield(parms..""neweventcodes"") || isempty(parms.neweventcodes)} {sprintf(""event%s""..strrep(num2str(this).."" ""..""_""))}","{~isfield(parms..""neweventcodes"") || isempty(parms.neweventcodes)} {sprintf(""event%s""..strrep(num2str(this.."" ""..""_"")))}","valueevent"
+"ts_trials2avg","function",,"yes","avg"
+"ts_preproc","function","""proc_epoch_data""",,
+"ts_preproc","saveepochs","{strcmp(this..""yes"")} {""epoch""}",,
+"ts_preproc","saveavgs","{strcmp(this..""yes"")} {""avg""}",,
+"ts_preproc","returnepochs","{strcmp(this..""yes"")} {""epoch""}",,
+"ts_preproc","returnavgs","{strcmp(this..""yes"")} {""avg""}",,
+"ts_preproc","saveaverages_flag","{this==1} {""avg""}",,
+"ts_preproc","saveepochs_flag","{this==1} {""epoch""}",,
+"ts_preproc","returnaverages_flag","{this==1} {""avg""}",,
+"ts_preproc","returnepochs_flag","{this==1} {""epoch""}",,
+"ts_preproc","bandpass_flag",,"{this==1} {""bp""}",
+"ts_preproc","bpfilter",,"{strcmp(this..""yes"")} {""bp""}",
+"ts_preproc","bpfreq","{strcmp(parms.bpfilter..""yes"") && ~isempty(this)} {sprintf(""bp%g-%g""..this(1)..this(2))}",,
+"ts_preproc","lpfreq","{strcmp(parms.lpfilter..""yes"") && ~isempty(this)} {sprintf(""lp%g""..this)}",,
+"ts_preproc","lnfreq","{strcmp(parms.lnfilter..""yes"") && ~isempty(this)} {sprintf(""ln%g""..this)}",,
+"ts_preproc","detrend","{strcmp(this..""yes"")} {""dt""}",,
+"ts_preproc","detrend_flag","{this==1} {""dt""}",,
+"ts_preproc","blc","{strcmp(this..""yes"")} {""blc""}",,
+"ts_preproc","baseline_flag","{this==1} {""blc""}",,
+"ts_process_ieeg_data","function",,,
+"ts_process_ieeg_data","saveepochs","{strcmp(this..""yes"")} {""epoch""}",,
+"ts_process_ieeg_data","saveavgs","{strcmp(parms.saveepochs..""no"") && strcmp(this..""yes"")} {""avg""}",,
+"ts_process_ieeg_data","reject","{~isempty(this) && strcmp(this..""yes"")} {""rej""}",,
+"ts_process_ieeg_data","rejectfile","{~isempty(this) && exist(this)} {""rej""}",,
+"ts_process_ieeg_data","auto_ica","{strcmp(this..""yes"")} {""ica""}",,
+"ts_process_ieeg_data","refchan","{strcmp(parms.auto_ica..""yes"")} {this}",,
+"ts_process_ieeg_data","manual_ica",,,
+"ts_process_ieeg_data","stim_delay",,,
+"ts_process_ieeg_data","lpfilter",,,
+"ts_process_ieeg_data","lpfreq","{strcmp(parms.saveepochs..""no"") && strcmp(parms.lpfilter..""yes"") && ~isempty(this)} {sprintf(""lp%g""..this)}",,
+"ts_process_ieeg_data","hpfilter",,,
+"ts_process_ieeg_data","hpfreq","{strcmp(parms.saveepochs..""no"") && strcmp(parms.hpfilter..""yes"") && ~isempty(this)} {sprintf(""hp%g""..this)}",,
+"ts_process_ieeg_data","lnfilter",,,
+"ts_process_ieeg_data","lnfreq","{strcmp(parms.saveepochs..""no"") && strcmp(parms.lnfilter..""yes"") && ~isempty(this)} {sprintf(""ln%g""..this)}",,
+"ts_process_ieeg_data","bpfilter",,,
+"ts_process_ieeg_data","bpfreq","{strcmp(parms.saveepochs..""no"") && strcmp(parms.bpfilter..""yes"") && ~isempty(this)} {sprintf(""bp%g-%g""..this(1)..this(2))}",,
+"ts_process_ieeg_data","blc","{strcmp(parms.saveepochs..""no"") && strcmp(this..""yes"")} {""blc""}",,
+"ts_process_ieeg_data","detrend","{strcmp(parms.saveepochs..""no"") && strcmp(this..""yes"")} {""dt""}",,
+"ts_statistics_wrapper","rejectfile","{~isempty(this)} {""rej""}","yes","rej"
+"ts_statistics_wrapper","hpfilter",,,
+"ts_statistics_wrapper","hpfreq","{strcmp(parms.hpfilter..""yes"") && ~isempty(this)} {sprintf(""hp%g""..this)}","yes","valuehp"
+"ts_statistics_wrapper","lpfilter",,,
+"ts_statistics_wrapper","lpfreq","{strcmp(parms.lpfilter..""yes"") && ~isempty(this)} {sprintf(""lp%g""..this)}","yes","valuelp"
+"ts_statistics_wrapper","lnfilter",,,
+"ts_statistics_wrapper","lnfreq","{strcmp(parms.lnfilter..""yes"") && ~isempty(this)} {sprintf(""ln%g""..this)}","yes","valueln"
+"ts_statistics_wrapper","bpfilter",,,
+"ts_statistics_wrapper","bpfreq","{strcmp(parms.bpfilter..""yes"") && ~isempty(this)} {sprintf(""bp%g""..this)}",,
+"ts_statistics_wrapper","blc","{strcmp(this..""yes"")} {""blc""}",,
+"ts_statistics_wrapper","function","""stats""","yes","stats"
+"ts_statistics_wrapper","conditions",,,
+"ts_statistics_wrapper","method","{this}","yes","value"
+"ts_statistics_wrapper","statistic","{this}","yes","value"
+"ts_statistics_wrapper","alpha",,,
+"ts_statistics_wrapper","tail",,,
+"ts_statistics_wrapper","clusterstatistic",,,
+"ts_statistics_wrapper","clusterthreshold",,,
+"ts_statistics_wrapper","clusteralpha",,,
+"ts_statistics_wrapper","clustercrtival",,,
+"ts_statistics_wrapper","clustertail",,,
+"ts_statistics_wrapper","numrandomization","{sprintf(""iter%g""..this)}","yes","valueiter"
+"ts_statistics_wrapper","neighbours",,,
+"ts_statistics_wrapper","bl_window",,,
+"ts_statistics_wrapper","channel",,,
+"ts_statistics_wrapper","chantype","{~isempty(this) && ischar(this)} {this}",,
+"ts_statistics_wrapper","latency",,,
+"ts_statistics_wrapper","events","{sprintf(""conds%g_%g""..this(1)..this(end))}","yes","valueconds"
+"ts_freqband_statistics","function","""timefreq_band_average""","""timefreq_band_stats""",
+"ts_freqband_statistics","method",,"{this}",
+"ts_freqband_statistics","numrandomization",,"{sprintf(""iter%g""..this)}",
+"ts_freqband_statistics","statistic",,"{this}",
+"ts_freqband_statistics","freqband","{~isempty(this)} {sprintf(""freq%g-%gHz""..this(1)..this(end))}",,
+"ts_freqband_statistics","latency","{~isempty(this)} {sprintf(""toi%g-%gsec""..this(1)..this(end))}",,
+"ts_freqband_statistics","events","{sprintf(""conds%g_%g""..this(1)..this(end))}",,
+"ts_freqband_statistics","baselinefile","{~isempty(this) && ischar(this)} {""composite-baseline""}",,
+"ts_timefreq_baseline","function","""timefreq_baseline""",,
+"ts_timefreq_baseline","toilim","{~isempty(this)} {sprintf(""toi%g-%gsec""..this(1)..this(end))}",,
+"ts_timefreq_baseline","blcwindow","{~isempty(this)} {sprintf(""toi%g-%gsec""..this(1)..this(end))}",,
+"ts_freqband_average","function","""average_freqband""","""timefreq_band_stats""",
+"ts_freqband_average","freqband","{~isempty(this)} {sprintf(""%g-%gHz""..this(1)..this(end))}",,
+"ts_freqband_average","latency","{~isempty(this)} {sprintf(""toi%g-%gsec""..this(1)..this(end))}",,
+"ts_freqband_average","events","{sprintf(""events%s""..strrep(num2str(this)..""  ""..""_""))}","{sprintf(""conds%g_%g""..this(1)..this(end))}",
+"ts_freqband_average","baselinefile","{~isempty(this) && ischar(this)} {""composite-baseline""}",,

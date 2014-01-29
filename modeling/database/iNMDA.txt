@@ -1,0 +1,30 @@
+g_NMDA=0; E_NMDA=0; Tmax=.001; Vpp=2; Kp=5; Mg0=1.5;
+alphar=7.2E4; NtauD=100; #betar=1/100;
+%fanout=.5;
+NMspan=.1;                % span = fraction of the larger pre/post to cover from pre to post
+NMscale=1;                % scale = factor amplifying conductance*kernel
+NoSelfConn=0; % 1 or 0, whether not to connect to cell at same position (self if pop x to pop x)
+Nmax=max(Npre,Npost);
+
+% precompute linear positions (index) and mask
+Nmax = max(Npre,Npost)
+Xpre = linspace(1,Nmax,Npre)'*ones(1,Npost)
+Xpost = (linspace(1,Nmax,Npost)'*ones(1,Npre))'
+%mask = abs(Xpre-Xpost)<=fanout
+%mask = mask - NoSelfConn*diag(diag(mask))
+
+% gaussian kernel and threshold mask
+NMsigma=(NMspan*Nmax);
+NMkernel=NMscale*exp(-(Xpre-Xpost).^2/NMsigma^2);
+
+BMg(V) = 1./(1+exp(-.062*V)*Mg0/3.57)     % Vpost
+NT(V) = Tmax./(1+exp(-(V-Vpp)/Kp))         % Vpre
+
+% gating dynamics
+sNMDApre' = alphar*NT(Vpre).*(1-sNMDApre)-sNMDApre/NtauD #betar*sNMDApre
+sNMDApre(0)=.1+.1*rand(Npre,1)
+
+% synaptic current
+%INMDA(V,s) = g_NMDA.*BMg(V).*(s'*(mask.*NMkernel))'.*(V-E_NMDA)
+INMDA(V,s) = g_NMDA.*BMg(V).*(s'*NMkernel)'.*(V-E_NMDA)
+current => -INMDA(Vpost,sNMDApre)

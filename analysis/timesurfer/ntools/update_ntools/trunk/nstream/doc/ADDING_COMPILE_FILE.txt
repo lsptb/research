@@ -1,0 +1,24 @@
+To add a C program to the build, you need to add the name of the file to the CMakeList.txt in that directory.  
+
+ - To add the file named mynewfile to trunk/misc/preproc:
+
+SET(mynewfile_SRCS
+   mynewfile.c
+)
+add_executable(mynewfile ${mynewfile_SRCS})
+install(TARGETS nspike_preproc
+    mynewfile
+$$ The rest of the files $$
+    DESTINATION bin)
+
+ - To add the file named mynewmexfile.c to trunk/misc/mex:
+
+set (MEXFILES 
+    mynewmexfile
+$$ The rest of the files $$
+)
+
+Don't forget to include a .m file for the documentation
+
+ - The same procedures apply to the mex functions for each module.  Check
+    the CMakeLists.txt in each directory.

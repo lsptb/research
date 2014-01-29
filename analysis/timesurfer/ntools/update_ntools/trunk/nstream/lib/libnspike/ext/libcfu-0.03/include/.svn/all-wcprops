@@ -1,0 +1,71 @@
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/lib/libnspike/ext/libcfu-0.03/include
+END
+cfulist.h
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/lib/libnspike/ext/libcfu-0.03/include/cfulist.h
+END
+cfuthread_queue.h
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/lib/libnspike/ext/libcfu-0.03/include/cfuthread_queue.h
+END
+cfutime.h
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/lib/libnspike/ext/libcfu-0.03/include/cfutime.h
+END
+cfu.h
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/lib/libnspike/ext/libcfu-0.03/include/cfu.h
+END
+cfuopt.h
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/lib/libnspike/ext/libcfu-0.03/include/cfuopt.h
+END
+cfuhash.h
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/lib/libnspike/ext/libcfu-0.03/include/cfuhash.h
+END
+cfu.h.in
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/lib/libnspike/ext/libcfu-0.03/include/cfu.h.in
+END
+cfutypes.h
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/lib/libnspike/ext/libcfu-0.03/include/cfutypes.h
+END
+cfuconf.h
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/lib/libnspike/ext/libcfu-0.03/include/cfuconf.h
+END
+cfustring.h
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/lib/libnspike/ext/libcfu-0.03/include/cfustring.h
+END
+cfutypes.h.in
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/s_bijan/nsuite/!svn/ver/1/trunk/nstream/lib/libnspike/ext/libcfu-0.03/include/cfutypes.h.in
+END

@@ -1,0 +1,46 @@
+cd /home/jsherfey/svn/dev/ntools
+% Relevant functions:
+% /home/jsherfey/svn/dev/ntools/trunk/ntools/gen/ntools_gen_epoch_data.m
+% /home/jsherfey/svn/dev/ntools/trunk/ntools/gen/ntools_gen_cont_data.m
+% /home/jsherfey/svn/dev/ntools/trunk/ntools/gen/ntools_gen_ft_data.m
+
+%  Parameters:
+%       dat_file: path to a .dat file
+%       dio_file: path to a .dio.txt file
+%       experiment: experiment structure
+
+dat_file = '/home/halgdev/data/iEEG_NYU/NY178_c/NY178_090418_FWIO_400Hz_flt32/NY178_090418_FWIO_Run1.400Hz_flt32.nspike.dat';
+dio_file = '/home/halgdev/data/iEEG_NYU/NY178_c/NY178_090418_FWIO_400Hz_flt32/NY178_090418_FWIO_Run1.dio.txt';
+exp_file = '/home/halgdev/data/iEEG_NYU/NY178_c/NY178_090418_FWIO_400Hz_flt32/NY178_090418_FWIO_Run1-exp.mat';
+channels   = 1:112;
+max_epochs = Inf;
+
+load(exp_file,'experiment');
+
+% Compare TimeSurfer ts_load_data() to NTools ntools_gen_epoch_data()
+% continuous data
+ncont      = ntools_gen_epoch_data(dat_file,[],[],'is_continuous',1,'channels',channels);
+cont_data  = ts_load_data(dat_file,'channels',channels);
+% isequal(ncont,cont_data) => 1
+
+% epoched data
+nepochs    = ntools_gen_epoch_data(dat_file,dio_file,experiment,'is_continuous',0,'channels',channels,'max_epochs',max_epochs);
+epoch_data = ts_load_data(dat_file,'dio_file',dio_file,'exp_file',exp_file,'is_continuous',0,'channels',channels,'max_epochs', max_epochs);
+% isequal(nepochs,epoch_data) => 1
+
+cdata = ts_load_data(dat_file);
+pdata = ts_process_data(dat_file);
+% isequal(cdata,pdata) => no because ts_process_data adds the noise covariance matrix and ntools_gen_epoch_data does not
+% isequal(cdata.epochs,pdata.epochs) => 1
+% cdata.noise=pdata.noise; isequal(pdata,cdata) => 1
+clear pdata
+
+edata = ts_epoch_data(cdata,'evntfile',dio_file,'exp_file',exp_file,'prestim',.5,'poststim',1,'datafile',dat_file);
+pdata = ts_process_data(dat_file,'evntfile',dio_file,'exp_file',exp_file,'prestim',.5,'poststim',1);
+% isequal(edata,pdata) => no, because ts_process_data adds the noise covariance matrix
+clear pdata edata
+
+%% Recommended usage
+pdata = ts_process_data(dat_file);
+pdata = ts_process_data(dat_file,'evntfile',dio_file,'exp_file',exp_file,'prestim',.5,'poststim',1);
+

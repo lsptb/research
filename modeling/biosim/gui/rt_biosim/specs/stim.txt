@@ -1,0 +1,2 @@
+args = [{'type',1,'dur',.1,'amp',1}] % brackets may be unecessary
+term => rt_pulsestim([sqrt(N) sqrt(N)],points,t,tlast,args)

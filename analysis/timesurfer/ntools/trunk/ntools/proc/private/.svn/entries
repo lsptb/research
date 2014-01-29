@@ -1,0 +1,52 @@
+8
+
+dir
+142
+https://secure2.svnrepository.com/s_bijan/nsuite/trunk/ntools/proc/private
+https://secure2.svnrepository.com/s_bijan/nsuite
+
+
+
+2008-12-01T03:29:33.130221Z
+39
+matthew.davidson
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+ff6fb3bc-ba1e-4aaa-8930-cabd43940b18
+
+strip_double_suffix.m
+file
+
+
+
+
+2011-02-09T19:42:55.000000Z
+b8a1293936ce688cd5b3b8bbbe031122
+2008-12-01T03:29:33.130221Z
+39
+matthew.davidson
+
+make_filename_root.m
+file
+
+
+
+
+2011-02-09T19:42:55.000000Z
+1150a101d9b2ea230d361a2466fa3fcb
+2008-12-01T03:29:33.130221Z
+39
+matthew.davidson
+

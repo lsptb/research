@@ -1,0 +1,28 @@
+%% iSYN: HH synaptic current with predefined dual exponential conductance
+
+% Periodic spikes (note: probably a better way to do this...)
+params: g, E, tauRx, tauDx, f, timelimits  (ex. f = 100)
+c = (1/((tauRx/tauDx)^(tauRx/(tauDx-tauRx))-(tauRx/tauDx)^(tauDx/(tauDx-tauRx))))
+spikes = [0 (timelimits(1):1000/f:timelimits(2))]
+Tspikes(n) = spikes(spikes<n)
+s(T) = cellfun(@(n)sum(c*(exp(-(n-Tspikes(n))/tauDx) - exp(-(n-Tspikes(n))/tauRx))),num2cell(T))
+I(V,s) = g.*(s).*(V-E)
+current => -I(Vpost,s(t))
+
+% Stochastic spikes
+params: g, E, tauRx, tauDx, lambda; onset, offset, timelimits, span
+c = (1/((tauRx/tauDx)^(tauRx/(tauDx-tauRx))-(tauRx/tauDx)^(tauDx/(tauDx-tauRx))))
+tvec = timelimits(1):dt:timelimits(2);
+spikes = poissrnd(lambda*1e-4,size(tvec));
+Tspikes = tvec(spikes>0);
+s = cellfun(@(n)sum(c*(exp(-(n-Tspikes(Tspikes<t)))/tauDx) - exp(-(n-Tspikes(Tspikes<t))/tauRx))),num2cell(tvec))
+sigma = round(span*Npop);
+mask = circshift([ones(1,sigma) zeros(1,Npop-sigma)]',0);
+I(V,s) = g.*(s).*(V-E).*mask
+current => -I(Vpost,s(floor(t/dt)+1))*(t>onset&t<offset)
+
+% AMPAR
+%F(V) = 1./(1+exp(-V/2));
+%s' = as.*F(Vpre).*(1-s)-s./taus
+%I(V) = g.*s.*(V-E)
+%current => -I(Vpost,s)

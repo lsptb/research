@@ -1,0 +1,47 @@
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/s_bijan/nsuite/!svn/ver/119/trunk/ntools/conv/edfconvert
+END
+hdrxml.c
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/s_bijan/nsuite/!svn/ver/119/trunk/ntools/conv/edfconvert/hdrxml.c
+END
+edf_spec.pdf
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/s_bijan/nsuite/!svn/ver/119/trunk/ntools/conv/edfconvert/edf_spec.pdf
+END
+edfconvert.c
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/s_bijan/nsuite/!svn/ver/119/trunk/ntools/conv/edfconvert/edfconvert.c
+END
+hdrxml.h
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/s_bijan/nsuite/!svn/ver/119/trunk/ntools/conv/edfconvert/hdrxml.h
+END
+edfconvert.h
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/s_bijan/nsuite/!svn/ver/119/trunk/ntools/conv/edfconvert/edfconvert.h
+END
+Makefile
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/s_bijan/nsuite/!svn/ver/119/trunk/ntools/conv/edfconvert/Makefile
+END
+README
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/s_bijan/nsuite/!svn/ver/119/trunk/ntools/conv/edfconvert/README
+END

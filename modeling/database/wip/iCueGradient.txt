@@ -1,0 +1,13 @@
+
+
+cuespan=.25; Acue=1; cueON=0; cueOFF=inf;  % N=20; 
+gradient_flag=1;
+
+sigma = ceil(cuespan*N);
+mask1 = circshift([ones(1,sigma) zeros(1,N-sigma)]',floor(N/4-sigma/4));
+mask2 = flipud(mask1);
+mask = mask1 + 2*mask2;
+mask = gradient_flag*mask+(1-gradient_flag)*(mask>0);
+
+Icue(t) = Acue*(t>=cueON & t<cueOFF).*mask
+

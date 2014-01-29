@@ -1,0 +1,54 @@
+evt = experiment.event(i).source_code;
+lat = experiment.event(i).timestamps;
+epoch_data.epochs(i).trial_info=[];
+epoch_data.epochs(i).trial_info.number(1,:)                      = find(ismember(C,evt));
+epoch_data.epochs(i).trial_info.latency(1,:)                     = experiment.event(i).timestamps;
+epoch_data.epochs(i).trial_info.badtrial(1,:)                    = zeros(1,length(lat));
+epoch_data.epochs(i).trial_info.event_code(1,:)                  = evt*ones(1,length(lat));
+epoch_data.epochs(i).trial_info.duration(1,:)                    = ones(1,length(lat));
+[epoch_data.epochs(i).trial_info.datafile{1,1:length(lat)}]      = deal(dat_file);
+[epoch_data.epochs(i).trial_info.events_fnames{1,1:length(lat)}] = deal(dio_file);
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% add to ts_epoch_data ------------------------------
+
+sfreq 		   								= epoch_data.sfreq;
+NSPIKE_SAMPLING_RATE 				= 30000;  											%  NSpike timestamps are in Nspike system sampling rate
+sfreq_to_nspike_sfreq_ratio = sfreq / NSPIKE_SAMPLING_RATE;
+samples_per_ms 							= sfreq / 1000;
+
+% loop over event codes
+
+precision 	 = class(epoch_data.epochs(i).data);
+start_offset = epoch_data.epochs(i).time(1)   * 1000;
+stop_offset  = epoch_data.epochs(i).time(end) * 1000;
+
+% loop over trials
+
+timestamp 	= epoch_data.epochs(i).trial_info.latency(j); % in 30 kHz
+start 			= round(timestamp * sfreq_to_nspike_sfreq_ratio + start_offset * samples_per_ms) + 1;
+stop 				= round(timestamp * sfreq_to_nspike_sfreq_ratio + stop_offset * samples_per_ms);
+[data, eof] = ntools_load_samples(dat_file, precision, num_channels, start, stop);
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    max_epochs = Inf;
+    wh_channels_to_keep = 1:num_channels;
+    is_continuous = 0;
+		
+		dat_file = '/home/halgdev/data/iEEG_NYU/NY178_c/NY178_090418_FWIO_400Hz_flt32/NY178_090418_FWIO_Run1.400Hz_flt32.nspike.dat';
+dio_file = '/home/halgdev/data/iEEG_NYU/NY178_c/NY178_090418_FWIO_400Hz_flt32/NY178_090418_FWIO_Run1.dio.txt';
+exp_file = '/home/halgdev/data/iEEG_NYU/NY178_c/NY178_090418_FWIO_400Hz_flt32/NY178_090418_FWIO_Run1-exp.mat';
+
+load(exp_file,'experiment');
+
+channels      = 1:112;
+max_epochs    = Inf;
+is_continuous = 1;
+
+epoch_data1 = ntools_gen_epoch_data(dat_file,dio_file,experiment, ...
+  'channels',channels,'max_epochs', max_epochs,'is_continuous',is_continuous);
+
+cont_data  = ts_load_data(dat_file,'channels',channels);
+epoch_data = 

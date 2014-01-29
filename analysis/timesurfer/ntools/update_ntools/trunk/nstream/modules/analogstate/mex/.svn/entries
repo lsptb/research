@@ -1,0 +1,69 @@
+8
+
+dir
+142
+https://secure2.svnrepository.com/s_bijan/nsuite/trunk/nstream/modules/analogstate/mex
+https://secure2.svnrepository.com/s_bijan/nsuite
+
+
+
+2008-11-03T22:08:03.919635Z
+17
+yan
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+ff6fb3bc-ba1e-4aaa-8930-cabd43940b18
+
+cmake
+dir
+
+nstream_get_digital_state.c
+file
+
+
+
+
+2011-02-25T04:03:38.000000Z
+9fca2f020f2ffb177e0555b4f57e1205
+2008-11-03T22:08:03.919635Z
+17
+yan
+has-props
+
+nstream_get_analog_state.c
+file
+
+
+
+
+2011-02-25T04:03:38.000000Z
+3744bc05fadaa5adfa99312f02db0b1a
+2008-11-03T22:08:03.919635Z
+17
+yan
+has-props
+
+CMakeLists.txt
+file
+
+
+
+
+2011-02-25T04:03:38.000000Z
+a5ea85f5dbf73004c1a5f17fd1e508ae
+2008-11-03T22:08:03.919635Z
+17
+yan
+

@@ -1,0 +1,12 @@
+Ntype='fanout'; Nspan=1; Wtype='gaussian'; Wspan=1; selfconn=0; p=1;
+g=1; E=0; tauDx=25; tauRx=1; IC=.1;																															% note: E=0 (excitatory); E=-80 (inhibitory) | Vrest=-65
+A = defnetwork([sqrt(Npop),sqrt(Npop)],'Ntype',{'span',Nspan,'prob',p,'SelfConn',selfconn}); 		% 'random',{'prob',1}; '1'; 'flow',{'g',1} aka: 'GJ','GAP'
+W = defweights([sqrt(Npop),sqrt(Npop)],'Wtype',{'span',Wspan}); 																% 'distributed',{'pdf','unifrnd','a',0,'b',1}; '1'
+K = (A.*W);
+
+Spre' = (((1-Spre)/tauRx).*(1+tanh(Vpre/10)))-Spre./tauDx
+Spre(0)=IC +.1*rand(Npop,1)
+
+syn(Vpost,Spre) = -((g/Npop).*(Spre'*K)'.*(Vpost-E))
+%net(Xpre,Xpost) = -(g.*(Xpre'*K).*(Xpost'-E))';
+current => syn(Vpost,Spre)

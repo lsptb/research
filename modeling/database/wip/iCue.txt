@@ -1,0 +1,22 @@
+times=[200 200]; dur=100;
+cuespan=.25; Acue=1; cueON=0; cueOFF=inf;
+gradient_flag=0;
+
+tvec=timelimits(1):dt:timelimits(2);
+sigma = ceil(cuespan*N);
+mask1 = circshift([ones(1,sigma) zeros(1,N-sigma)]',floor(N/4-sigma/4));
+mask2 = flipud(mask1);
+mask = mask1 + 2*mask2;
+IA=repmat(mask,[1 numel(tvec)]);
+
+indicator=zeros(size(tvec));
+for k=1:length(times), indicator(tvec>=times(k)&tvec<=times(k)+dur)=k; end
+IB=repmat(indicator,[N 1]);
+
+cue=IA.*IB;
+cue((IA~=IB)|(IA==0)|(IB==0))=0;
+cue = gradient_flag*cue+(1-gradient_flag)*(cue>0);
+Icue(t) = Acue*(t>=cueON & t<cueOFF).*cue(:,max(1,round(t/dt)));
+current => Icue(t)
+
+% figure; imagesc(tvec,1:N,cue)
