@@ -98,8 +98,11 @@ end
 if exist('H','var') && isfield(H,'f_cell') && ishandle(H.f_cell)
   close(H.f_cell);
 end
-H.f_cell = figure('position',[125 150 1400 800],...
-  'WindowScrollWheelFcn',@ZoomFunction,'CloseRequestFcn','delete(gcf);');%'global currspec; currspec=[]; delete(gcf);');
+sz = get(0,'ScreenSize'); 
+H.f_cell = figure('position',[.005*sz(3) .01*sz(4) .94*sz(3) .88*sz(4)],...%'position',[125 100 1400 800],...
+  'WindowScrollWheelFcn',@ZoomFunction,'CloseRequestFcn','delete(gcf);');
+% H.f_cell = figure('position',[125 150 1400 800],...
+%   'WindowScrollWheelFcn',@ZoomFunction,'CloseRequestFcn','delete(gcf);');%'global currspec; currspec=[]; delete(gcf);');
 jobj=findjobj(H.f_cell); 
 set(jobj,'MouseEnteredCallback','global H; figure(H.f_cell)');
 set(jobj,'MouseClickedCallback',{@Update,'controls'});
@@ -648,6 +651,71 @@ end
 %          structure (which does not contain compartment coordinate info).
 % TODO: rewrite this block (it's ugly and will probably break for complex morphologies).
 %       ex) have get_neighb() return linear indices (not identifiers) to grid elements...
+
+
+% jobj=findjobj(H.ui_cellcomp(xi,yi));
+% set(jobj,'MouseEnteredCallback',{@Update,'controls',compnames{compcnt}});
+
+% con=currspec.connections; 
+% [from,to]=ind2sub(size(con),cellfun(@isempty,{con.mechanisms}));
+% %from=find(from); to=find(to);
+% root=currspec.cells(1).label;
+% level = nan(size(currspec.cells));
+% level(1)=0;
+% bucket=[1];%{root};
+% parents=[0]; parentsi=[1];
+% while ~isempty(bucket)
+%      parent = bucket(1);%{1};
+%      bucket(1)=[];
+%      children = find((from(parent)&to)|(to(parent)&from))
+%      children = {x | parent=>x or x=>parent} = nodes connected to parent
+%      foreach child: level['child']=level['parent']+1
+%      bucket=cat(2,bucket,children)
+%      parents=cat(2,parents,repmat(parent,[1 numel(children)]))
+% end
+% for i=1:max(level)
+%      nodes= {nodes w/ level==i}
+%      for j=1:length(nodes)
+%                goto parent of nodes(j)
+%                get neighborhood of parent (set of surrounding grid-cells)
+%                opt=find neighborhood cells surrounded by empty grid-cells
+%                if ~isempty(opt)
+%                     put nodes(j) in opt(1)
+%                else
+%                     put nodes(j) in first empty neighborhood grid-cell
+%                end
+%      end
+% end
+
+% HOW TO FILL CELL MORPHOLOGY GRID WITH COMPARTMENT LABELS:
+% root=cells(1).label
+% level = nan(#nodes)
+% level[root]=0
+% bucket={root}
+% parents=[0]
+% while ~isempty(bucket)
+%      parent = bucket{1}
+%      bucket(1)=[]
+%      children = {x | parent=>x or x=>parent} = nodes connected to parent
+%      foreach child: level['child']=level['parent']+1
+%      bucket=cat(2,bucket,children)
+%      parents=cat(2,parents,repmat(parent,[1 numel(children)]))
+% end
+% for i=1:max(level)
+%      nodes= {nodes w/ level==i}
+%      for j=1:length(nodes)
+%                goto parent of nodes(j)
+%                get neighborhood of parent (set of surrounding grid-cells)
+%                opt=find neighborhood cells surrounded by empty grid-cells
+%                if ~isempty(opt)
+%                     put nodes(j) in opt(1)
+%                else
+%                     put nodes(j) in first empty neighborhood grid-cell
+%                end
+%      end
+% end
+% 
+
 compcnt=1; compind=1; linked{1}=compnames{1};
 gridnums=flipud(reshape(1:maxcomp^2,[maxcomp maxcomp]));
 xi=round((maxcomp+1)/2); yi=xi; allxi=xi; allyi=yi;

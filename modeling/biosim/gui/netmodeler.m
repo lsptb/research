@@ -66,7 +66,8 @@ end
 %% Create main figure
 maxcomp = 5; c=1.5;
 %H = [];
-H.f_net = figure('position',[125 100 1400 800],...
+sz = get(0,'ScreenSize'); 
+H.f_net = figure('position',[.005*sz(3) .01*sz(4) .94*sz(3) .88*sz(4)],...%'position',[125 100 1400 800],...
   'WindowScrollWheelFcn',@ZoomFunction,'CloseRequestFcn','delete(gcf);');
 jobj=findjobj(H.f_net); 
 set(jobj,'MouseEnteredCallback','global H; figure(H.f_net)');
