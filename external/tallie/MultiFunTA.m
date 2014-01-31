@@ -85,16 +85,31 @@ for kf = 1:length(CfunHandle)
     end
 end
 
-e = cellfun(@(x) strsplit(x,'.'),Cfilenames,'Uni',0);
-if length(e{1})>1
-    ext = e{1}{end};
-    e2 = cellfun(@(x) x{1:end-1},e,'Uni',0);
-    e3 = cellfun(@(x) strjoin(x,''),e2,'Uni',0);
-    Cfilenames_orig = Cfilenames; Cfilenames = e3;
-else ext = 'var';
+%% EDITED BY JASON
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+f=Cfilenames;
+[a,b,c]=fileparts(f{1});
+if ~isempty(c)
+  for k=1:length(f)
+    [fp,Cfilenames{k},ext]=fileparts(f{k});
+    Cfilenames_orig{k}=f{k};
+  end
+  try ext=strrep(ext,'.',''); end
+else
+  ext='var';
 end
-            
+% e = cellfun(@(x) strsplit(x,'.'),Cfilenames,'Uni',0);
+% if length(e{1})>1
+%     ext = e{1}{end};
+%     e2 = cellfun(@(x) x{1:end-1},e,'Uni',0);
+%     e3 = cellfun(@(x) strjoin(x,''),e2,'Uni',0);
+%     Cfilenames_orig = Cfilenames; Cfilenames = e3;
+% else ext = 'var';
+% end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 switch ext
+  
     case 'axgd'
         if isempty(Cfilenames_orig)
             O = importAxoX;  % Thank you Ed!!
@@ -265,6 +280,7 @@ for kf = 1:length(CfunHandle)
     disp(['Performing Function ' num2str(kf) '..'])
     hwb = waitbar(0,'');
     for ko = 1:length(O)
+        tic
         %try
         RCell.(funName{kf}).(genvarname(fn2{ko}{1})) = num2cell(zeros(1,nout(kf)));
             [RCell.(funName{kf}).(genvarname(fn2{ko}{1})){:}] = feval(CfunHandle{kf},varval2{kf}{ko}{:});
@@ -276,6 +292,7 @@ for kf = 1:length(CfunHandle)
         %catch %#ok<CTCH>
         %    disp(['Failed analysis of ''' Cfilenames{ko} ''''])
         %end
+        toc
     end
     close(hwb)
 end
