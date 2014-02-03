@@ -27,7 +27,7 @@ switch class(Vars)
         end
         c1 = 1;
         for k = 1:nf
-            fm
+%             fm
             if k==nf, subnum = nfr; else subnum = 8; end
             for k2 = 1:subnum
                 if c1<=nfiles
@@ -52,7 +52,7 @@ switch class(Vars)
         end
         c1 = 1;
         for k = 1:nf
-            fm
+%             fm
             if k==nf, subnum = nfr; else subnum = 8; end
             for k2 = 1:subnum
                 name = num2str(c1);
@@ -83,7 +83,7 @@ switch class(Vars)
         end
         c1 = 1;
         for k = 1:nf
-            fm
+%             fm
             if k==nf, subnum = nfr; else subnum = 8; end
             for k2 = 1:subnum
                 if c1<=nfiles

@@ -5,6 +5,9 @@ end
 if ~exist(DBPATH,'dir')
   DBPATH = 'C:\Users\jsherfey\Desktop\My World\Code\modelers\database';
 end
+if ~exist(DBPATH,'dir')
+  DBPATH = '/project/crc-nak/sherfey/code/research/modeling/database';
+end
 d=dir(DBPATH);
 list = {d(cellfun(@(x)any(regexp(x,'.txt$')),{d.name})).name};
 files = cellfun(@(x)fullfile(DBPATH,x),list,'unif',0);

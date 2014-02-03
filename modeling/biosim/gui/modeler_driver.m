@@ -52,8 +52,8 @@ cellmodeler(cells); % rt_biosim(cells); data=biosim(cell); biosim_plots(data);
 
 %% Network Modeler: driver to define initial network model and launch the network modeler
 %addpath /space/mdeh3/9/halgdev/projects/jsherfey/code/modelers;
-cd('C:\Users\jsherfey\Desktop\My World\Code');
-addpath(genpath('C:\Users\jsherfey\Desktop\My World\Code\research\modeling'));
+%cd('C:\Users\jsherfey\Desktop\My World\Code');
+%addpath(genpath('C:\Users\jsherfey\Desktop\My World\Code\research\modeling'));
 %addpath('C:\Users\jsherfey\Desktop\My World\Code\modelers\biosim');
 clear global; %clear all; close all;
 net = [];

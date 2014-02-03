@@ -3,4 +3,10 @@ This repository contains code used by jss for research, developed by him or his 
 Associated directories
 ----------------------
 on jss ASUS laptop: C:\Users\jsherfey\Desktop\My World\Code\research
-on BU cluster (scc1.bu.edu): /project/crc-nak/sherfey/code/research
+on BU SCC cluster (scc1.bu.edu, scc2.bu.edu, others):
+/project/crc-nak/sherfey/code/research -> /usr3/graduate/sherfey/research
+
+sherfey bashrc aliases to update this repo on scc:
+commitme 'message'
+pushme
+
