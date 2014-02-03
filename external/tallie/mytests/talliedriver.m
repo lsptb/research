@@ -255,8 +255,34 @@ MultiFunTA(files',fh,ones(1,length(fh)),VarsC{:}); toc
 % of simulations as well as sets of analyses (w/ cluster handling + qmatjobs 
 % scripts copied from mmil, and structured prefixes/rootoutdirs like Shane)
 
+O = importAxoX(files);
 
-  
+t=O(2).Channels(1).data; 
+V=O(2).Channels(2).data; 
+I=O(2).Channels(3).data; 
+figure; 
+subplot(2,1,1); plot(t,V);
+subplot(2,1,2); plot(t,I);
+
+nd=length(O);
+nc=cellfun(@length,{O.Channels});
+nt=arrayfun(@(x)length(x.Channels(1).data),O);
+nsamp=max(nt);
+data=zeros(sum(nc),nsamp);
+cnt=0;
+for i=1:nd
+  for j=1:nc(i)
+    cnt=cnt+1;
+    dat=O(i).Channels(j).data;
+    data(cnt,1:length(dat))=dat;
+  end
+end
+data=ts_matrix2data(data,'sfreq',1/(data(1,2)-data(1,1)));
+visualizer(data);
+
+
+    
+
 %% test other data sets (other formats; eg, .axgt, .mat)
 if 0
   file = {'/project/crc-nak/sherfey/projects/rhythms/rat/predelta 020.txt.axgt'};
