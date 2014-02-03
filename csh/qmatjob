@@ -7,5 +7,6 @@ echo "HOSTNAME = " $HOSTNAME
 echo "JOB_NAME = " $JOB_ID
 echo "JOB_NAME = " $JOB_NAME
 #mat -r "$2"
-/usr/local/bin/matlab -nojvm -nosplash -r "$2"
+#/usr/local/bin/matlab -nojvm -nosplash -r "$2"
+/usr/local/bin/matlab -nodisplay -singleCompThread -r "$2"
 echo "finished"

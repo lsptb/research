@@ -1,4 +1,4 @@
-function allspecs = get_search_space(spec)
+function allspecs = get_search_space(spec,scope,variable,values)
 % % List of changes for each iteration (example)
 %   objs = {'connections','entities'    ,'entities'  ,'entities'  ,'simulation'};
 %   inds = {[i,j]        ,[i]           ,[i]         ,[i2]        ,[1]};
@@ -23,9 +23,44 @@ function allspecs = get_search_space(spec)
 %   var => (flds, keys) for nvar >=1 iteration
 %   val => (vals) for nval > 1 iterations
 %   niter = nscope*nvar*nval
-try spec.simulation.scope = correct_loadjson_arrstr(spec.simulation.scope); end
-try spec.simulation.variable = correct_loadjson_arrstr(spec.simulation.variable); end
-try spec.simulation.values = correct_loadjson_arrstr(spec.simulation.values); end
+if ~isfield(spec,'entities') && isfield(spec,'cells')
+  entityfield='cells';
+  spec.entities = spec.cells;
+  spec = rmfield(spec,'cells');
+else
+  entityfield='entities';
+end
+
+if nargin<4
+  try 
+    spec.simulation.values = correct_loadjson_arrstr(spec.simulation.values); 
+  catch
+    error('must specify values to simulate.');
+  end
+else
+  spec.simulation.values = values;
+end
+if nargin<3
+  try 
+    spec.simulation.variable = correct_loadjson_arrstr(spec.simulation.variable); 
+  catch
+    error('must specify variable to adjust.');
+  end
+else
+  spec.simulation.variable = variable;
+end
+if nargin<2
+  try 
+    spec.simulation.scope = correct_loadjson_arrstr(spec.simulation.scope); 
+  catch
+    error('must specify scope of variable to adjust.');
+  end
+else
+  spec.simulation.scope = scope;
+end
+if ~iscell(spec.simulation.scope), spec.simulation.scope={spec.simulation.scope}; end
+if ~iscell(spec.simulation.variable), spec.simulation.variable={spec.simulation.variable}; end
+if ~iscell(spec.simulation.values), spec.simulation.values={spec.simulation.values}; end
 
 if length(spec.simulation.scope) > 1
   tmpspec = spec;
@@ -155,6 +190,14 @@ for s = 1:length(spec.simulation.scope)
         end
         if iscell(temp.simulation.values)
           tmpstrs=temp.simulation.values;
+          for ii=1:length(tmpstrs)
+            if iscell(tmpstrs{ii})
+              tmpstrs{ii}=[tmpstrs{ii}{:}];
+            end
+            if isnumeric(tmpstrs{ii})
+              tmpstrs{ii}=num2str(tmpstrs{ii}); 
+            end
+          end
           for ii=1:length(tmpstrs),if isnumeric(tmpstrs{ii}),tmpstrs{ii}=num2str(tmpstrs{ii}); end; end
           tmpstrs = unique(tmpstrs);
           tmpstr = '(';
@@ -178,6 +221,12 @@ for s = 1:length(spec.simulation.scope)
   allspecs = {allspecs{:} modspecs{:}}; % add the set of runs specified by this (scope,var,val)
 end
 
+if isequal(entityfield,'cells')
+  for k=1:length(allspecs)
+    allspecs{k}.cells = allspecs{k}.entities;
+    allspecs{k} = rmfield(allspecs{k},'entities');
+  end
+end
 end
 
 % ----------------------------------------------------------
@@ -274,10 +323,11 @@ function list = parse_spec(type,str,spec)
           elems = regexp(str,'[\w\.]+','match');
           inds = permutesets(length(elems));
           for l = 1:size(inds,1)
-            ind = inds(l,:);
+            ind = unique(inds(l,:));
             tmp = elems(ind);
             for m = 1:length(tmp)
-              list{l,m} = tmp{m};
+              s = check_scope(tmp{m},spec);
+              list{l}{m} = {s.objecttype{1},s.index};%tmp{m};
             end
           end
         case 'bracketed_parentheses'    % iterate over sets of elements to change together
@@ -353,14 +403,13 @@ function list = parse_spec(type,str,spec)
             list{k}{1} = elems(k);
           end          
         case 'braced-strings'         % ex. list of mechanisms to permute
-%           error('permuting sets delimited by braces not yet implemented.');
           elems = regexp(str,'[\w\.]+','match');
           inds = permutesets(length(elems));
           for l = 1:size(inds,1)
-            ind = inds(l,:);
+            ind = unique(inds(l,:));
             tmp = elems(ind);
             for m = 1:length(tmp)
-              list{l,m} = tmp{m};
+              list{l}{m} = tmp{m};
             end
           end
         case 'bracketed_parentheses'  % ex. list of mechanisms to iterate
@@ -410,10 +459,13 @@ function res = check_scope(str,spec)
       if strmatch(parts{1},'simulation')
         res.objecttype = {'simulation'};
         res.index = 1;
-        try
+        if isfield(spec.simulation,'sim_0x2D_label')
           res.label = spec.simulation.sim_0x2D_label;
-        catch
+        elseif isfield(spec.simulation,'label')
           res.label = spec.simulation.label;
+        else
+          res.label = 'simulation';
+          spec.simulation.label = 'simulation';
         end
         res.entities = [];
       else
