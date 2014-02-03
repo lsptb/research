@@ -1,0 +1,34 @@
+cd /space/mdeh3/9/halgdev/projects/jsherfey/code/visualizer
+
+addpath /space/mdeh3/9/halgdev/projects/jsherfey/sleep/shared
+addpath /space/mdeh3/9/halgdev/projects/jsherfey/sleep/meeg/tmp
+rootdir = '/space/mdeh3/9/halgdev/projects/jsherfey/sleep';
+datapath  = [rootdir '/ieeg/CH17/matfiles/central'];
+
+subjnum = 17;
+params  = SO_params(subjnum,[rootdir '/ieeg']);
+
+combolayout = '/space/mdeh3/9/halgdev/projects/jsherfey/sleep/so_paper1/iEEG/CH17/CH17_central_allchans_RefLabel.lay';
+
+toilim = [8500 10000];
+
+% Load iEEG data (continuous epoch_data structure, ntrial=1)
+load([datapath '/proc_eeg_epoch_data_ICA.mat'],'epoch_data');
+toilim = [8500 10000];
+
+% I = 1000:5000;
+% data = epoch_data;
+% data.epochs.time = data.epochs.time(I);
+% data.epochs.data = data.epochs.data(:,I);
+data = ts_data_selection(epoch_data,'toilim',toilim); 
+clear epoch_data
+for ch = 1:data.num_sensors
+  data.epochs.data(ch,:) = ts_freq_filt(data.epochs.data(ch,:)',data.sfreq,[.1 30],[0 0],'bandpass')';
+end
+dsfact = 4;
+data.epochs.time = data.epochs.time(1:dsfact:end);
+data.epochs.data = data.epochs.data(:,1:dsfact:end);
+data.sfreq = data.sfreq / dsfact;
+vismap(data,combolayout);
+
+%% reorder channels for visualizer

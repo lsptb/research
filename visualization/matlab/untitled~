@@ -1,0 +1,11 @@
+% Figures for BU BI502 presentation
+% 26-Apr-2012
+%
+% Data obtained by first executing script:
+% /space/mdeh3/9/halgdev/projects/jsherfey/sleep/so_paper1/iEEG/CH17/CH17_SO_flows_20120426.m
+%
+% Desired figures:
+% 1. Distributions of: event size - # elecs, sum|amp|, & max latency
+% 2. Example directed graphs from latencies for one SO
+
+

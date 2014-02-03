@@ -1,0 +1,77 @@
+Directory: 
+
+1) /home/jsherfey/projects/sleep2/andrei_sleep_and_recons.m
+	- Paths to recons for MGH and UCSD sleep data
+	- Contains the results from his source space sleep analysis (+ leadfield and forward matrices)
+
+2) /home/jsherfey/svn/dev/ppl/andrei/mfiles/mkfig_dSPM.m
+	- How to make movies from MGH files
+	- Calls: ts_surf2movie() (see neuroimaging.pbwiki.com/Ts-Movie-Maker)
+	
+3) /home/jsherfey/svn/dev/ppl/andrei/mfiles/calc_diff_mgh.m
+	- Saves stc and mgh with the difference b/w original and inflated brain sources from mgh files
+	- Calls: fs_load_mgh(), ts_write_stc(), & ts_stc2mgh()
+
+4) /home/jsherfey/svn/dev/ppl/andrei/mfiles/decimateTRI.m
+	- decimates a tri file
+	- Calls: ts_decimate_tri()
+
+5) tksurfer (freesurfer function to use at linux shell)
+	- example: tksurfer SUBJNAME lh white -sdir SUBJDIR -overlay MGHFILE.mgh
+	- note: the MGHFILE can be in ico7 while SUBJNAME is in ico4
+	
+-----------------------------------------------------------
+NOTES ON COMMON SOURCE SPACE FUNCTIONS AND VARIABLES
+-----------------------------------------------------------
+fs_load_mgh()
+ts_load_bem_surfs() & ts_load_tri_file()
+ts_read_dip_file()
+ts_read_dec_file()
+
+ts_write_stc()
+ts_stc2mgh()
+ts_decimate_tri()
+ts_gain_xyz2norm()
+
+ts_gain_xyz2norm(): calculate normal and tangential components from xyz gain matrix
+
+ts_load_bem_surfs(): load FreeSurfer compatible tri files for BEM calculations
+										 Calls: ts_load_tri_file()
+
+ts_prep_MEG_info(): % returns MEG 306 info in "head" space from avg_data
+
+T_mri2head: transformation matrix specifying registration between 
+						mri (freesurfer brain space) and head (MEG/EEG sensor space)
+						
+ts_load_studyinfo(): load csv file containing study info for group analysis
+	- example csv: /home/halgdev/projects/ttbrown/group_avg_APR09_6kids_8adults_6cond.csv
+
+ts_groupavg(): calculate group averages and t-stats from surface stats in mgh format, resampled to common space of FreeSurfer's icosahedral sphere
+	- example script: /home/halgdev/projects/ttbrown/APR09_6kids_8adults_6cond.m
+
+		
+-----------------------------------------------------------
+USEFUL SOURCE SPACE CODE
+-----------------------------------------------------------
+% compute absolute value of the gradient |\del B|
+if nmb == 1, up = 1; else up = p; end
+for t = 1:up
+   G(t,g1) = sqrt(G(t, g1).^2 + G(t,g2).^2);
+   G(t,mg) =  abs(G(t,mg));
+   G(t,eg) =  abs(G(t,eg));
+end
+-----------------------------------------------------------
+[verts,faces] = ts_load_bem_surfs (tri_file);
+verts         = verts./1000;
+tmp_verts     = (T*[verts(:,1:3)';ones(1,size(verts,1))])';
+plot3(tmp_verts(:,1),tmp_verts(:,2),tmp_verts(:,3),'.k','MarkerSize',10   );
+plot3(grid_mri (1,:),grid_mri (2,:),grid_mri (3,:),'.b','MarkerSize',  .01);
+axis equal; grid on; title(labels{t}); view(views{t}(1),views{t}(2)); xlabel('x'); ylabel('y');
+-----------------------------------------------------------
+
+Miscellaneous shell functions:
+mri_convert
+mri_nu_correct.mni (?)
+convert (ImageMagick)
+
+
