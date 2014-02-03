@@ -6,5 +6,6 @@ echo "cwd = " `pwd`
 echo "HOSTNAME = " $HOSTNAME
 echo "JOB_NAME = " $JOB_ID
 echo "JOB_NAME = " $JOB_NAME
-mat -r "$2"
+#mat -r "$2"
+/usr/local/bin/matlab -nojvm -nosplash -r "$2"
 echo "finished"
