@@ -55,7 +55,9 @@ cellmodeler(cells); % rt_biosim(cells); data=biosim(cell); biosim_plots(data);
 %cd('C:\Users\jsherfey\Desktop\My World\Code');
 %addpath(genpath('C:\Users\jsherfey\Desktop\My World\Code\research\modeling'));
 %addpath('C:\Users\jsherfey\Desktop\My World\Code\modelers\biosim');
-clear global; %clear all; close all;
+%addpath(genpath('/project/crc-nak/sherfey/code/research/external/tallie'));
+
+clear global; clear all; close all;
 net = [];
 
 % Define E-cell population

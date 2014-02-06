@@ -1,27 +1,61 @@
 function varargout = biosimdriver(spec,varargin)
 
 parms = mmil_args2parms( varargin, ...
-                         {  'log_flag',1,[],...
+                         {  'logfid',1,[],...
                             'savefig_flag',1,[],...
+                            'savedata_flag',1,[],...
                             'reply_address','sherfey@bu.edu',[],...
-                            'output_list',[],[],...
+                            'rootoutdir',[],[],...
+                            'prefix','sim',[],... 
+                            'verbose',1,[],...
                          }, false);
-log_flag = parms.log_flag;
+logfid = parms.logfid;
 savefig_flag = parms.savefig_flag;
 reply_address = parms.reply_address;  % FROM address on the emails that get generated. 
-output_list=parms.output_list;
+rootoutdir = parms.rootoutdir;
+prefix = parms.prefix;
 
 % create rootoutdir
+if ~exist(rootoutdir,'dir'), mkdir(rootoutdir); end
+if ~exist(fullfile(rootoutdir,'model'),'dir'), mkdir(fullfile(rootoutdir,'model')); end
+if ~exist(fullfile(rootoutdir,'data'),'dir'), mkdir(fullfile(rootoutdir,'data')); end
 
 % save spec in unique specfile in specs dir
+specfile = fullfile(rootoutdir,'model',[prefix '_model-specification.mat']);
+save(specfile,'spec','parms');
 
 % run biosim
+args = mmil_parms2args(spec.simulation);
+[sim_data,spec,pms] = biosim(spec,args{:},'verbose',parms.verbose);
+parms.biosim = pms;
+%   spec.simulation.override
+%   spec.simulation.dt
+%   spec.simulation.SOLVER
+%   spec.simulation.timelimits
+%   spec.simulation.dsfact
 
 % save results with prefix
+if parms.savedata_flag
+  datafile = fullfile(rootoutdir,'data',[prefix '_sim_data.mat']);
+  save(datafile,'sim_data','spec','parms','-v7.3');
+  fprintf('data saved to: %s\n',datafile);
+end
 
 % plot results
-
+  % V (per population)
+  % other state vars
+  % LFP power spectrum
+  % firing rate(t) and FRH
+  
 % save plots
+% if ~exist(fullfile(rootoutdir,'images'),'dir'), mkdir(fullfile(rootoutdir,'images')); end
+% if ~exist(fullfile(rootoutdir,'images','rawv'),'dir'), mkdir(fullfile(rootoutdir,'images','rawv')); end
+% if ~exist(fullfile(rootoutdir,'images','vars'),'dir'), mkdir(fullfile(rootoutdir,'images','vars')); end
+% if ~exist(fullfile(rootoutdir,'images','rates'),'dir'), mkdir(fullfile(rootoutdir,'images','rates')); end
+% if ~exist(fullfile(rootoutdir,'images','power'),'dir'), mkdir(fullfile(rootoutdir,'images','power')); end
+if parms.savefig_flag
+  % ...
+end
 
 
 %% Old driver script

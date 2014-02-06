@@ -47,12 +47,13 @@ parms = mmil_args2parms( varargin, ...
                               'output_list',[],[],...
                               'override',[],[],...
                               'IC',[],[],...
+                              'verbose',1,[],...
                            }, false);
 
 % ----------------------------------------------------------
 % get model
 %[model,ic,functions,auxvars,spec,readable,StateIndex] = buildmodel(spec,'logfid',parms.logfid,'override',parms.override);
-[model,ic,functions,auxvars,spec,readable,StateIndex] = buildmodel2(spec,'logfid',parms.logfid,'override',parms.override,'dt',parms.dt);
+[model,ic,functions,auxvars,spec,readable,StateIndex] = buildmodel2(spec,'logfid',parms.logfid,'override',parms.override,'dt',parms.dt,'verbose',parms.verbose);
 if ~isempty(parms.IC) && numel(parms.IC)==numel(ic)
   ic = parms.IC;
 end
@@ -308,22 +309,27 @@ end
 
 % store result in timesurfer format
 clear simdata
+if isfield(spec,'entities')
+  simfield='entities';
+else
+  simfield='cells';
+end
 datafield = 'epochs';% 'studies';
 maxN = max(Esizes);
 try
-  for i = 1:length(spec.entities)
+  for i = 1:length(spec.(simfield))
     EN = Esizes(i);
-    varlist = unique(spec.entities(i).var_list);
+    varlist = unique(spec.(simfield)(i).var_list);
     VN = length(varlist);
     dat = zeros(VN,ntime,maxN);%EN); % vars x time x cells
     for v = 1:length(varlist)
-      index = spec.entities(i).var_index(strmatch(varlist{v},spec.entities(i).var_list,'exact'));
+      index = spec.(simfield)(i).var_index(strmatch(varlist{v},spec.(simfield)(i).var_list,'exact'));
       dat(v,:,1:length(index)) = data(:,index);
     end
     if ndims(dat)==2
-      tmpdata = ts_matrix2data(dat,'time',t/1000,'datafield',datafield,'continuous',1);
+      tmpdata = ts_matrix2data(single(dat),'time',t/1000,'datafield',datafield,'continuous',1);
     elseif ndims(dat)==3
-      tmpdata = ts_matrix2data(dat,'time',t/1000,'datafield',datafield);
+      tmpdata = ts_matrix2data(single(dat),'time',t/1000,'datafield',datafield);
     end
     [tmpdata.sensor_info.label] = deal(varlist{:});
     [tmpdata.sensor_info.kind] = deal(i);
@@ -336,7 +342,7 @@ try
     clear tmpdata dat
   end
 catch
-  simdata = data;
+  simdata = single(data);
 end
 clear data
 

@@ -7,7 +7,7 @@ cfg.focusconn = 1;
 cfg.pauseflag = -1;
 cfg.quitflag = -1;
 cfg.tlast=-inf; 
-cfg.buffer = 1000;
+cfg.buffer = 500;%10000;
 cfg.dt = .02;
 
 if ~isfield(net,'cells'), net.cells = net; end
@@ -69,8 +69,8 @@ maxcomp = 5; c=1.5;
 sz = get(0,'ScreenSize'); 
 H.f_net = figure('position',[.005*sz(3) .01*sz(4) .94*sz(3) .88*sz(4)],...%'position',[125 100 1400 800],...
   'WindowScrollWheelFcn',@ZoomFunction,'CloseRequestFcn','delete(gcf);');
-jobj=findjobj(H.f_net); 
-set(jobj,'MouseEnteredCallback','global H; figure(H.f_net)');
+%jobj=findjobj(H.f_net); 
+%set(jobj,'MouseEnteredCallback','global H; figure(H.f_net)');
 % Panels
 H.p_net_select = uipanel('parent',H.f_net,'Position',[.02 .67 .35 .3],'BackgroundColor','white','BorderWidth',.2,'BorderType','line'); % cell morphology
 H.p_net_connect = uipanel('parent',H.f_net,'Position',[.02 .44 .35 .34/c],'BackgroundColor','white','BorderWidth',.2,'BorderType','line','title','Population connections'); % cell specification
@@ -287,21 +287,127 @@ set(H.rad_adj,'SelectedObject',[]);  % No selection
 set(H.rad_adj,'Visible','on');
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+function simulate(src,evnt,action)
+global CURRSPEC H cfg
+DrawSimPlots;
+functions = CURRSPEC.model.functions;
+auxvars = CURRSPEC.model.auxvars;
+ode = CURRSPEC.model.ode;
+IC = CURRSPEC.model.IC;
+cfg.T = (0:cfg.buffer-1)*cfg.dt; % ms
+fh_pow = @(x,y) PowerSpecTA(x,y,[10 80],min(8000,cfg.buffer/2),'Normalized',[]);
+
+% evaluate auxiliary variables (ie., adjacency matrices)
+for k = 1:size(auxvars,1)
+  %try  % added to catch mask=mask-diag(diag(mask)) when mask is not square
+    eval(sprintf('%s = %s;',auxvars{k,1},auxvars{k,2}) );
+  %end
+end
+% evaluate anonymous functions
+for k = 1:size(functions,1)
+  eval(sprintf('%s = %s;',functions{k,1},functions{k,2}) );
+end
+
+F = eval(ode);
+
+% Simulate (simple forward Euler integration)
+X=IC; t=0; cnt=0; cfg.record=zeros(length(IC),cfg.buffer);
+while cfg.quitflag<0
+  cnt=cnt+1;
+  % speed?
+  if get(findobj('tag','speed'),'value')~=0
+    pause(0.1*get(findobj('tag','speed'),'value')^1);
+  end
+  % pause?
+  p=findobj('tag','pause');
+  while cfg.pauseflag>0
+    pause(0);drawnow; %needed to overcome MATLAB7 bug (found by Gerardo Lafferriere) 
+    set(p,'string','resume');
+  end;
+  set(p,'string','pause');
+  % integrate
+  X = X+cfg.dt*F(t,X);
+  t = t + cfg.dt;
+  if cnt<=cfg.buffer
+    cfg.record(:,cnt)=X;
+  else
+    cfg.record = [cfg.record(:,2:end) X];
+    %if mod(cnt,100)==0
+      %set(H.ax_state_plot,'xtick',get(H.ax_state_plot(1),'xtick')+100*cfg.dt);
+    %end
+  end
+  % get output to plot
+  list=get(H.lst_comps,'string');
+  sel=get(H.lst_comps,'value');
+  if length(sel)>3, sel=sel(1:3); end
+  show=list(sel);
+  for k=1:length(show)
+    this=sel(k);
+    numcell=CURRSPEC.cells(this).multiplicity;
+    if numcell > cfg.ncellshow
+      tmp=randperm(numcell);
+      inds = sort(tmp(1:cfg.ncellshow));
+    else
+      inds = 1:numcell;
+    end
+    var = CURRSPEC.cells(this).ode_labels{1};
+    var = find(cellfun(@(x)isequal(x,var),CURRSPEC.cells(this).var_list));
+    lfp=mean(cfg.record(var,:),1);
+    set(H.simdat_LFP(k),'ydata',lfp,'linewidth',4,'color','k','linestyle','-');
+    for j=1:length(inds)
+      set(H.simdat_alltrace(k,j),'ydata',cfg.record(var(inds(j)),:));
+    end    
+    if mod(cnt,cfg.buffer)==0 && cnt>1
+      % update power spectrum
+      try
+        res = feval(fh_pow,cfg.T,lfp);
+        set(H.simdat_LFP_power(k),'xdata',res.f,'ydata',log10(res.Pxx));
+      catch
+        fprintf('power spectrum calc failed.\n');
+      end
+    end
+  end
+  drawnow
+end
+cfg.quitflag=-1;
+p=findobj('tag','pause');
+set(p,'string','pause'); 
+set(findobj('tag','start'),'string','restart');
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function DrawSimPlots
-global H cfg
+global H cfg CURRSPEC
+cfg.T = (0:cfg.buffer-1)*cfg.dt; % ms
+cfg.f = 1:100;
+cfg.ncellshow=10;
+cfg.colors  = 'kbrgmy';
+cfg.lntype  = {'-',':','-.','--'};
 dy=-.25;
-for i=1:3 % i=1:ncomp
+list=get(H.lst_comps,'string');
+sel=get(H.lst_comps,'value');
+show=list(sel);
+if length(show)>3, show=show(1:3); end
+% data plots
+if isfield(H,'ax_state_plot')
+  delete(H.simdat_alltrace);
+  delete(H.simdat_LFP);
+  delete(H.ax_state_plot);
+  delete(H.simdat_LFP_power);
+  delete(H.ax_state_power);
+end
+for i=1:length(show) % i=1:ncomp
   H.ax_state_plot(i) = subplot('position',[.05 .7+(i-1)*dy .6 -.8*dy],...
     'parent',H.p_state_plot,'linewidth',3,'color','w'); 
-  H.ax_state_img(i) = subplot('position',[.7 .7+(i-1)*dy .25 -.8*dy],'parent',H.p_state_plot); 
-  H.img_state = imagesc(zeros(10,40)); axis xy; axis square
-  %   legstr = {};
-  %   for k=1:ncomp
-  %     H.simdat_alltrace(k)=line('color',cfg.colors(max(1,mod(k,length(cfg.colors)))),'LineStyle',cfg.lntype{max(1,mod(k,length(cfg.lntype)))},'erase','background','xdata',cfg.T,'ydata',zeros(1,cfg.buffer),'zdata',[]);
-  %     legstr{k} = currspec.cells(k).label;
-  %   end
-  % axis([cfg.T(1) cfg.T(end) -100 30]); xlabel('time (ms)');
-  % h=legend(legstr{:});
+  for k=1:cfg.ncellshow
+    H.simdat_alltrace(i,k)=line('color',cfg.colors(max(1,mod(k,length(cfg.colors)))),'LineStyle',cfg.lntype{max(1,mod(k,length(cfg.lntype)))},'erase','background','xdata',cfg.T,'ydata',zeros(1,cfg.buffer),'zdata',[]);
+  end
+  H.simdat_LFP(i)=line('color',cfg.colors(max(1,mod(k,length(cfg.colors)))),'LineStyle',cfg.lntype{max(1,mod(k,length(cfg.lntype)))},'erase','background','xdata',cfg.T,'ydata',zeros(1,cfg.buffer),'zdata',[],'linewidth',2);
+  axis([cfg.T(1) cfg.T(end) -100 30]); xlabel('time (ms)');
+  ylabel([show{i} '.V']);  
+  H.ax_state_power(i) = subplot('position',[.7 .7+(i-1)*dy .25 -.8*dy],'parent',H.p_state_plot); 
+  H.simdat_LFP_power(i)=line('color','k','LineStyle','-','erase','background','xdata',cfg.f,'ydata',zeros(size(cfg.f)),'zdata',[],'linewidth',2);
+  %H.ax_state_img(i) = subplot('position',[.7 .7+(i-1)*dy .25 -.8*dy],'parent',H.p_state_plot); 
+  %H.img_state = imagesc(zeros(10,40)); axis xy; axis square
 end
 % % slider control
 if isempty(findobj('tag','speed'))
@@ -331,12 +437,41 @@ if isempty(findobj('tag','stop'))
   uicontrol('Style','pushbutton', 'Units','normalized', ...
             'Position',[0.85  0.05 0.04 0.05],...
             'String','stop','tag','stop','Callback','global cfg;cfg.quitflag=1;');
-end
+end     
+if isempty(findobj('tag','dt'))
+  % btn: start <=> reset        
+  uicontrol('Style','edit', 'Units','normalized', ...
+            'Position',[0.75  0.11 0.04 0.05],...
+            'String',num2str(cfg.dt),'tag','dt','Callback','global cfg; cfg.dt=str2num(get(gcbo,''string''));'); % start <=> pause
+end        
+if isempty(findobj('tag','buffer'))
+  % btn: start <=> reset        
+  uicontrol('Style','edit', 'Units','normalized', ...
+            'Position',[0.8  0.11 0.04 0.05],...
+            'String',num2str(cfg.buffer),'tag','buffer','Callback','global cfg; cfg.buffer=str2num(get(gcbo,''string''));'); % start <=> pause
+end     
+
 % autoscale       
 uicontrol('Style','pushbutton', 'Units','normalized', ...
           'Position',[0.9 0.05 0.075 0.05],...
           'String','autoscale','Callback',{@setlimits,'autoscale'});
-
+% simstudy       
+uicontrol('Style','pushbutton', 'Units','normalized', ...
+          'Position',[0.9 0.11 0.075 0.05],...
+          'String','sim study','Callback','StudyDriverUI;');
+        
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+function setlimits(src,evnt,action)
+global cfg H
+if ~isfield(cfg,'record'), return; end
+switch action
+  case 'autoscale'
+    ymin = min(cfg.record(:));
+    ymax = max(cfg.record(:));
+    if ymin~=ymax
+      set(H.ax_state_plot,'ylim',[ymin ymax]);
+    end
+end
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function OpenCellModeler(src,evnt,compname)
 global CURRSPEC

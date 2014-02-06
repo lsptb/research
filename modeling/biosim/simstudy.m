@@ -20,13 +20,15 @@ spec.simulation = mmil_args2parms( varargin, ...
                       'sim_cluster','scc2.bu.edu',[],...
                       'sim_qsubscript','qmatjobs_memlimit',[],...
                       'sim_driver','biosimdriver.m',[],...
-                      'ProjName','model',[],...
-                      'StudyName','study',[],...
                       'description',[],[],...
                       'dt',.01,[],...
                       'SOLVER','euler',[],...
                       'memlimit','8G',[],...
                       'batchdir',[],[],...
+                      'rootdir',pwd,[],...
+                      'override',[],[],...
+                      'timelimits',[],[],...
+                      'dsfact',[],[],...
                    }, false);
                  
 % get search space
@@ -40,15 +42,41 @@ logfile=spec.simulation.logfile;
 logfid=spec.simulation.logfid;
 if ischar(logfile) && ~isempty(logfile), logfid = fopen(logfile,'w'); else logfid = 1; end
 
+% define output directory structure
+scopes = cellfun(@(x)x.simulation.scope,allspecs,'uni',0);
+vars = cellfun(@(x)x.simulation.variable,allspecs,'uni',0);
+uniqscopes = unique(scopes);
+outdirs={}; dirinds=zeros(size(allspecs));
+for k=1:length(uniqscopes)
+  scopeparts = regexp(uniqscopes{k},'[^\(\)]*','match');
+  inds = strmatch(uniqscopes{k},scopes,'exact');
+  varparts = regexp(vars{inds(1)},'[^\(\)]*','match');
+  dirname = '';
+  for j=1:length(scopeparts)
+    dirname = [dirname '_' strrep(scopeparts{j},',','_') '-' varparts{j}];
+  end
+  outdirs{end+1} = dirname(2:end);
+  dirinds(inds) = k;
+end
+rootoutdir={}; prefix={};
+for i=1:length(allspecs)
+  rootoutdir{i} = fullfile(spec.simulation.rootdir,datestr(now,'yyyymmdd-HHMM'),outdirs{dirinds(i)});
+  tmp=regexp(allspecs{i}.simulation.description,'[^\d_].*','match');
+  prefix{i}=strrep([tmp{:}],',','_');
+  fprintf(logfid,'%s: %s\n',rootoutdir{i},prefix{i});
+end
+% save allspecs(i) results in rootoutdir{i}
+
 % system info
 [o,host]=system('echo $HOSTNAME');
 [o,home]=system('echo $HOME');
 home=home(1:end-1); % remove new line character
+cwd = pwd;
 
-if spec.simulation.cluster_flag % run on cluster
+if spec.simulation.sim_cluster_flag % run on cluster
   % create batchdir
   if isempty(spec.simulation.batchdir)
-    batchname = sprintf('%s_%s_%s',spec.simulation.ProjName,spec.simulation.StudyName,datestr(now,30)); 
+    batchname = ['B' datestr(now,'yyyymmdd-HHMMSS')];
     batchdir = sprintf('%s/batchdirs/%s',home,batchname);
     spec.simulation.batchdir=batchdir;
   else
@@ -56,7 +84,7 @@ if spec.simulation.cluster_flag % run on cluster
     batchdir = spec.simulation.batchdir;
   end
   mkdir(batchdir);
-  cwd = pwd; cd(batchdir);
+  cd(batchdir);
   driverscript = which(spec.simulation.sim_driver);
   [fpath,scriptname,fext] = fileparts(driverscript);
   %allfiles = {driverscript spec.files{:}};
@@ -71,7 +99,7 @@ if spec.simulation.cluster_flag % run on cluster
     save(specfile,'modelspec');
     jobs{end+1} = sprintf('job%g.m',k);
     fileID = fopen(jobs{end},'wt');
-    fprintf(fileID,'load(''%s'',''modelspec''); %s(modelspec);\n',specfile,scriptname);
+    fprintf(fileID,'load(''%s'',''modelspec''); %s(modelspec,''rootoutdir'',''%s'',''prefix'',''%s'');\n',specfile,scriptname,rootoutdir{k},prefix{k});
     fprintf(fileID,'exit');
     fclose(fileID);
   end
@@ -88,24 +116,23 @@ if spec.simulation.cluster_flag % run on cluster
   if ~strmatch(host,spec.simulation.sim_cluster);
     % connect to cluster and submit jobs
     if 0
-      [s,m] = unix(sprintf('ssh %s "%s"',spec.simulation.sim_cluster,cmd));
+      [s,m] = system(sprintf('ssh %s "%s"',spec.simulation.sim_cluster,cmd));
     end
   else
     % submit jobs on the current host
-    [s,m] = unix(cmd);
+    [s,m] = system(cmd);
   end
   % log errors
   if s, fprintf(logfid,'%s',m); end
-  cd(cwd);
   fprintf(logfid,'Jobs submitted.\n');        
 else
   % run on local machine
   for specnum = 1:length(allspecs) % loop over elements of search space
     modelspec = allspecs{specnum};
     fprintf(logfid,'processing simulation...');
-    simdriver(modelspec);
+    biosimdriver(modelspec,'rootoutdir',rootoutdir{specnum},'prefix',prefix{specnum},'verbose',0);
     fprintf(logfid,'done (%g of %g)\n',specnum,length(allspecs));
   end
 end
-
+cd(cwd);
 end % end main function

@@ -246,24 +246,10 @@ fh{end+1} = @(x,yF,yIC,a,b,c,d) CharDepolTonicSpikesTA(x,yF,yIC,[],[],a,b,c,d)
 fh{end+1} = @(x,yF,yIC,a,b,c,d,e) CharDepolTonicSpikesTA(x,yF,yIC,[],[],a,b,c,d,e);
 MultiFunTA(files',fh,ones(1,length(fh)),VarsC{:}); toc
 
-%% 3. understand how parameter setting/variation works
-% ...
-
-% 4. figure out how to plug in sim data or extract analysis/plot guts for own funcs
-% 5. incorporate into cellmodeler & netmodeler
-% 6. then incorporate simstudy controls and apply get_search_space to form sets
-% of simulations as well as sets of analyses (w/ cluster handling + qmatjobs 
-% scripts copied from mmil, and structured prefixes/rootoutdirs like Shane)
-
+%% figure out how to plug in sim data or extract analysis/plot guts for own funcs
 O = importAxoX(files);
 
-t=O(2).Channels(1).data; 
-V=O(2).Channels(2).data; 
-I=O(2).Channels(3).data; 
-figure; 
-subplot(2,1,1); plot(t,V);
-subplot(2,1,2); plot(t,I);
-
+% manual visualization
 nd=length(O);
 nc=cellfun(@length,{O.Channels});
 nt=arrayfun(@(x)length(x.Channels(1).data),O);
@@ -278,19 +264,56 @@ for i=1:nd
   end
 end
 data=ts_matrix2data(data,'sfreq',1/(data(1,2)-data(1,1)));
-visualizer(data);
+visualizer(data); % check chan2 @ 330-340 (clear ~8-10Hz STO; img view)
 
-
-    
-
-%% test other data sets (other formats; eg, .axgt, .mat)
-if 0
-  file = {'/project/crc-nak/sherfey/projects/rhythms/rat/predelta 020.txt.axgt'};
-  % note: this is data I collected during my first visit to Newcastle
-  MultiFunTA(file,fh,1,VarsC{:}) % (Cfilenames,CfunHandle,nout,varargin)
-  % - need to create a param file with the correct sections_start_sec and sections_length_sec
+% manual spectral analysis
+fh = @(x,y) PowerSpecTA(x,y,[10 80],8000,'Normalized',[]);
+clear res
+figure; 
+for i=1:nd
+  t=O(i).Channels(1).data; 
+  V=O(i).Channels(2).data; 
+  I=O(i).Channels(3).data; 
+  res(i) = feval(fh,t,V);
+  subplot(3,nd,i); plot(res(i).f,log10(res(i).Pxx)); xlim([0 100]);
+  subplot(3,nd,i+nd); plot(t,V);
+  subplot(3,nd,i+2*nd); plot(t,I);
 end
 
+% given simdata:
+pop=1; var=1;
+t=simdata(pop).epochs.time;
+V=simdata(pop).epochs.data(var,:);
+res = feval(fh,t,V);
+  
+%% test other data sets (other formats; eg, .axgt, .mat)
+file = {'/project/crc-nak/sherfey/projects/rhythms/rat/predelta 020.txt.axgt'};
+% note: this is data I collected during my first visit to Newcastle
+fh = @(x,y) PowerSpecTA(x,y,[10 80],8000,'Normalized',[]);
 
+% MultiFunTA load and analysis
+MultiFunTA(file,fh,1); % (Cfilenames,CfunHandle,nout,varargin)
+o=Results.PowerSpecTA.predelta0200x2Etxt.output_1;
+figure; plot(o.f,log10(o.Pxx)); xlim([0 100]);  
 
+% manual load and analysis
+axgt = cellfun(@importdata,file);
+data = axgt.data';
+data=ts_matrix2data(data,'time',data(1,:));
+visualizer(data);
+
+t=axgt.data(:,1);
+V=axgt.data(:,2);
+I=axgt.data(:,3);
+fh = @(x,y) PowerSpecTA(x,y,[10 80],8000,'Normalized',[]);
+res = feval(fh,t,V);
+figure
+subplot(3,1,1); plot(res.f,log10(res.Pxx)); xlim([0 100]);
+subplot(3,1,2); plot(t,V);
+subplot(3,1,3); plot(t,I);
+
+% 3 approaches to plugging simdata into MultiFunTA():
+% - modify MultiFunTA to load simdata and organize into proper structure
+% - save simdata in Tallie format for use w/ MultiFunTA "as is"
+% - skip MultiFunTA and pass simdata (t,x) to the desired fh directly
 
