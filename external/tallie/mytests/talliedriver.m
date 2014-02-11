@@ -317,3 +317,52 @@ subplot(3,1,3); plot(t,I);
 % - save simdata in Tallie format for use w/ MultiFunTA "as is"
 % - skip MultiFunTA and pass simdata (t,x) to the desired fh directly
 
+%%
+
+codepath='/project/crc-nak/sherfey/code/research/external/tallie';
+datapath='/project/crc-nak/sherfey/projects/rhythms/rat/cell-characterization/hyper and depol steps/hyper/';
+parmfile='/project/crc-nak/sherfey/projects/rhythms/rat/cell-characterization/Parms hyperpol steps blockers temp.xlsx';
+addpath(genpath(codepath));
+cd(datapath);
+
+parms = GetParmsTA(parmfile);
+%{
+What field do you want to select by? 'trace_description'
+What value should this field have? 'hyperpol steps'
+How many fields do you want to collate into easier-to-access matrices? 7
+Fieldname 1: 'offset_potential'
+'num' or 'str': 'num'
+Fieldname 2: 'tonic_injected_current'
+'num' or 'str': 'num'
+Fieldname 3: 'sections_label'
+'num' or 'str': 'num'
+Fieldname 4: 'sections_start_sec'
+'num' or 'str': 'num'
+Fieldname 5: 'sections_length_sec'
+'num' or 'str': 'num'
+Fieldname 6: 'baseline_start_sec'
+'num' or 'str': 'num'
+Fieldname 7: 'baseline_length_sec'
+'num' or 'str': 'num'
+    'Done.'
+%}
+%fh = CharHyperpolStepTA(x,y,offset_voltage,tonic_injected_current,sections_label_num,sections_start_sec,sections_length_sec,baseline_start_sec,baseline_length_sec);
+
+fh=@(x,y,a,b,c,d,e,f,g)CharHyperpolStepTA(x,y,a,b,c,d,e,f,g);
+f=dir; 
+f={f(~[f.isdir]).name};
+f=f(~cellfun(@isempty,regexp(f,'ci.*.axgt')));
+
+sel=1:3;
+fs=f(sel);
+vs=VarsC; vs(2:2:end)=cellfun(@(x)x(sel),vs(2:2:end),'uni',0);
+MultiFunTA(fs,fh,1,vs{:}) % (Cfilenames,CfunHandle,nout,varargin)
+
+% output_1.step_sections (@plot)
+% export multiples: Results.CharHyperpolStepTA
+figure; MultiFigTA(@plot,V);
+% output_1.Ih_Peak_mV (@bar)
+% export multiples: Results.CharHyperpolStepTA
+figure; MultiFigTA(@bar,V);
+
+

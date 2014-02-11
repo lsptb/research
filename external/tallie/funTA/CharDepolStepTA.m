@@ -55,7 +55,9 @@ end
             sections_start_sec(end+1) = sections_start_sec(k) + sections_length_sec(k);
         end
     end
-if sections_start_sec(1) <= x(1), sections_start_sec(1) = x(2); end
+if sections_start_sec(1) <= x(1) || isnan(sections_start_sec(1))
+    sections_start_sec(1) = x(2);
+end
 for k = 1:length(sections_start_sec)
     sl{k} = round((sections_start_sec(k)-x(1))*Fs:(sections_start_sec(k)+sections_length_sec(k)-x(1))*Fs);
 end

@@ -42,17 +42,15 @@ if parms.savedata_flag
 end
 
 % plot results
-  % V (per population)
-  % other state vars
-  % LFP power spectrum
-  % firing rate(t) and FRH
+plotv(sim_data,spec); % V (per population) and spectrum of sum(V)
+plotspk(sim_data,spec); % firing rate(t) and FRH
+% other state vars
   
 % save plots
 % if ~exist(fullfile(rootoutdir,'images'),'dir'), mkdir(fullfile(rootoutdir,'images')); end
 % if ~exist(fullfile(rootoutdir,'images','rawv'),'dir'), mkdir(fullfile(rootoutdir,'images','rawv')); end
 % if ~exist(fullfile(rootoutdir,'images','vars'),'dir'), mkdir(fullfile(rootoutdir,'images','vars')); end
-% if ~exist(fullfile(rootoutdir,'images','rates'),'dir'), mkdir(fullfile(rootoutdir,'images','rates')); end
-% if ~exist(fullfile(rootoutdir,'images','power'),'dir'), mkdir(fullfile(rootoutdir,'images','power')); end
+% if ~exist(fullfile(rootoutdir,'images','rates'),'dir'), mkdir(fullfile(rootoutdir,'images','spikes')); end
 if parms.savefig_flag
   % ...
 end
