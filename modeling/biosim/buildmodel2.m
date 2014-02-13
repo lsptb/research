@@ -156,15 +156,19 @@ for i=1:N % loop over entities
     idx = regexp(spec.files,sprintf('(^%s|/%s|\\\\%s).txt',ML,ML,ML));
     idx = find(~cellfun(@isempty,idx));
     if length(idx) ~= 1
-      fprintf('Looking in known mech list for %s\n',ML);
-      [jnk,knownfiles] = get_mechlist;
-      idx = regexp(knownfiles,sprintf('(^%s|/%s|\\\\%s).txt',ML,ML,ML));
-      idx = find(~cellfun(@isempty,idx));
-      if length(idx) ~= 1
-        error('Failed to find a distinct specification file for mechanism: %s',ML);
+      if exist(fullfile(pwd,[ML '.txt']),'file')
+        file = fullfile(pwd,[ML '.txt']);
       else
-        file = knownfiles{idx};
-        fprintf('Found mech file. Using: %s\n',file);
+        fprintf('Looking in known mech list for %s\n',ML);
+        [jnk,knownfiles] = get_mechlist;
+        idx = regexp(knownfiles,sprintf('(^%s|/%s|\\\\%s).txt',ML,ML,ML));
+        idx = find(~cellfun(@isempty,idx));
+        if length(idx) ~= 1
+          error('Failed to find a distinct specification file for mechanism: %s',ML);
+        else
+          file = knownfiles{idx};
+          fprintf('Found mech file. Using: %s\n',file);
+        end
       end
     else
       file = spec.files{idx};

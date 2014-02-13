@@ -66,8 +66,8 @@ cfg.focusmech = min(1,length(selmechlist));
 cfg.pauseflag = -1;
 cfg.quitflag = -1;
 cfg.tlast=-inf; 
-cfg.buffer = 1000;
-cfg.dt = .02;
+cfg.buffer = 10000;
+cfg.dt = .01;
 
 [model,IC,functions,auxvars,spec] = buildmodel2(spec);
 try spec.cells=spec.entities; spec=rmfield(spec,'entities'); end
@@ -149,6 +149,9 @@ function Display_Mech_Info(src,evnt,mechpos,uitype,hmech,hcomp)
 % purpose: display the mech model in a readable form
 try
 global H currspec cfg
+try
+  H.ui_mechlist_edit=H.ui_mechlist_edit(ishandle(H.ui_mechlist_edit));
+end
 if any(strcmp('on',get(H.ui_mechlist_edit,'visible'))), return; end
 cfg.focuscomp = strmatch(get(hcomp,'string'),{currspec.cells.label},'exact');
 spec = currspec.cells(cfg.focuscomp);

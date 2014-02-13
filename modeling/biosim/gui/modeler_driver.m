@@ -7,10 +7,37 @@ cell = [];
 cell.label = 'E';        % --> cell name
 cell.multiplicity = 1;   % --> number of cells
 cell.mechanisms = {'itonic','ileak','iK','iNa','noise'}; % predefined: get_mechlist
-cell.parameters = {'stim',10,'E_l',-10.6,'g_l',.3,'Cm',1,'gNa',120,'EKf',-77,'V_noise',3,'IC_noise',1};
+cell.parameters = {'stim',10,'E_l',-54.4,'g_l',.3,'Cm',1,'gNa',120,'EKf',-77,'V_noise',3,'IC_noise',1};
 cell.dynamics = 'V''=(current)';
 
 cellmodeler(cell); % rt_biosim(cell); data=biosim(cell); biosim_plots(data);
+
+%% cell characterization
+clear all
+cell = [];
+cell.label = 'E';        % --> cell name
+cell.multiplicity = 1;   % --> number of cells
+cell.mechanisms = {'iStepProtocol' 'ileak','iK','iNa','noise'}; % predefined: get_mechlist
+cell.parameters = {'E_l',-54.4,'g_l',.3,'Cm',1,'ENa',50,'gNa',120,'EKf',-77,'V_noise',0,...
+  'isi',150,'nsteps',2,'steptime',100,'nsections',3,'membranearea',2000,'tonictime',6000};
+cell.dynamics = 'V''=(current)';
+%cellmodeler(cell);
+
+[X,t,Iinj]=SimCharacterizeCells(cell,120*30);
+figure; 
+subplot(2,1,1); plot(t,X(:,1)); xlim([min(t) max(t)]); 
+subplot(2,1,2); plot(t,Iinj); xlim([min(t) max(t)]);
+
+% cells.cells=cell;
+% cells.connections.mechanisms=[];
+% cells.connections.parameters=[];
+% cells.connections.label = [];
+% netmodeler(cells);
+
+% E_iStepProtocol_I    = getStepProtocolStim((0.02),(500),(2),(200),(100),(1500),(3),(60000));
+% figure; V=X(:,1);
+% subplot(2,1,1); plot(V); xl=xlim; 
+% subplot(2,1,2); plot(E_iStepProtocol_I); xlim(xl);
 
 %% Cell Modeler (2-compartments): driver to define initial cell model and launch the cell modeler
 cd('C:\Users\jsherfey\Desktop\My World\Code\research\modeling\biosim\gui');
@@ -21,7 +48,7 @@ cell=[]; cells=[];
 cell.label = 'soma';        % --> cell name
 cell.multiplicity = 1;   % --> number of cells
 cell.mechanisms = {'itonic','ileak','iK','iNa','noise'}; % predefined: get_mechlist
-cell.parameters = {'stim',10,'E_l',-10.6,'g_l',.3,'Cm',1,'gNa',120,'EKf',-77,'V_noise',3,'IC_noise',1};
+cell.parameters = {'stim',10,'E_l',-54.4,'g_l',.3,'Cm',1,'gNa',120,'EKf',-77,'V_noise',3,'IC_noise',1};
 cell.dynamics = 'V''=(current)';
 cells.cells(1) = cell;
 
@@ -29,7 +56,7 @@ cell=[];
 cell.label = 'dend';        % --> cell name
 cell.multiplicity = 1;   % --> number of cells
 cell.mechanisms = {'itonic','ileak','iK','iNa','noise'}; % predefined: get_mechlist
-cell.parameters = {'stim',10,'E_l',-10.6,'g_l',.3,'Cm',1,'gNa',120,'EKf',-77,'V_noise',3,'IC_noise',1};
+cell.parameters = {'stim',10,'E_l',-54.4,'g_l',.3,'Cm',1,'gNa',120,'EKf',-77,'V_noise',3,'IC_noise',1};
 cell.dynamics = 'V''=(current)';
 cells.cells(2) = cell;
 
@@ -65,7 +92,7 @@ cell = [];
 cell.label = 'E';         % --> cell name
 cell.multiplicity = 40;   % --> number of cells
 cell.mechanisms = {'itonic','ileak','iK','iNa','noise'};
-cell.parameters = {'stim',10,'E_l',-10.6,'g_l',.3,'Cm',1,'gNa',120,'EKf',-77,'V_noise',3,'IC_noise',1};
+cell.parameters = {'stim',10,'E_l',-54.4,'g_l',.3,'Cm',1,'gNa',120,'EKf',-77,'V_noise',3,'IC_noise',1};
 cell.dynamics = 'V''=(current)';
 net.cells(1) = cell;
 
@@ -74,7 +101,7 @@ cell = [];
 cell.label = 'I';         % --> cell name
 cell.multiplicity = 10;   % --> number of cells
 cell.mechanisms = {'itonic','ileak','iK','iNa','noise'};
-cell.parameters = {'stim',-10,'E_l',-10.6,'g_l',.3,'Cm',1,'gNa',120,'EKf',-77,'V_noise',3,'IC_noise',1};
+cell.parameters = {'stim',-10,'E_l',-54.4,'g_l',.3,'Cm',1,'gNa',120,'EKf',-77,'V_noise',3,'IC_noise',1};
 cell.dynamics = 'V''=(current)';
 net.cells(2) = cell;
 

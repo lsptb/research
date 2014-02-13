@@ -7,8 +7,8 @@ cfg.focusconn = 1;
 cfg.pauseflag = -1;
 cfg.quitflag = -1;
 cfg.tlast=-inf; 
-cfg.buffer = 500;%10000;
-cfg.dt = .02;
+cfg.buffer = 20000;%10000;
+cfg.dt = .01;
 
 if ~isfield(net,'cells'), net.cells = net; end
 if isfield(net.cells,'files'), net.files = net.cells(1).files; end
@@ -351,13 +351,15 @@ while cfg.quitflag<0
       inds = 1:numcell;
     end
     var = CURRSPEC.cells(this).ode_labels{1};
-    var = find(cellfun(@(x)isequal(x,var),CURRSPEC.cells(this).var_list));
-    lfp=mean(cfg.record(var,:),1);
-    set(H.simdat_LFP(k),'ydata',lfp,'linewidth',4,'color','k','linestyle','-');
+    var = find(cellfun(@(x)isequal(x,var),CURRSPEC.variables.labels));%CURRSPEC.cells(this).var_list));
     for j=1:length(inds)
       set(H.simdat_alltrace(k,j),'ydata',cfg.record(var(inds(j)),:));
     end    
-    if mod(cnt,cfg.buffer)==0 && cnt>1
+    if 0 
+      lfp=mean(cfg.record(var,:),1);
+      set(H.simdat_LFP(k),'ydata',lfp,'linewidth',4,'color','k','linestyle','-');
+    end
+    if 0 && mod(cnt,cfg.buffer)==0 && cnt>1
       % update power spectrum
       try
         res = feval(fh_pow,cfg.T,lfp);
@@ -389,11 +391,12 @@ show=list(sel);
 if length(show)>3, show=show(1:3); end
 % data plots
 if isfield(H,'ax_state_plot')
-  delete(H.simdat_alltrace);
-  delete(H.simdat_LFP);
-  delete(H.ax_state_plot);
-  delete(H.simdat_LFP_power);
-  delete(H.ax_state_power);
+  delete(H.simdat_alltrace(ishandle(H.simdat_alltrace)));
+  delete(H.simdat_LFP(ishandle(H.simdat_LFP)));
+  delete(H.ax_state_plot(ishandle(H.ax_state_plot)));
+  delete(H.simdat_LFP_power(ishandle(H.simdat_LFP_power)));
+  delete(H.ax_state_power(ishandle(H.ax_state_power)));
+  H=rmfield(H,{'simdat_alltrace','simdat_LFP','ax_state_plot','simdat_LFP_power','ax_state_power'});
 end
 for i=1:length(show) % i=1:ncomp
   H.ax_state_plot(i) = subplot('position',[.05 .7+(i-1)*dy .6 -.8*dy],...
@@ -403,7 +406,7 @@ for i=1:length(show) % i=1:ncomp
   end
   H.simdat_LFP(i)=line('color',cfg.colors(max(1,mod(k,length(cfg.colors)))),'LineStyle',cfg.lntype{max(1,mod(k,length(cfg.lntype)))},'erase','background','xdata',cfg.T,'ydata',zeros(1,cfg.buffer),'zdata',[],'linewidth',2);
   axis([cfg.T(1) cfg.T(end) -100 30]); xlabel('time (ms)');
-  ylabel([show{i} '.V']);  
+  title([show{i} '.V']);  %ylabel([show{i} '.V']);  
   H.ax_state_power(i) = subplot('position',[.7 .7+(i-1)*dy .25 -.8*dy],'parent',H.p_state_plot); 
   H.simdat_LFP_power(i)=line('color','k','LineStyle','-','erase','background','xdata',cfg.f,'ydata',zeros(size(cfg.f)),'zdata',[],'linewidth',2);
   %H.ax_state_img(i) = subplot('position',[.7 .7+(i-1)*dy .25 -.8*dy],'parent',H.p_state_plot); 
@@ -627,7 +630,11 @@ else
   l={currspec.cells.label}; L={CURRSPEC.cells.label};
   % update compartments in both models
   [s1,s2]=match_str(L,l);
-  if ~isempty(s1) && (~isequal({CURRSPEC.cells(s1).mechs},{currspec.cells(s2).mechs}) || (isfield(CURRSPEC.cells,'parent') && ~isequal({CURRSPEC.cells(s1).parent},{currspec.cells(s2).parent})))
+  if ~isempty(s1) && (...
+      ~isequal({CURRSPEC.cells(s1).mechs},{currspec.cells(s2).mechs}) || ...
+      (isfield(CURRSPEC.cells,'parent') && ~isequal({CURRSPEC.cells(s1).parent},{currspec.cells(s2).parent})) || ...
+      ~isequal({CURRSPEC.cells(s1).parameters},{currspec.cells(s2).parameters})...
+                     )
     CURRSPEC.cells(s1).mechanisms = currspec.cells(s2).mechanisms;
     CURRSPEC.cells(s1).parameters = currspec.cells(s2).parameters;
     CURRSPEC.cells(s1).dynamics = currspec.cells(s2).dynamics;
