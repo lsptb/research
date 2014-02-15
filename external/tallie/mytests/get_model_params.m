@@ -5,8 +5,8 @@ CharHyperpolStepTA().Baseline_mV
 CharHyperpolStepTA().Resistance_Mohms
 CharHyperpolStepTA().step_sections
 CharHyperpolStepTA().IsThereIhYNeach
-CharHyperpolStepTA().output.IhDecayToThird_ms
-CharHyperpolStepTA().output.Ih_mV
+CharHyperpolStepTA().IhDecayToThird_ms
+CharHyperpolStepTA().Ih_mV
 
 CharDepolStepTA().Baseline_mV
 CharDepolStepTA().Resistance_Mohms
@@ -21,7 +21,7 @@ CharDepolTonicSpikesTA().Spike_Width
 CharDepolTonicSpikesTA().SpikeRate_persec
 %}
 
-funnames = {'CharHyperpolStepTA','CharDepolStepTA','CharDepolTonicSpikesTA'};
+funnames = {'CharHyperp olStepTA','CharDepolStepTA','CharDepolTonicSpikesTA'};
 %outnames{1} = {'Baseline_mV','Resistance_Mohms',...};
 
 O = CharDepolStepTA(x,y,offset_voltage,tonic_injected_current,sections_label_num,sections_start_sec,sections_length_sec,baseline_start_sec,baseline_length_sec,step_length)

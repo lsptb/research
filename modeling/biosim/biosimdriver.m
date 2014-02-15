@@ -2,12 +2,15 @@ function varargout = biosimdriver(spec,varargin)
 
 parms = mmil_args2parms( varargin, ...
                          {  'logfid',1,[],...
-                            'savefig_flag',1,[],...
+                            'savefig_flag',0,[],...
                             'savedata_flag',1,[],...
                             'reply_address','sherfey@bu.edu',[],...
                             'rootoutdir',[],[],...
                             'prefix','sim',[],... 
                             'verbose',1,[],...
+                            'cluster_flag',0,[],...
+                            'batchdir',pwd,[],...
+                            'jobname','job.m',[],...
                          }, false);
 logfid = parms.logfid;
 savefig_flag = parms.savefig_flag;
@@ -19,6 +22,9 @@ prefix = parms.prefix;
 if ~exist(rootoutdir,'dir'), mkdir(rootoutdir); end
 if ~exist(fullfile(rootoutdir,'model'),'dir'), mkdir(fullfile(rootoutdir,'model')); end
 if ~exist(fullfile(rootoutdir,'data'),'dir'), mkdir(fullfile(rootoutdir,'data')); end
+if parms.cluster_flag
+  if ~exist(fullfile(rootoutdir,'logs'),'dir'), mkdir(fullfile(rootoutdir,'logs')); end
+end
 
 % save spec in unique specfile in specs dir
 specfile = fullfile(rootoutdir,'model',[prefix '_model-specification.mat']);
@@ -38,23 +44,36 @@ parms.biosim = pms;
 if parms.savedata_flag
   datafile = fullfile(rootoutdir,'data',[prefix '_sim_data.mat']);
   save(datafile,'sim_data','spec','parms','-v7.3');
-  fprintf('data saved to: %s\n',datafile);
+  fprintf(logfid,'data saved to: %s\n',datafile);
 end
 
-% plot results
-plotv(sim_data,spec); % V (per population) and spectrum of sum(V)
-plotspk(sim_data,spec); % firing rate(t) and FRH
-% other state vars
-  
-% save plots
-% if ~exist(fullfile(rootoutdir,'images'),'dir'), mkdir(fullfile(rootoutdir,'images')); end
-% if ~exist(fullfile(rootoutdir,'images','rawv'),'dir'), mkdir(fullfile(rootoutdir,'images','rawv')); end
-% if ~exist(fullfile(rootoutdir,'images','vars'),'dir'), mkdir(fullfile(rootoutdir,'images','vars')); end
-% if ~exist(fullfile(rootoutdir,'images','rates'),'dir'), mkdir(fullfile(rootoutdir,'images','spikes')); end
 if parms.savefig_flag
-  % ...
+  % plot results
+  plotv(sim_data,spec); % V (per population) and spectrum of sum(V)
+  plotspk(sim_data,spec); % firing rate(t) and FRH
+  % other state vars
+  % save plots
+  % if ~exist(fullfile(rootoutdir,'images'),'dir'), mkdir(fullfile(rootoutdir,'images')); end
+  % if ~exist(fullfile(rootoutdir,'images','rawv'),'dir'), mkdir(fullfile(rootoutdir,'images','rawv')); end
+  % if ~exist(fullfile(rootoutdir,'images','vars'),'dir'), mkdir(fullfile(rootoutdir,'images','vars')); end
+  % if ~exist(fullfile(rootoutdir,'images','rates'),'dir'), mkdir(fullfile(rootoutdir,'images','spikes')); end
 end
 
+% save cluster log
+if parms.cluster_flag
+  [p,name]=fileparts(parms.jobname);
+  outlog=fullfile(parms.batchdir,'pbsout',[name '.out']);
+  errlog=fullfile(parms.batchdir,'pbsout',[name '.err']);
+  outoutlog=fullfile(rootoutdir,'logs',[prefix '_' name '.out']);
+  outerrlog=fullfile(rootoutdir,'logs',[prefix '_' name '.err']);
+  fprintf(logfid,'saving cluster log: %s\n',outlog);
+  cmd = sprintf('cp %s %s',outlog,outoutlog);
+  [s,m] = system(cmd);
+  if s, fprintf(logfid,'%s',m); end
+  cmd = sprintf('cp %s %s',errlog,outerrlog);
+  [s,m] = system(cmd);
+  if s, fprintf(logfid,'%s',m); end
+end
 
 %% Old driver script
 % 

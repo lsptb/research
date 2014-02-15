@@ -19,20 +19,20 @@ cell.label = 'E';        % --> cell name
 cell.multiplicity = 1;   % --> number of cells
 cell.mechanisms = {'iStepProtocol' 'ileak','iK','iNa','noise'}; % predefined: get_mechlist
 cell.parameters = {'E_l',-54.4,'g_l',.3,'Cm',1,'ENa',50,'gNa',120,'EKf',-77,'V_noise',0,...
-  'isi',150,'nsteps',2,'steptime',100,'nsections',3,'membranearea',2000,'tonictime',6000};
+  'isi',150,'nsteps',2,'steptime',100,'nsections',3,'membranearea',2000,'tonictime',6000,'dt',.01};
 cell.dynamics = 'V''=(current)';
 %cellmodeler(cell);
+% 
+% [X,t,Iinj]=SimCharacterizeCells(cell,120*30);
+% figure; 
+% subplot(2,1,1); plot(t,X(:,1)); xlim([min(t) max(t)]); 
+% subplot(2,1,2); plot(t,Iinj); xlim([min(t) max(t)]);
 
-[X,t,Iinj]=SimCharacterizeCells(cell,120*30);
-figure; 
-subplot(2,1,1); plot(t,X(:,1)); xlim([min(t) max(t)]); 
-subplot(2,1,2); plot(t,Iinj); xlim([min(t) max(t)]);
-
-% cells.cells=cell;
-% cells.connections.mechanisms=[];
-% cells.connections.parameters=[];
-% cells.connections.label = [];
-% netmodeler(cells);
+cells.cells=cell;
+cells.connections.mechanisms=[];
+cells.connections.parameters=[];
+cells.connections.label = [];
+netmodeler(cells);
 
 % E_iStepProtocol_I    = getStepProtocolStim((0.02),(500),(2),(200),(100),(1500),(3),(60000));
 % figure; V=X(:,1);

@@ -1,5 +1,4 @@
 thresh=0;
-dt = .005; % ms
 isi = 500;%1000; % ms
 nsteps = 2;%5; % number of current pulses
 steptime = 200;%400; % ms

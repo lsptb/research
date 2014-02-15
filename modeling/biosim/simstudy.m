@@ -60,7 +60,7 @@ for k=1:length(uniqscopes)
 end
 rootoutdir={}; prefix={};
 for i=1:length(allspecs)
-  rootoutdir{i} = fullfile(spec.simulation.rootdir,datestr(now,'yyyymmdd-HHMM'),outdirs{dirinds(i)});
+  rootoutdir{i} = fullfile(spec.simulation.rootdir,datestr(now,'yyyymmdd-HHMMSS'),outdirs{dirinds(i)});
   tmp=regexp(allspecs{i}.simulation.description,'[^\d_].*','match');
   prefix{i}=strrep([tmp{:}],',','_');
   fprintf(logfid,'%s: %s\n',rootoutdir{i},prefix{i});
@@ -99,8 +99,8 @@ if spec.simulation.sim_cluster_flag % run on cluster
     save(specfile,'modelspec');
     jobs{end+1} = sprintf('job%g.m',k);
     fileID = fopen(jobs{end},'wt');
-    fprintf(fileID,'load(''%s'',''modelspec''); %s(modelspec,''rootoutdir'',''%s'',''prefix'',''%s'');\n',specfile,scriptname,rootoutdir{k},prefix{k});
-    fprintf(fileID,'exit');
+    fprintf(fileID,'load(''%s'',''modelspec''); %s(modelspec,''rootoutdir'',''%s'',''prefix'',''%s'',''cluster_flag'',1,''batchdir'',''%s'',''jobname'',''%s'');\n',specfile,scriptname,rootoutdir{k},prefix{k},batchdir,jobs{end});
+    fprintf(fileID,'exit\n');
     fclose(fileID);
   end
   % create scriptlist.txt (list of jobs)

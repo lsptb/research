@@ -595,6 +595,18 @@ auxvars=Cexpr(:,[2 3 1]);
 % 	also update: odes, ode_labels
 sys.variables.entity=[];
 for i=1:N
+  for j=1:length(sys.entities(i).mechs)
+    p=sys.entities(i).parameters{j};
+    if isempty(p), continue; end
+    m=sys.entities(i).mechs(j);
+    flds=fieldnames(m.params);
+    if isempty(flds), continue; end
+    [s1,s2]=match_str(flds,p(1:2:end));
+    for k=1:length(s1)
+      m.params.(flds{s1(k)}) = p{2*s2(k)};
+    end
+    sys.entities(i).mechs(j) = m;
+  end    
   sys.entities(i).auxvars = auxvars(Cpop==i,:);
   sys.entities(i).functions = functions(Hpop==i,:);
   sys.entities(i).odes = Sodes(Spop==i);
