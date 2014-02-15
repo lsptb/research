@@ -38,8 +38,8 @@ p = s.mechs(strcmp(cfg.mechanism,s.mechanisms)).params;
 
 tonic_injected_current = 0;
 offset_voltage = 0;
-baseline_start_sec = b.bltime/2;%.05;
-baseline_length_sec = b.bltime/2;%.05;
+baseline_start_sec = p.bltime/2;%.05;
+baseline_length_sec = p.bltime/2;%.05;
 
 parms.CharHyperpolStepTA.offset_voltage = offset_voltage;
 parms.CharHyperpolStepTA.tonic_injected_current = tonic_injected_current;
