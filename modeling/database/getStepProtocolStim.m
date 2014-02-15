@@ -1,4 +1,4 @@
-function Iinj = getStepProtocolStim(dt,isi,nsteps,steptime,stepsize,membranearea,nsections,tonictime)
+function Iinj = getStepProtocolStim(dt,isi,nsteps,steptime,stepsize,membranearea,nsections,tonictime,bltime)
 if nargin<1
   dt = .01; % ms
 end
@@ -23,11 +23,15 @@ end
 if nargin<8
   tonictime = 60000; % ms
 end
+if nargin<9
+  bltime = 100; % ms, baseline duration. baseline = [0 bltime].
+end
 %stepsize = 100; % pA. typically: 100-500pA (.1-.5nA)
 %membranearea = 1500; % um^2. typically: 1000-2000 um2
 CF = (1e-6)/(1e-8); % pA/um^2 => uA/cm^2. note: 1um2=1e-8cm2, 1pA=1e-6uA
 Iapp = CF*stepsize/membranearea; % uA/cm^2
 
+bl = zeros(size(0:dt:bltime));
 tstep=0:dt:isi;
 I0 = zeros(size(tstep));
 I0(tstep<steptime)=Iapp;
@@ -40,7 +44,7 @@ for a=1:nsections
 end
 ramprate=50;
 I3 = linspace(0,nsections*Iapp*ramprate,round(tonictime/dt));
-Iinj = [I1 I2 I3];
+Iinj = [bl I1 I2 I3];
 %t = (0:length(Iinj)-1)*dt;
 %figure; plot(t/1000,Iinj);
 

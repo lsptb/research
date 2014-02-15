@@ -1,4 +1,5 @@
-function I=holdstim(V,I,k,thresh,isi,nsteps,nsections,dt)%,procidx)
+function I=holdstim(V,I,k,thresh,isi,nsteps,nsections,dt,bltime)%,procidx)
+if nargin<9, bltime=100; end
   overshootfactor=1.1; 
   global statedata
 if ~isfield(statedata,'Iinj')
@@ -6,7 +7,7 @@ if ~isfield(statedata,'Iinj')
   statedata.current=0;
   statedata.threshcrossing=inf;
 end
-if k<(isi*nsteps*nsections*2/dt), I=0; return; end
+if k<((bltime+isi*nsteps*nsections*2)/dt), I=0; return; end
 % if k<procidx, I=0; return; end
   if isfield(statedata,'current') && isnumeric(statedata.current) && statedata.current~=0
     if k<=2

@@ -25,7 +25,7 @@ end
 % list of files from a simulation batch and processes them all, saving
 % post-processed results into a batch analysis directory.
 
-datafile = '/project/crc-nak/sherfey/code/tests/cellchar/20140213-121655/E-multiplicity/data/E-multiplicity_1_sim_data.mat';
+datafile = '/project/crc-nak/sherfey/code/tests/cellchar/20140215-100816/E-multiplicity/data/E-multiplicity_1_sim_data.mat';
 load(datafile,'sim_data','spec','parms');
 cellname = 'E'; thiscell = 1; datavar = [cellname '_V'];
 

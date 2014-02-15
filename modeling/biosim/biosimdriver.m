@@ -66,7 +66,7 @@ if parms.cluster_flag
   errlog=fullfile(parms.batchdir,'pbsout',[name '.err']);
   outoutlog=fullfile(rootoutdir,'logs',[prefix '_' name '.out']);
   outerrlog=fullfile(rootoutdir,'logs',[prefix '_' name '.err']);
-  fprintf(logfid,'saving cluster log: %s\n',outlog);
+  fprintf(logfid,'saving cluster log (%s) to %s.\n',outlog,outoutlog);
   cmd = sprintf('cp %s %s',outlog,outoutlog);
   [s,m] = system(cmd);
   if s, fprintf(logfid,'%s',m); end
