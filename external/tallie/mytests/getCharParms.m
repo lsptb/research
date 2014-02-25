@@ -12,6 +12,7 @@ cfg = mmil_args2parms( varargin, ...
                          {  'mechanism','iStepProtocol',[],... 
                             'cellfld','entities',[],...
                             'cellind',1,[],...
+                            'prestep_time_offset',-.01,[],...
                          }, false);
 
 parms = [];
@@ -38,13 +39,14 @@ p = s.mechs(strcmp(cfg.mechanism,s.mechanisms)).params;
 
 tonic_injected_current = 0;
 offset_voltage = 0;
-baseline_start_sec = p.bltime/2;%.05;
-baseline_length_sec = p.bltime/2;%.05;
+baseline_start_sec = p.bltime/2/1000;%.05;
+baseline_length_sec = p.bltime/2/1000;%.05;
+prestep_time_offset = cfg.prestep_time_offset; % start section before pulse onset
 
 parms.CharHyperpolStepTA.offset_voltage = offset_voltage;
 parms.CharHyperpolStepTA.tonic_injected_current = tonic_injected_current;
 parms.CharHyperpolStepTA.sections_label_num = 1:p.nsections;
-parms.CharHyperpolStepTA.sections_start_sec = baseline_start_sec + baseline_length_sec;
+parms.CharHyperpolStepTA.sections_start_sec = prestep_time_offset + baseline_start_sec + baseline_length_sec;
 parms.CharHyperpolStepTA.sections_length_sec = p.isi*p.nsteps/1000;
 parms.CharHyperpolStepTA.baseline_start_sec = baseline_start_sec;
 parms.CharHyperpolStepTA.baseline_length_sec = baseline_length_sec;
@@ -52,11 +54,11 @@ parms.CharHyperpolStepTA.baseline_length_sec = baseline_length_sec;
 parms.CharDepolStepTA.offset_voltage = offset_voltage;
 parms.CharDepolStepTA.tonic_injected_current = tonic_injected_current;
 parms.CharDepolStepTA.sections_label_num = 1:p.nsections;
-parms.CharDepolStepTA.sections_start_sec = p.nsections*p.isi*p.nsteps/1000 + baseline_start_sec + baseline_length_sec;
+parms.CharDepolStepTA.sections_start_sec = prestep_time_offset + p.nsections*p.isi*p.nsteps/1000 + baseline_start_sec + baseline_length_sec;
 parms.CharDepolStepTA.sections_length_sec = p.isi*p.nsteps/1000;
 parms.CharDepolStepTA.baseline_start_sec = baseline_start_sec;
 parms.CharDepolStepTA.baseline_length_sec = baseline_length_sec;
-parms.CharDepolStepTA.step_length = p.steptime;
+parms.CharDepolStepTA.step_length = p.steptime/1000;
 
 parms.CharDepolTonicSpikesTA.bpFiltParms = [5 80];
 parms.CharDepolTonicSpikesTA.Notch = [];

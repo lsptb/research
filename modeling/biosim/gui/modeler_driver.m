@@ -19,8 +19,8 @@ cell.label = 'E';        % --> cell name
 cell.multiplicity = 1;   % --> number of cells
 cell.mechanisms = {'iStepProtocol' 'ileak','iK','iNa','noise'}; % predefined: get_mechlist
 cell.parameters = {'E_l',-54.4,'g_l',.3,'Cm',1,'ENa',50,'gNa',120,'EKf',-77,'V_noise',0,...
-  'isi',150,'nsteps',2,'steptime',100,'nsections',3,'membranearea',2000,'tonictime',6000,'dt',.01};
-cell.dynamics = 'V''=(current)';
+  'isi',1000,'nsteps',3,'steptime',400,'nsections',3,'membranearea',2000,'tonictime',6000,'dt',.01};
+cell.dynamics = 'V''=(current)'; % note: set timelimits=[0 25000]
 %cellmodeler(cell);
 % 
 % [X,t,Iinj]=SimCharacterizeCells(cell,120*30);

@@ -209,9 +209,13 @@ global H CURRSPEC
 % evaluate auxiliary variables
 a = CURRSPEC.model.auxvars;
 for i=1:size(a,1)
-  eval(sprintf('%s = %s;',a{i,1},a{i,2}));
   key = a{i,1};
-  val = eval(a{i,2});
+  try
+    eval(sprintf('%s = %s;',a{i,1},a{i,2}));
+    val = eval(a{i,2});
+  catch
+    val = nan;
+  end
   CURRSPEC.model.eval.(key) = val;
 end
 % make list of connections

@@ -40,6 +40,7 @@ parms = mmil_args2parms( varargin, ...
                             'dt',.01,[],...
                             'nofunctions',1,[],...
                             'verbose',1,[],...
+                            'timelimits',[],[],...
                          }, false);
 % note: override = {label,field,value,[arg]; ...}
 fileID = parms.logfid;
@@ -97,6 +98,11 @@ if issubfield(spec,'simulation.sim_dt')
   dt=spec.simulation.sim_dt;
 else
   dt=parms.dt;
+end
+if issubfield(spec,'simulation.timelimits')
+  timelimits = spec.simulation.timelimits;
+else
+  timelimits = parms.timelimits;
 end
 
 % combine intrinsic and connection mechanisms per entity; load mech models
@@ -378,6 +384,10 @@ for m=1:nmech
   if m>0, k1=Minputs{m}(1); else k1=k0; end
   n1=NE(k1);
   new={n1,n1,n0,n0,n0,dt};
+  if ~isempty(timelimits)
+    old = {old{:},'timelimits(1)','timelimits(2)','timelimits'};
+    new = {new{:},timelimits(1),timelimits(2),sprintf('[%g %g]',timelimits)};
+  end
   [f,e,o,t,ic]=substitute(old,new,f,e,o,t,ic);
   % prefixes: expressions: (expressions, functions, odes, terms)
   old=Cexpr(Cmech==m,1); new=Cexpr(Cmech==m,2);

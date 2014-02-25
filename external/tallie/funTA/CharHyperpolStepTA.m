@@ -1,8 +1,14 @@
-function O = CharHyperpolStepTA(x,y,offset_voltage,tonic_injected_current,sections_label_num,sections_start_sec,sections_length_sec,baseline_start_sec,baseline_length_sec)
+function O = CharHyperpolStepTA(x,y,offset_voltage,tonic_injected_current,sections_label_num,sections_start_sec,sections_length_sec,baseline_start_sec,baseline_length_sec,plot_flag)
 % This function is part of a set of scripts for characterizing cells:
 % CharHyperpolStepTA.m
 % CharDepolStepTA.m
 % CharDepolTonicSpikeTA.m
+
+% CHANGELOG
+% - 20140223 - adjusted window on moving avg for event detection (100=>10)
+% - added plot_flag to suppress plotting; default=1
+if nargin<10, plot_flag=1; end
+movavgwinsize = 10;
 
 warning('off')
 
@@ -56,12 +62,14 @@ end
 y_sections = cellfun(@(x) y(x),sl,'Uni',0);
 rr = cellfun(@(x) rem(length(x),Fs),y_sections,'Uni',0);
 rl = cellfun(@(x) floor(length(x)/Fs),y_sections,'Uni',0);
-for k = 1:length(y_sections), y_sections{k}(end-rr{k}+1:end) = []; end
+% if 0
+  for k = 1:length(y_sections), y_sections{k}(end-rr{k}+1:end) = []; end
+% end
 y_sect_mat = cellfun(@(x,y) reshape(x,Fs,y),y_sections,rl,'Uni',0);
 y_mean = cellfun(@(x) mean(x,2),y_sect_mat,'Uni',0);
 
 % use this mean to find event locations
-dy_mean = cellfun(@(x) moving(diff(moving(x,100)),100),y_mean,'Uni',0);
+dy_mean = cellfun(@(x) moving(diff(moving(x,movavgwinsize)),movavgwinsize),y_mean,'Uni',0);
 dy_mean2 = cellfun(@(x) x*(-1),dy_mean,'Uni',0); 
 [~,mloc_on] = cellfun(@max,dy_mean2,'Uni',0);
 [~,mloc_off] = cellfun(@max,dy_mean,'Uni',0);
@@ -134,18 +142,19 @@ elseif I>0
 elseif I==0 || isnan(I)
     cmap2 = bone(length(y_sections)+3);
 end
-cmap2 = flipud(cmap2); cmap2(1:3,:) = []; cmap2 = num2cell(cmap2,2);
-figure, hold on, cellfun(@(x,y) plot(1/Fs:1/Fs:length(x)/Fs,x,'Color',y),y_mean,cmap2','Uni',0);
-legend(cellfun(@(x) num2str(x),(num2cell(sections_label_num)),'Uni',0))
-gx = get(gca,'XLim'); gy = get(gca,'YLim');
-GX = gx(1)+(range(gx)/20); GY = gy(1)+(range(gy)/20);
-if isnan(offset_voltage), text(GX,GY,'(offset voltage unknown)'), end
-for k = 1:length(IhSta1)
-    scatter([bl(1)/Fs bl(end)/Fs IhSta1{k}/Fs IhSta2{k}/Fs StepFin1{k}/Fs StepFin2{k}/Fs IhSta12{k}/Fs IhSta22{k}/Fs ],...
-        [O.Baseline_mV O.Baseline_mV O.Ih_Peak_mV{k} O.Ih_Peak_mV{k} O.Ih_End_mV{k} O.Ih_End_mV{k} O.Ih_Peak2_mV{k} O.Ih_Peak2_mV{k}],[],cmap,'filled');
+if plot_flag
+  cmap2 = flipud(cmap2); cmap2(1:3,:) = []; cmap2 = num2cell(cmap2,2);
+  figure, hold on, cellfun(@(x,y) plot(1/Fs:1/Fs:length(x)/Fs,x,'Color',y),y_mean,cmap2','Uni',0);
+  legend(cellfun(@(x) num2str(x),(num2cell(sections_label_num)),'Uni',0))
+  gx = get(gca,'XLim'); gy = get(gca,'YLim');
+  GX = gx(1)+(range(gx)/20); GY = gy(1)+(range(gy)/20);
+  if isnan(offset_voltage), text(GX,GY,'(offset voltage unknown)'), end
+  for k = 1:length(IhSta1)
+      scatter([bl(1)/Fs bl(end)/Fs IhSta1{k}/Fs IhSta2{k}/Fs StepFin1{k}/Fs StepFin2{k}/Fs IhSta12{k}/Fs IhSta22{k}/Fs ],...
+          [O.Baseline_mV O.Baseline_mV O.Ih_Peak_mV{k} O.Ih_Peak_mV{k} O.Ih_End_mV{k} O.Ih_End_mV{k} O.Ih_Peak2_mV{k} O.Ih_Peak2_mV{k}],[],cmap,'filled');
+  end
+  axis tight, set(gca,'Box','on'), xlabel('Time (s)'), ylabel('Membrane Potential (mV)'), title('Plot to show accuracy in getting event points')
 end
-axis tight, set(gca,'Box','on'), xlabel('Time (s)'), ylabel('Membrane Potential (mV)'), title('Plot to show accuracy in getting event points')
-
 O.Fs = Fs;
 O.step_sections_x = [1/Fs:1/Fs:length(y_mean{1})/Fs];
 for k = 1:length(y_mean)

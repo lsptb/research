@@ -1,4 +1,4 @@
-function O = CharDepolStepTA(x,y,offset_voltage,tonic_injected_current,sections_label_num,sections_start_sec,sections_length_sec,baseline_start_sec,baseline_length_sec,step_length)
+function O = CharDepolStepTA(x,y,offset_voltage,tonic_injected_current,sections_label_num,sections_start_sec,sections_length_sec,baseline_start_sec,baseline_length_sec,step_length,plot_flag)
 % This function is part of a set of scripts for characterizing cells:
 % CharHyperpolStepTA.m
 % CharDepolStepTA.m
@@ -7,6 +7,9 @@ function O = CharDepolStepTA(x,y,offset_voltage,tonic_injected_current,sections_
 %
 % PLEASE MAKE SURE THERE IS NO SPIKE BEFORE THE START OF THE FIRST STEP!!
 %
+% CHANGELOG:
+% 20140223 - added plot_flag to suppress plotting; default=1
+if nargin<10, plot_flag=1; end
 
 warning('off') %#ok<WNOFF>
 
@@ -106,19 +109,21 @@ elseif I>0
 elseif I==0 || isnan(I)
     cmap2 = bone(length(y_sections)+3);
 end
-cmap2 = flipud(cmap2); cmap2(1:3,:) = []; cmap2 = num2cell(cmap2,2);
-figure, hold on, cellfun(@(x,y) plot(1/Fs:1/Fs:length(x)/Fs,x,'Color',y),y_mean,cmap2','Uni',0);
-cellfun(@(x,y) plot(1/Fs:1/Fs:length(x)/Fs,x(:,1),'-k'),y_mean2,'Uni',0);
-legend(cellfun(@(x) num2str(x),(num2cell(sections_label_num)),'Uni',0))
-gx = get(gca,'XLim'); gy = get(gca,'YLim');
-GX = gx(1)+(range(gx)/20); GY = gy(1)+(range(gy)/20);
-if isnan(offset_voltage), text(GX,GY,'(offset voltage unknown)'), end
-for k = 1:length(O.VoltOff)
-    scatter([bl(1)/Fs bl(end)/Fs (mloc_off-200)/Fs (mloc_off-100)/Fs],...
-        [O.Baseline_mV O.Baseline_mV O.VoltOff{k} O.VoltOff{k}],[],cmap,'filled');
-    for k2 = 1:length(spike_rloc{k}), scatter((spike_rloc{k}{k2}+mloc_on)/Fs,spike_height{k}{k2},[],'*g'), end
+if plot_flag
+  cmap2 = flipud(cmap2); cmap2(1:3,:) = []; cmap2 = num2cell(cmap2,2);
+  figure, hold on, cellfun(@(x,y) plot(1/Fs:1/Fs:length(x)/Fs,x,'Color',y),y_mean,cmap2','Uni',0);
+  cellfun(@(x,y) plot(1/Fs:1/Fs:length(x)/Fs,x(:,1),'-k'),y_mean2,'Uni',0);
+  legend(cellfun(@(x) num2str(x),(num2cell(sections_label_num)),'Uni',0))
+  gx = get(gca,'XLim'); gy = get(gca,'YLim');
+  GX = gx(1)+(range(gx)/20); GY = gy(1)+(range(gy)/20);
+  if isnan(offset_voltage), text(GX,GY,'(offset voltage unknown)'), end
+  for k = 1:length(O.VoltOff)
+      scatter([bl(1)/Fs bl(end)/Fs (mloc_off-200)/Fs (mloc_off-100)/Fs],...
+          [O.Baseline_mV O.Baseline_mV O.VoltOff{k} O.VoltOff{k}],[],cmap,'filled');
+      for k2 = 1:length(spike_rloc{k}), scatter((spike_rloc{k}{k2}+mloc_on)/Fs,spike_height{k}{k2},[],'*g'), end
+  end
+  axis tight, set(gca,'Box','on'), xlabel('Time (s)'), ylabel('Membrane Potential (mV)'), title('Plot to show accuracy in getting event points')
 end
-axis tight, set(gca,'Box','on'), xlabel('Time (s)'), ylabel('Membrane Potential (mV)'), title('Plot to show accuracy in getting event points')
 
 % further analysis for any subsections that contained spikes
 for kys = 1:length(spike_height)
