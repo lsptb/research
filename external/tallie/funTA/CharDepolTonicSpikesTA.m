@@ -105,8 +105,8 @@ if ~all(cell2mat(cellfun(@isnan,AngLoc,'Uni',0)))
             [~,~,~,~,Ang_peak{k},~,Distrib_kurt{k},Peak_Density{k},DataE_st{k},DataE_en{k}] = HistFitTA2(25,0.5,AngLoc{k},PlotsYN);
         end
     end
-    if length(Ang_peak)>1, SpikeFieldCoh_RoseAll_TA(Ang_peak,DataE_st,DataE_en,rates,num_spikes), end
-    
+    if length(Ang_peak)>1 && strcmp('Y',PlotsYN), SpikeFieldCoh_RoseAll_TA(Ang_peak,DataE_st,DataE_en,rates,num_spikes), end
+     
     for k = 1:length(AngLoc)
     if ~isnan(AngLoc{k})
         for kso = 1:size(so{k},2)

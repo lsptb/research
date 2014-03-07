@@ -1,5 +1,6 @@
 function netmodeler(net)
 global cfg H CURRSPEC LASTSPEC
+if nargin<1, net=[]; end
 CURRSPEC = net;
 LASTSPEC = net;
 %cfg = [];
@@ -10,7 +11,13 @@ cfg.tlast=-inf;
 cfg.buffer = 20000;%10000;
 cfg.dt = .01;
 
-if ~isfield(net,'cells'), net.cells = net; end
+if ~isfield(net,'cells')
+  if isfield(net,'entities')
+    net.cells = net.entities;
+  else
+    net.cells = net;
+  end
+end
 if isfield(net.cells,'files'), net.files = net.cells(1).files; end
 if ~isfield(net.cells,'parent'), net.cells(1).parent=[]; end
 
@@ -32,25 +39,31 @@ elseif ischar(net.files) && exist(net.files,'dir')
   allmechlist = {selmechlist{:} allmechlist{:}}; % prepend user mechs
   selmechfiles = cellfun(@(x)fullfile(DBPATH,x),net.files,'unif',0);
   allmechfiles = {selmechfiles{:} allmechfiles{:}};
+elseif iscellstr(net.files)
+  % todo: get mechs from spec
+%   selmechlist = {d(cellfun(@(x)any(regexp(x,'.txt$')),{d.name})).name};
+%   allmechlist = {selmechlist{:} allmechlist{:}}; % prepend user mechs
+%   selmechfiles = cellfun(@(x)fullfile(DBPATH,x),net.files,'unif',0);
+%   allmechfiles = {selmechfiles{:} allmechfiles{:}};  
 end
 
 % only keep mech selection matching those included in the cell
-cellmechs={net.cells.mechanisms}; cellmechs=[cellmechs{:}];
-connmechs={net.connections.mechanisms}; 
-connmechs=connmechs(~cellfun(@isempty,connmechs));
-cellmechs={cellmechs{:} connmechs{:}};
-selmechlist = cellfun(@(x)strrep(x,'.txt',''),selmechlist,'unif',0);
-sel=cellfun(@(x)any(strmatch(x,cellmechs,'exact')),selmechlist);
-selmechlist = selmechlist(sel);
-selmechfiles = selmechfiles(sel);
-
+if isfield(net.cells,'mechanisms')
+  cellmechs={net.cells.mechanisms}; cellmechs=[cellmechs{:}];
+  connmechs={net.connections.mechanisms}; 
+  connmechs=connmechs(~cellfun(@isempty,connmechs));
+  cellmechs={cellmechs{:} connmechs{:}};
+  selmechlist = cellfun(@(x)strrep(x,'.txt',''),selmechlist,'unif',0);
+  sel=cellfun(@(x)any(strmatch(x,cellmechs,'exact')),selmechlist);
+  selmechlist = selmechlist(sel);
+  selmechfiles = selmechfiles(sel);
+  net.files = selmechfiles;
+  updatemodel(net); % prepare model
+end
 cfg.selmechlist = selmechlist;
 cfg.allmechlist = allmechlist;
 cfg.allmechfiles = allmechfiles;
 cfg.focuscolor = [.7 .7 .7];
-net.files = selmechfiles;
-updatemodel(net); % prepare model
-
 % load all mech data
 global allmechs
 for i=1:length(allmechfiles)
@@ -68,7 +81,21 @@ maxcomp = 5; c=1.5;
 %H = [];
 sz = get(0,'ScreenSize'); 
 H.f_net = figure('position',[.005*sz(3) .01*sz(4) .94*sz(3) .88*sz(4)],...%'position',[125 100 1400 800],...
-  'WindowScrollWheelFcn',@ZoomFunction,'CloseRequestFcn','delete(gcf);');
+  'WindowScrollWheelFcn',@ZoomFunction,'CloseRequestFcn','delete(gcf); clear global H');
+set(H.f_net,'MenuBar','none');
+file_m = uimenu(H.f_net,'Label','File');
+uimenu(file_m,'Label','Load sim_data','Callback',@Load_Data);
+uimenu(file_m,'Label','Load spec','Callback',@Load_Spec);
+uimenu(file_m,'Label','Save spec','Callback',@Save_Spec);
+uimenu(file_m,'Label','Grab spec','Callback','global CURRSPEC; assignin(''base'',''spec'',CURRSPEC);');
+uimenu(file_m,'Label','Update spec from base','Callback',{@refresh,1});%'if ismember(''spec'',evalin(''base'',''who'')), updatemodel(evalin(''base'',''spec'')); SelectCells; end');
+uimenu(file_m,'Label','Exit','Callback','global CURRSPEC H cfg; close(H.f_net); clear CURRSPEC H cfg;');
+plot_m = uimenu(H.f_net,'Label','Plot');
+condition='global CURRSPEC; if ismember(''sim_data'',evalin(''base'',''who'')), ';
+uimenu(plot_m,'Label','plotv','Callback',[condition 'plotv(evalin(''base'',''sim_data''),CURRSPEC); else disp(''load data to plot''); end']);
+uimenu(plot_m,'Label','plotpow','Callback',[condition 'plotpow(evalin(''base'',''sim_data''),CURRSPEC); else disp(''load data to plot''); end']);
+uimenu(plot_m,'Label','plotspk','Callback',[condition 'plotspk(evalin(''base'',''sim_data''),CURRSPEC,''window_size'',30/1000,''dW'',5/1000); else disp(''load data to plot''); end']);
+
 %jobj=findjobj(H.f_net); 
 %set(jobj,'MouseEnteredCallback','global H; figure(H.f_net)');
 % Panels
@@ -77,23 +104,93 @@ H.p_net_connect = uipanel('parent',H.f_net,'Position',[.02 .44 .35 .34/c],'Backg
 H.p_net_kernel = uipanel('parent',H.f_net,'Position',[.02 .01 .35 .42],'BackgroundColor','white','BorderWidth',.2,'BorderType','line','title','Cell connections'); % cell specification
 H.p_state_plot = uipanel('parent',H.f_net,'Position',[.4 .01 .59 .97],'BackgroundColor','white','BorderWidth',.2,'BorderType','line','title','plots'); % cell specification
 % basic controls (load cell model; undo; ...)
-H.btn_loadcell = uicontrol('parent',H.f_net,'units','normalized',...
-  'style','pushbutton','fontsize',10,'string','load','callback',[],...
-  'position',[.02+.5*.2-.01-.06-.03 .97 .05 .03]);%,'BackgroundColor','white');
+%H.btn_loadcell = uicontrol('parent',H.f_net,'units','normalized',...
+%  'style','pushbutton','fontsize',10,'string','load','callback',[],...
+%  'position',[.02+.5*.2-.01-.06-.03 .97 .05 .03]);%,'BackgroundColor','white');
 H.btn_undo = uicontrol('parent',H.f_net,'units','normalized','position',[.02+.5*.2+.05-.06 .97 .05 .03],'style','pushbutton','string','undo','fontsize',10,'callback',@undo);
 H.btn_print = uicontrol('parent',H.f_net,'units','normalized','position',[.02+.5*.2+.05 .97 .05 .03],'style','pushbutton','string','print','fontsize',10,'callback',@printmodel);
-H.btn_update = uicontrol('parent',H.f_net,'units','normalized','position',[.02+.5*.2+.05+.06 .97 .05 .03],'style','pushbutton','string','refresh','fontsize',10,'callback',@refresh);
+H.btn_update = uicontrol('parent',H.f_net,'units','normalized','position',[.02+.5*.2+.05+.06 .97 .05 .03],'style','pushbutton','string','refresh','fontsize',10,'callback',{@refresh,0});
 % Selection panel
 H.txt_lstlabel = uicontrol('parent',H.p_net_select,'units','normalized',...
   'style','text','position',[.02 .87 .25 .06],'string','Compartments','ListboxTop',0);%,'HorizontalAlignment','left','backgroundcolor','w');
-l={net.cells.label}; i=1:length(l);
+if isfield(net.cells,'label')
+  l={net.cells.label}; i=1:length(l);
+else
+  l={}; i=[];
+end
 H.lst_comps = uicontrol('parent',H.p_net_select,'units','normalized',...
   'style','listbox','position',[.02 .05 .25 .8],'value',i,'string',l,...
   'backgroundcolor','w','Max',maxcomp,'Min',0,'Callback',@SelectCells);
+
+if ~isfield(net.cells,'mechanisms'), return; end
+
 % Selection and Connection panels
 SelectCells;
 DrawAuxView;
 DrawSimPlots;
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+function Load_Data(src,evnt)
+[filename,pathname] = uigetfile({'*.mat'},'Pick a file.','MultiSelect','off');
+if isequal(filename,0) || isequal(pathname,0), return; end
+if iscell(filename)
+  datafile = cellfun(@(x)fullfile(pathname,x),filename,'uniformoutput',false);
+  filename = filename{1};
+else
+  datafile = [pathname filename];
+end
+if exist(datafile,'file')
+  fprintf('Loading data: %s\n',datafile);
+  o=load(datafile);
+  if isfield(o,'sim_data') && isfield(o,'spec')
+    assignin('base','sim_data',o.sim_data);
+    assignin('base','spec',o.spec);
+    global CURRSPEC
+    CURRSPEC = o.spec;
+    refresh(src,evnt);
+%     global H
+%     if isfield(H,'f_cell') && ishandle(H.f_cell), close(H.f_cell); end
+%     if isfield(H,'f_net') && ishandle(H.f_net), close(H.f_net); end
+%     netmodeler(o.spec);
+  else
+    fprintf('select file does not contain sim_data and spec. no data loaded\n');
+  end
+end
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+function Load_Spec(src,evnt)
+[filename,pathname] = uigetfile({'*.mat'},'Pick a file.','MultiSelect','off');
+if isequal(filename,0) || isequal(pathname,0), return; end
+if iscell(filename)
+  datafile = cellfun(@(x)fullfile(pathname,x),filename,'uniformoutput',false);
+  filename = filename{1};
+else
+  datafile = [pathname filename];
+end
+if exist(datafile,'file')
+  fprintf('Loading model specification: %s\n',datafile);
+  o=load(datafile);
+  if isfield(o,'spec')
+    global CURRSPEC
+    CURRSPEC = o.spec;
+    refresh(src,evnt);
+  else
+    fprintf('select file does not contain spec structure. no specification loaded\n');
+  end
+end
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+function Save_Spec(src,evnt)
+[filename,pathname] = uiputfile({'*.mat;'},'Save as','model_specification.mat');
+if isequal(filename,0) || isequal(pathname,0)
+  return;
+end
+outfile = fullfile(pathname,filename);
+[fpath,fname,fext] = fileparts(outfile);
+global CURRSPEC
+spec=CURRSPEC;
+fprintf('Saving model specification: %s\n',outfile);
+save(outfile,'spec');
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function SelectCells(src,evnt)
@@ -196,7 +293,7 @@ for i=1:length(sel)
     end
   end
 end
-if length(H.txt_to)>i
+if isfield(H,'txt_to') && length(H.txt_to)>i
   set(H.txt_to(i+1:end),'visible','off');
   set(H.txt_from(i+1:end),'visible','off');
   set(H.edit_conn_mechs(i+1:end,:),'visible','off');
@@ -684,10 +781,19 @@ global LASTSPEC
 updatemodel(LASTSPEC);
 SelectCells;
 
-function refresh(src,evnt)
-global CURRSPEC
-updatemodel(CURRSPEC);
+function refresh(src,evnt,where)
+if nargin<3 || where==0
+  global CURRSPEC
+  updatemodel(CURRSPEC);
+elseif where==1 % get spec from base workspace
+  if ismember('spec',evalin('base','who'))
+    updatemodel(evalin('base','spec'));
+  else
+    return;
+  end
+end
 SelectCells;
+DrawSimPlots; % ??? should this be here???
 
 function printmodel(src,evnt)
 global CURRSPEC

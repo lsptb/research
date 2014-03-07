@@ -2,13 +2,14 @@ function varargout = biosimdriver(spec,varargin)
 
 parms = mmil_args2parms( varargin, ...
                          {  'logfid',1,[],...
-                            'savefig_flag',0,[],...
+                            'savefig_flag',1,[],...
                             'savedata_flag',1,[],...
                             'reply_address','sherfey@bu.edu',[],...
                             'rootoutdir',[],[],...
                             'prefix','sim',[],... 
                             'verbose',1,[],...
                             'cluster_flag',0,[],...
+                            'plot_flag',1,[],...
                             'batchdir',pwd,[],...
                             'jobname','job.m',[],...
                          }, false);
@@ -17,6 +18,10 @@ savefig_flag = parms.savefig_flag;
 reply_address = parms.reply_address;  % FROM address on the emails that get generated. 
 rootoutdir = parms.rootoutdir;
 prefix = parms.prefix;
+formats={'-dpng','-depsc'}; exts={'.png','.eps'}; % ,'-djpeg' ,'.jpg'
+filenames={};
+
+%% prepare output directory
 
 % create rootoutdir
 if ~exist(rootoutdir,'dir'), mkdir(rootoutdir); end
@@ -29,34 +34,157 @@ end
 % save spec in unique specfile in specs dir
 specfile = fullfile(rootoutdir,'model',[prefix '_model-specification.mat']);
 save(specfile,'spec','parms');
+filenames{end+1}=specfile;
+
+%% simulate
 
 % run biosim
 args = mmil_parms2args(spec.simulation);
-[sim_data,spec,pms] = biosim(spec,args{:},'verbose',parms.verbose);
-parms.biosim = pms;
-%   spec.simulation.override
-%   spec.simulation.dt
-%   spec.simulation.SOLVER
-%   spec.simulation.timelimits
-%   spec.simulation.dsfact
+[sim_data,spec,parms.biosim] = biosim(spec,args{:},'verbose',parms.verbose);
 
-% save results with prefix
+% save simulated data with prefix
 if parms.savedata_flag
   datafile = fullfile(rootoutdir,'data',[prefix '_sim_data.mat']);
   save(datafile,'sim_data','spec','parms','-v7.3');
-  fprintf(logfid,'data saved to: %s\n',datafile);
+  fprintf(logfid,'Simulated data saved to: %s\n',datafile);
 end
 
-if parms.savefig_flag
-  % plot results
-  plotv(sim_data,spec); % V (per population) and spectrum of sum(V)
-  plotspk(sim_data,spec); % firing rate(t) and FRH
-  % other state vars
+%% analyze and plot simulated data
+
+% spectral analysis parameters
+NFFT=[]; 
+WINDOW=[]; 
+NOVERLAP=[];
+% spike rate parameters
+window_size = 30/1000;%50/1000;
+dW = 5/1000;
+% cell characterization protocol mechanisms
+SimMech='iStepProtocol';
+
+% create directory for saving analysis results
+if ~exist(fullfile(rootoutdir,'analysis'),'dir'), mkdir(fullfile(rootoutdir,'analysis')); end
+
+% -----------------------------------------------------
+% LFP 
+
+% get and plot results
+vars={};
+try
+  [h1,lfp,time]=plotv(sim_data,spec,'plot_flag',parms.plot_flag); % V (per population): image and (traces + mean(V))
+  vars={vars{:},'lfp','time'};
+catch err
+  h1=[];
+  disperror(err);
+end
+try
+  %NFFT=[]; WINDOW=[]; NOVERLAP=[];
+  [h2,pow,freq]=plotpow(sim_data,spec,'plot_flag',parms.plot_flag,...
+                        'NFFT',NFFT,'WINDOW',WINDOW,'NOVERLAP',NOVERLAP,'FreqRange',[10 80]); % LFP power and spectrogram
+  vars={vars{:},'pow','freq','NFFT','WINDOW','NOVERLAP'};
+catch err
+  h2=[];
+  disperror(err);
+end
+% save LFP data to lfp directory
+if ~isempty(vars)
+  if ~exist(fullfile(rootoutdir,'analysis','lfp'),'dir'), mkdir(fullfile(rootoutdir,'analysis','lfp')); end
+  vars{end+1}='spec';
+  outfile = fullfile(rootoutdir,'analysis','lfp',[prefix '_sim_data_LFPs.mat']);
+  save(outfile,vars{:},'-v7.3');
+  fprintf('LFP data saved to %s\n',outfile);
+  clear vars
+end 
+
+% -----------------------------------------------------
+% SPIKES 
+
+try
+  %window_size=30/1000; dW=5/1000;
+  [h3,rates,tmins,spiketimes,spikeinds]=plotspk(sim_data,spec,'plot_flag',parms.plot_flag,...
+                                  'window_size',window_size,'dW',dW); % firing rate(t) and FRH
+  if ~exist(fullfile(rootoutdir,'analysis','spikes'),'dir'), mkdir(fullfile(rootoutdir,'analysis','spikes')); end
+  % save spike data to spikes directory
+  outfile = fullfile(rootoutdir,'analysis','spikes',[prefix '_sim_data_spikes.mat']);
+  save(outfile,'rates','tmins','spiketimes','spikeinds','window_size','dW','spec','-v7.3');  
+  fprintf('Spike data saved to %s\n',outfile);
+catch err
+  h3=[];
+  disperror(err);
+end
+figs = [h1 h2 h3];
+
+% -----------------------------------------------------
+% save figures
+if parms.plot_flag && parms.savefig_flag
   % save plots
-  % if ~exist(fullfile(rootoutdir,'images'),'dir'), mkdir(fullfile(rootoutdir,'images')); end
-  % if ~exist(fullfile(rootoutdir,'images','rawv'),'dir'), mkdir(fullfile(rootoutdir,'images','rawv')); end
-  % if ~exist(fullfile(rootoutdir,'images','vars'),'dir'), mkdir(fullfile(rootoutdir,'images','vars')); end
-  % if ~exist(fullfile(rootoutdir,'images','rates'),'dir'), mkdir(fullfile(rootoutdir,'images','spikes')); end
+  if ~exist(fullfile(rootoutdir,'images'),'dir'), mkdir(fullfile(rootoutdir,'images')); end
+  if ~isempty(h1)
+    if ~exist(fullfile(rootoutdir,'images','rawv'),'dir'), mkdir(fullfile(rootoutdir,'images','rawv')); end
+    filenames{end+1} = fullfile(rootoutdir,'images','rawv',[prefix '_rawv']);
+    fprintf('saving plots - voltage traces: %s\n',filenames{end});
+    for i=1:length(exts), try print(h1,formats{i},[filenames{end} exts{i}]); end; end %print(h1,[filename '.jpg'],'-djpeg'); %print(h1,[filename '.png'],'-dpng'); %print(h1,[filename '.eps'],'-depsc');
+  end
+  if ~isempty(h2)
+    if ~exist(fullfile(rootoutdir,'images','power'),'dir'), mkdir(fullfile(rootoutdir,'images','power')); end
+    filenames{end+1} = fullfile(rootoutdir,'images','power',[prefix '_power']);
+    fprintf('saving plots - field power: %s\n',filenames{end});
+    for i=1:length(exts), try print(h2,formats{i},[filenames{end} exts{i}]); end; end
+  end
+  if ~isempty(h3)
+    if ~exist(fullfile(rootoutdir,'images','spikes'),'dir'), mkdir(fullfile(rootoutdir,'images','spikes')); end
+    filenames{end+1} = fullfile(rootoutdir,'images','spikes',[prefix '_rates']);
+    fprintf('saving plots - spike rates: %s\n',filenames{end});
+    for i=1:length(exts), try print(h3,formats{i},[filenames{end} exts{i}]); end; end
+  end
+end
+
+% -----------------------------------------------------
+% plot state vars
+% statevars = {sim_data.sensor_info.label};
+% - remove cell label prefixes from statevars
+% [h1,lfp,time]=plotv(sim_data,spec,'plot_flag',parms.plot_flag,'var',var);
+% todo: 
+%   - modify plotv() to use var labels instead of indices
+%   - loop over state vars; call plotv() once per var
+%   - in plotv(): skip subplot row if var label not present in pop
+
+% -----------------------------------------------------
+% characterize cells if appropriate (if contains iStepProtcol)
+if parms.savedata_flag && ismember(SimMech,spec.entities(1).mechanisms)
+  try
+    inputs={};
+    for i=1:length(sim_data)
+      inputs{i}.sim_data=sim_data(i);
+      inputs{i}.spec=spec;
+      inputs{i}.spec.entities = spec.entities(i);    
+      inputs{i}.rootoutdir=fullfile(rootoutdir,'analysis');
+      inputs{i}.prefix=prefix;
+    end
+    [results,cellids,allparms,setfiles] = getcharacteristics(inputs,'sim');
+    %results = getcharacteristics(datafile,'sim');
+    clear inputs
+    if parms.plot_flag
+      h=plotcharacteristics(results,spec);
+      if parms.savefig_flag
+        % save plots: hyperpol & depol overlays, tonic depol plots
+        if ~exist(fullfile(rootoutdir,'images','cell_characteristics'),'dir'), mkdir(fullfile(rootoutdir,'images','cell_characteristics')); end
+        for i=1:length(h)
+          filenames{end+1} = fullfile(rootoutdir,'images','cell_characteristics',[prefix '_cell_characteristics_' spec.entities(i).label]);
+          fprintf('saving plots - cell characteristics (%s): %s\n',filenames{end},spec.entities(i).label);
+          for j=1:length(exts), try print(h(i),formats{j},[filenames{end} exts{j}]); end; end
+        end
+      end
+      figs = [figs h];
+    end
+  catch err
+    disperror(err);
+  end
+end
+
+%% cleanup
+
+if parms.plot_flag && parms.savefig_flag && ~parms.cluster_flag
+  close(figs);
 end
 
 % save cluster log
@@ -74,6 +202,13 @@ if parms.cluster_flag
   [s,m] = system(cmd);
   if s, fprintf(logfid,'%s',m); end
 end
+
+function disperror(err)
+  fprintf('Error: %s\n',err.message);
+  for i=1:length(err.stack)
+    fprintf('\t in %s (line %g)\n',err.stack(i).name,err.stack(i).line);
+  end
+  %rethrow(err);
 
 %% Old driver script
 % 

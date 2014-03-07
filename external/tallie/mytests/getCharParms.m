@@ -24,7 +24,9 @@ switch type
       error('parm source for simulated data must be the model specification structure.');
     end
   case 'exp' % extract parameters from excel spreadsheet
-    if ischar(source) && exist(source,'file')
+    if isstruct(source)
+      parms = chooseparms(source);
+    elseif ischar(source) && exist(source,'file')
       parms = parsexls(source,cfg);
     else
       error('parm source for experimental data must be an excel filename');
@@ -32,6 +34,50 @@ switch type
   otherwise
     error('unknown source type; must be ''sim'' or ''exp''.');
 end
+
+function parms = chooseparms(p)
+
+if iscellstr(p.sections_label)
+  p.sections_label = cellfun(@str2num,p.sections_label,'uni',0);
+  p.sections_label = [p.sections_label{:}];
+end
+if isnan(p.step_length)
+  p.step_length = .4;
+end
+
+parms.CharHyperpolStepTA.offset_voltage = p.offset_potential;
+parms.CharHyperpolStepTA.tonic_injected_current = p.tonic_injected_current;
+parms.CharHyperpolStepTA.sections_label_num = p.sections_label;
+parms.CharHyperpolStepTA.sections_start_sec = p.sections_start_sec;
+parms.CharHyperpolStepTA.sections_length_sec = p.sections_length_sec;
+parms.CharHyperpolStepTA.baseline_start_sec = p.baseline_start_sec;
+parms.CharHyperpolStepTA.baseline_length_sec = p.baseline_length_sec;
+%O = CharHyperpolStepTA(x,y,offset_voltage,tonic_injected_current,sections_label_num,...
+%sections_start_sec,sections_length_sec,baseline_start_sec,baseline_length_sec)
+
+parms.CharDepolStepTA.offset_voltage = p.offset_potential;
+parms.CharDepolStepTA.tonic_injected_current = p.tonic_injected_current;
+parms.CharDepolStepTA.sections_label_num = p.sections_label;
+parms.CharDepolStepTA.sections_start_sec = p.sections_start_sec;
+parms.CharDepolStepTA.sections_length_sec = p.sections_length_sec;
+parms.CharDepolStepTA.baseline_start_sec = p.baseline_start_sec;
+parms.CharDepolStepTA.baseline_length_sec = p.baseline_length_sec;
+parms.CharDepolStepTA.step_length = p.step_length;
+%O = CharDepolStepTA(x,y,offset_voltage,tonic_injected_current,sections_label_num,...
+%sections_start_sec,sections_length_sec,baseline_start_sec,baseline_length_sec)
+%fh = @(x,yF,yIC,a,b,c,d) CharDepolTonicSpikesTA(x,yF,yIC,[],[],a,b,c,d)
+
+parms.CharDepolTonicSpikesTA.bpFiltParms = [];
+parms.CharDepolTonicSpikesTA.Notch = []; % [48 52]
+parms.CharDepolTonicSpikesTA.PlotsYN = 'N';
+parms.CharDepolTonicSpikesTA.offset_voltage = p.offset_potential;
+parms.CharDepolTonicSpikesTA.tonic_injected_current = p.tonic_injected_current;
+parms.CharDepolTonicSpikesTA.sections_label_num = p.sections_label;
+parms.CharDepolTonicSpikesTA.sections_start_sec = p.sections_start_sec;
+parms.CharDepolTonicSpikesTA.sections_length_sec = p.sections_length_sec;
+%O = CharDepolTonicSpikesTA(x,yF,yIC,bpFiltParms,Notch,offset_voltage,...
+%tonic_injected_current,sections_label_num,sections_start_sec,sections_length_sec)
+%fh = @(x,yF,yIC,a,b,c,d,e) CharDepolTonicSpikesTA(x,yF,yIC,[],[],a,b,c,d,e);
 
 function parms = parsespec(spec,cfg)
 s = spec.(cfg.cellfld)(cfg.cellind);

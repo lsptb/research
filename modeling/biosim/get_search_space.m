@@ -118,7 +118,7 @@ for s = 1:length(spec.simulation.scope)
       var_elems = varlist{j};
       % for each iter k of nval 
       for k = 1:length(vallist)
-        val = vallist{k}{1}; % values are singular
+        val = vallist{k};
         temp = base;
         str1 = ''; str2 = '';
         temp.simulation.scope = {};
@@ -136,6 +136,9 @@ for s = 1:length(spec.simulation.scope)
             velem = var_elems{jj};
             fld = velem{1}; svar = fld;
             key = velem{2}; if ischar(key), svar = key; end
+            if ~strcmp(fld,'mechanisms')
+              val = val{1}; % values are singular if not mech list
+            end
             if jj==1, str2=svar; else str2=sprintf('%s-%s',str2,svar); end
 %             % todo: ADD HANDLING FOR INTERACTION WHEN >1 (scope,var,val)-spec
 %             if last_scope==scope && last_var==var
@@ -144,7 +147,12 @@ for s = 1:length(spec.simulation.scope)
             temp.simulation.values{end+1} = val;
             if isempty(key)
               temp.simulation.variable{end+1} = fld;
-              temp.(obj)(ind).(fld) = val;
+              if strcmp(fld,'mechanisms')
+                if ischar(val), mechval={val}; else mechval=val; end
+                temp.(obj)(ind).(fld) = {base.(obj)(ind).(fld){:} mechval{:}};
+              else
+                temp.(obj)(ind).(fld) = val;
+              end
             else
               keyind = find(cellfun(@(x)isequal(key,x),temp.(obj)(ind).(fld)));
               temp.simulation.variable{end+1} = key; %[fld '.' key];
@@ -405,6 +413,10 @@ function list = parse_spec(type,str,spec)
         case 'braced-strings'         % ex. list of mechanisms to permute
           elems = regexp(str,'[\w\.]+','match');
           inds = permutesets(length(elems));
+          tmp=cellfun(@(x)unique(inds(x,:)),num2cell(1:size(inds,1)),'uni',0);
+          tmp=cellfun(@num2str,tmp,'uni',0);
+          [tmp,I,J] = unique(tmp);
+          inds = inds(I,:);
           for l = 1:size(inds,1)
             ind = unique(inds(l,:));
             tmp = elems(ind);
@@ -504,7 +516,8 @@ end
 % sets = cellfun(@unique, sets, 'UniformOutput',false);
 
 function result = permutesets(n)
-  res = cartesianProduct({1:n,1:n});
+  %res = cartesianProduct({1:n,1:n});
+  res = cartesianProduct(repmat({1:n},[1 n]));
   res = sort(res,2);
   str = cellfun(@(k)num2str(res(k,:)),num2cell(1:size(res,1)),'uniformoutput',false);
   [str,I,J] = unique(str);

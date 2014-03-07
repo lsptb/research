@@ -59,8 +59,9 @@ for k=1:length(uniqscopes)
   dirinds(inds) = k;
 end
 rootoutdir={}; prefix={};
+timestamp = datestr(now,'yyyymmdd-HHMMSS');
 for i=1:length(allspecs)
-  rootoutdir{i} = fullfile(spec.simulation.rootdir,datestr(now,'yyyymmdd-HHMMSS'),outdirs{dirinds(i)});
+  rootoutdir{i} = fullfile(spec.simulation.rootdir,timestamp,outdirs{dirinds(i)});
   tmp=regexp(allspecs{i}.simulation.description,'[^\d_].*','match');
   prefix{i}=strrep([tmp{:}],',','_');
   fprintf(logfid,'%s: %s\n',rootoutdir{i},prefix{i});
@@ -76,7 +77,7 @@ cwd = pwd;
 if spec.simulation.sim_cluster_flag % run on cluster
   % create batchdir
   if isempty(spec.simulation.batchdir)
-    batchname = ['B' datestr(now,'yyyymmdd-HHMMSS')];
+    batchname = ['B' timestamp];
     batchdir = sprintf('%s/batchdirs/%s',home,batchname);
     spec.simulation.batchdir=batchdir;
   else

@@ -162,16 +162,25 @@ for k = 1:length(y_mean)
     O.Ih_FallOffTrace(1:length(Ih_FallOffTrace{k}),k) = Ih_FallOffTrace{k};
 end
 O.Ih_FallOffTrace(O.Ih_FallOffTrace==0) = NaN;
-FOsg = sgolayfilt(O.Ih_FallOffTrace,1,201);
-for k = 1:size(FOsg,2)
-    mi = nanmax(FOsg(:,k));
-    ma = nanmin(FOsg(:,k));
-    mh = mi+((ma-mi)/3);
-    mctemp = crossing(FOsg(:,k),1:length(FOsg(:,k)),mh);
-    O.IhDecayToThird_ms(k) = mctemp(1)/Fs*1000;
+try
+  FOsg = sgolayfilt(O.Ih_FallOffTrace,1,201);
+catch
+  FOsg = smooth(O.Ih_FallOffTrace);
 end
-O.DecayToThirdlast = O.IhDecayToThird_ms(end);
-
+try
+  for k = 1:size(FOsg,2)
+      mi = nanmax(FOsg(:,k));
+      ma = nanmin(FOsg(:,k));
+      mh = mi+((ma-mi)/3);
+      mctemp = crossing(FOsg(:,k),1:length(FOsg(:,k)),mh);
+      if ~isempty(mctemp)
+        O.IhDecayToThird_ms(k) = mctemp(1)/Fs*1000;
+      end
+  end
+  O.DecayToThirdlast = O.IhDecayToThird_ms(end);
+catch
+  O.DecayToThirdlast = [];
+end
 O.Ih_End_mV = cell2num(O.Ih_End_mV);
 O.Ih_Peak_mV = cell2num(O.Ih_Peak_mV);
 O.Ih_Peak2_mV = cell2num(O.Ih_Peak2_mV);

@@ -16,10 +16,10 @@ cellmodeler(cell); % rt_biosim(cell); data=biosim(cell); biosim_plots(data);
 clear all
 cell = [];
 cell.label = 'E';        % --> cell name
-cell.multiplicity = 1;   % --> number of cells
+cell.multiplicity = 5;   % --> number of cells
 cell.mechanisms = {'iStepProtocol' 'ileak','iK','iNa','noise'}; % predefined: get_mechlist
-cell.parameters = {'E_l',-54.4,'g_l',.3,'Cm',1,'ENa',50,'gNa',120,'EKf',-77,'V_noise',0,...
-  'isi',1000,'nsteps',3,'steptime',400,'nsections',3,'membranearea',2000,'tonictime',6000,'dt',.01};
+cell.parameters = {'E_l',-54.4,'g_l',.3,'Cm',1,'ENa',50,'gNa',120,'EKf',-77,'V_noise',2,...
+  'isi',1000,'nsteps',3,'steptime',400,'nsections',3,'membranearea',2500,'tonictime',6000,'dt',.01};
 cell.dynamics = 'V''=(current)'; % note: set timelimits=[0 25000]
 %cellmodeler(cell);
 % 
@@ -38,6 +38,21 @@ netmodeler(cells);
 % figure; V=X(:,1);
 % subplot(2,1,1); plot(V); xl=xlim; 
 % subplot(2,1,2); plot(E_iStepProtocol_I); xlim(xl);
+
+%% Cell spiking
+clear all
+cell = [];
+cell.label = 'E';        % --> cell name
+cell.multiplicity = 5;   % --> number of cells
+cell.mechanisms = {'itonic' 'ileak','iK','iNa','noise'}; % predefined: get_mechlist
+cell.parameters = {'E_l',-54.4,'g_l',.3,'Cm',1,'ENa',50,'gNa',120,'EKf',-77,'V_noise',2,...
+  'stim',25,'dt',.01};
+cell.dynamics = 'V''=(current)'; % note: set timelimits=[0 25000]
+cells.cells=cell;
+cells.connections.mechanisms=[];
+cells.connections.parameters=[];
+cells.connections.label = [];
+netmodeler(cells);
 
 %% Cell Modeler (2-compartments): driver to define initial cell model and launch the cell modeler
 cd('C:\Users\jsherfey\Desktop\My World\Code\research\modeling\biosim\gui');

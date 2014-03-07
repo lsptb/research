@@ -21,11 +21,12 @@ if strcmp('Normalized',NormAbs)
 end
 PeakPower = max(Pxx(FR));
 [mn,n] = max(Pxx(FR));
-FRup = FR(1)+n + 2*(Bins/Fs);
+FRup = ceil(FR(1)+n + 2*(Bins/Fs));
 if FR(1)+n > 4*(Bins/Fs)
     FRdown = FR(1)+n - 2*(Bins/Fs);
 else FRdown = FR(1)+n;
 end
+FRdown=floor(FRdown);
 [~,n2] = findpeaks(Pxx(FRdown:FRup),'MinPeakHeight',mn*0.85);
 if ~isempty(n2), n = round(nanmean(n2)); end
 OscFreq = round(f(FR(1)-1+n));
