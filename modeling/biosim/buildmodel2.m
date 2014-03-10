@@ -1,4 +1,4 @@
-function [model,IC,functions,auxvars,sys,Sodes,Svars] = buildmodel2(spec,varargin)
+function [model,IC,functions,auxvars,sys,Sodes,Svars,txt] = buildmodel2(spec,varargin)
 % get input structure into the right form
 
 if ~isfield(spec,'connections')
@@ -30,9 +30,6 @@ if isfield(spec,'connections') && any(size(spec.connections)<length(spec.entitie
   spec.connections(n,n).mechanisms=[];
   spec.connections(n,n).parameters=[];
 end
-if isfield(spec,'files')
-  spec.files = unique(spec.files);
-end
 parms = mmil_args2parms( varargin, ...
                          {  ...
                             'logfid',1,[],...
@@ -41,6 +38,7 @@ parms = mmil_args2parms( varargin, ...
                             'nofunctions',1,[],...
                             'verbose',1,[],...
                             'timelimits',[],[],...
+                            'DBPATH',[],[],...
                          }, false);
 % note: override = {label,field,value,[arg]; ...}
 fileID = parms.logfid;
@@ -48,6 +46,20 @@ fileID = parms.logfid;
 if ischar(spec)
   spec=loadspec(spec);
 end
+if isfield(spec,'files')
+  spec.files = unique(spec.files);
+else
+  if isempty(parms.DBPATH)
+    parms.DBPATH = '/space/mdeh3/9/halgdev/projects/jsherfey/code/modeler/database';
+  end
+  if ~exist(parms.DBPATH,'dir')
+    parms.DBPATH = 'C:\Users\jsherfey\Desktop\My World\Code\modelers\database';
+  end
+  [allmechlist,allmechfiles]=get_mechlist(parms.DBPATH);
+  % use stored mechs if user did not provide list of mech files
+  spec.files = allmechfiles;
+end
+
 Elabels = {spec.entities.label}; % Entity labels
 Clabels = {spec.connections.label};
 
@@ -274,7 +286,7 @@ for i=1:N
     M=E.mechs(m);
     Minputs{mcnt}=E.inputs{m};
     Mlabels{mcnt}=E.mechanisms{m};
-    if Minputs{mcnt}~=i
+    if Minputs{mcnt}~=i || mechtype{i}(m)==0
       prefix = [EL{Minputs{mcnt}} '_' EL{i} '_' Mlabels{mcnt}];
     else
       prefix = [EL{i} '_' Mlabels{mcnt}];
@@ -766,7 +778,103 @@ if parms.verbose
   if nvar>=1,fprintf(fileID,'); end\n'); end
   fprintf(fileID,'%%-----------------------------------------------------------\n\n');
 end
-  
+txt={};
+if nargout>7
+  % Print model info
+  sgind=find(Stype==0);
+  txt{end+1}=sprintf('\nModel Description\n----------------------------------\n\n');
+  txt{end+1}=sprintf('Specification files:\n');
+  for f = 1:length(spec.files)
+    txt{end+1}=sprintf('%s\n',spec.files{f});
+  end
+  txt{end+1}=sprintf('\nPopulations:');
+  for i = 1:N
+    txt{end+1}=sprintf('\n%-6.6s (n=%g):\n',EL{i},NE(i));
+    ind=find(Spop==i & Stype==0);
+    for j=1:length(ind)
+      txt{end+1}=sprintf('\tdynamics: %s'' = %s\n',Svars{ind(j),1},Sodes0{ind(j)});
+    end
+    M=spec.entities(i).mechanisms;
+    P=spec.entities(i).parameters;
+    if ~isempty(M)
+      txt{end+1}=sprintf('\tmechanisms: %s',M{1});
+      for j = 2:length(M)
+        txt{end+1}=sprintf(', %s',M{j});
+      end
+    end
+    if length(P)>=2
+      txt{end+1}=sprintf('\n\tparameters: %s=%g',P{1},P{2});
+      for j = 2:length(P)/2
+        txt{end+1}=sprintf(', %s=%g',P{2*j-1},P{2*j});
+      end
+    end
+  end
+  txt{end+1}=sprintf('\n\nConnections:\n');
+  txt{end+1}=sprintf('%-10.6s\t',' '); 
+  for i = 1:N, txt{end+1}=sprintf('%-10.6s\t',EL{i}); end; txt{end+1}=sprintf('\n');
+  for i = 1:N
+    txt{end+1}=sprintf('%-10.6s\t',EL{i});
+    for j = 1:N
+      if isempty(spec.connections(i,j).mechanisms)
+        txt{end+1}=sprintf('%-10.6s\t','-');
+      else
+        try
+          txt{end+1}=sprintf('%-10.10s\t',[spec.connections(i,j).mechanisms{:}]);
+        catch
+          txt{end+1}=sprintf('%-10.10s\t',spec.connections(i,j).mechanisms);
+        end
+      end
+    end
+    txt{end+1}=sprintf('\n');
+  end
+  txt{end+1}=sprintf('\nConnection parameters:');
+  CL={spec.connections.label};
+  CP={spec.connections.parameters};
+  for i = 1:length(CL)
+    if isempty(CP{i}), continue; end
+    txt{end+1}=sprintf('\n%s: ',strrep(CL{i},'-','->'));
+    if length(CP{i})>=2
+      txt{end+1}=sprintf('\n\tparameters: %s=%g',CP{i}{1},CP{i}{2});
+      for j = 2:length(CP{i})/2
+        txt{end+1}=sprintf(', %s=%g',CP{i}{2*j-1},CP{i}{2*j});
+      end
+    end
+  end
+  txt{end+1}=sprintf('\n\nModel Equations:\n----------------\n');
+  txt{end+1}=sprintf('ODEs:\n');
+  for i = 1:nvar
+    txt{end+1}=sprintf('\t%-20s = %s\n',[Svars{i,2} ''''],Sodes{i});
+  end
+  txt{end+1}=sprintf('\nInitial Conditions:\n');
+  for i = 1:nvar
+    for j=1:length(Svars{i,4})
+      if j==1
+        txt{end+1}=sprintf('\t%-20s=[',[Svars{i,2} '(0)']);
+      end
+      txt{end+1}=sprintf('%.4g, ',Svars{i,4}(j));
+    end
+    txt{end+1}=sprintf(']\n');
+  end
+  txt{end+1}=sprintf('\n');
+  txt{end+1}=sprintf('\nMatlab-formatted (copy and paste to repeat simulation):\n%%-----------------------------------------------------------\n');
+  txt{end+1}=sprintf('%% Auxiliary variables:\n');
+  for i = 1:size(Cexpr,1)
+    txt{end+1}=sprintf('\t%-20s = %s;\n',Cexpr{i,2},Cexpr{i,3});
+  end
+  txt{end+1}=sprintf('\n%% Anonymous functions:\n');
+  for i = 1:size(Hfunc,1)
+    %txt{end+1}=sprintf('\t%-20s = %-40s\t%% (%-9s)\n',Hfunc{i,2},[Hfunc{i,3} ';'],functions{i,3});
+    txt{end+1}=sprintf('\t%-20s = %-40s\n',Hfunc{i,2},[Hfunc{i,3} ';']);
+  end
+  txt{end+1}=sprintf('\n%% ODE Handle, ICs, integration, and plotting:\nF = %s\n',model);
+  txt{end+1}=sprintf('IC = [%s];\n',num2str(IC'));
+  txt{end+1}=sprintf('\n[t,y]=ode23(F,[0 100],IC);   %% numerical integration\nfigure; plot(t,y);           %% plot all variables/functions\n');
+  if nvar>=1,txt{end+1}=sprintf('try legend(''%s''',strrep(Svars{1,2},'_','\_')); end
+  if nvar>=2,for k=2:nvar,txt{end+1}=sprintf(',''%s''',strrep(Svars{k,2},'_','\_')); end; end
+  if nvar>=1,txt{end+1}=sprintf('); end\n'); end
+  txt{end+1}=sprintf('%%-----------------------------------------------------------\n\n');
+end  
+
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % PARAMETERS
 % default mech params | same pop & mech
