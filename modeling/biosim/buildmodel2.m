@@ -166,11 +166,22 @@ for i=1:N % loop over entities
   % load mechanism models from text files
   for j=1:M
     ML=mechs{j};    
+    % check for existing intrinsic mechanism
     if issubfield(sys.entities(i),'mechs.label')
       if ismember(ML,{sys.entities(i).mechs.label}) && length(sys.entities(i).mechs)>=j
         continue; % mechanism model already provided by user
       end
     end
+    % check for existing connection mechanism
+    tmpc=sys.connections(mechsrc{i}(j),i);
+    if issubfield(tmpc,'mechs.label') %any(arrayfun(@(x)issubfield(x,'mechs.label'),sys.connections(:,i))) %issubfield(sys.connections(i),'mechs.label')
+      if any(cellfun(@(x)isequal(ML,x),{tmpc.mechs.label}))
+        idx = find(cellfun(@(x)isequal(ML,x),{tmpc.mechs.label}));
+        sys.entities(i).mechs(j) = tmpc.mechs(idx(1));
+        continue;
+      end
+    end
+    % load mechanism from file
     idx = regexp(spec.files,sprintf('(^%s|/%s|\\\\%s).txt',ML,ML,ML));
     idx = find(~cellfun(@isempty,idx));
     if length(idx) ~= 1
@@ -616,6 +627,12 @@ auxvars=Cexpr(:,[2 3 1]);
 % 	spec.entities(i).orig_var_list=cat(1,Svars{Spop==i,1})
 % 	also update: odes, ode_labels
 sys.variables.entity=[];
+sys.connections=[];
+sys.connections.label = [];
+sys.connections.mechanisms=[];
+sys.connections.parameters=[];
+sys.connections.mechs=[];
+sys.connections(1:N,1:N)=sys.connections;
 for i=1:N
   for j=1:length(sys.entities(i).mechs)
     p=sys.entities(i).parameters{j};
@@ -654,6 +671,7 @@ for i=1:N
     for j=1:length(connis)
       ii=mechsrc{i}(connis(j));
       jj=mechdst{i}(connis(j));
+      sys.connections(ii,jj).label=[EL{ii} '-' EL{jj}];
       sys.connections(ii,jj).parameters = sys.entities(i).connection_parameters{j};
       if isempty(sys.connections(ii,jj).parameters) % pull default params from mech structure
         p = sys.entities(i).connection_mechs(j).params;
@@ -664,8 +682,10 @@ for i=1:N
       end
       if ~isfield(sys.connections,'mechs') || isempty(sys.connections(ii,jj).mechs)
         sys.connections(ii,jj).mechs = sys.entities(i).connection_mechs(j);
+        sys.connections(ii,jj).mechanisms=sys.entities(i).mechanisms(connis(j));
       else
         sys.connections(ii,jj).mechs(end+1) = sys.entities(i).connection_mechs(j);
+        sys.connections(ii,jj).mechanisms{end+1}=sys.entities(i).mechanisms{connis(j)};
       end
     end
   end
@@ -873,6 +893,7 @@ if nargout>7
   if nvar>=2,for k=2:nvar,txt{end+1}=sprintf(',''%s''',strrep(Svars{k,2},'_','\_')); end; end
   if nvar>=1,txt{end+1}=sprintf('); end\n'); end
   txt{end+1}=sprintf('%%-----------------------------------------------------------\n\n');
+  txt=[txt{:}];
 end  
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
