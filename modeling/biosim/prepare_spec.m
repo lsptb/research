@@ -3,16 +3,17 @@
 % uncomment this line and remove the net-def when finished
 % if nargin<1, net=[]; end
 if nargin<1
-  cell = [];
-  cell.label = 'E';        % --> cell name
-  cell.multiplicity = 5;   % --> number of cells
-  cell.mechanisms = {'itonic' 'ileak','iK','iNa','noise'}; % predefined: get_mechlist
-  cell.parameters = {'E_l',-54.4,'g_l',.3,'Cm',1,'ENa',50,'gNa',120,'EKf',-77};
-  cell.dynamics = 'V''=(current)'; % note: set timelimits=[0 25000]
-  net.cells=cell;
-  net.connections.mechanisms='iSYN';
-  net.connections.parameters=[];
-  net.connections.label = 'E-E';
+  net=[];
+%   cell = [];
+%   cell.label = 'E';        % --> cell name
+%   cell.multiplicity = 5;   % --> number of cells
+%   cell.mechanisms = {'itonic' 'ileak','iK','iNa','noise'}; % predefined: get_mechlist
+%   cell.parameters = {'E_l',-54.4,'g_l',.3,'Cm',1,'ENa',50,'gNa',120,'EKf',-77};
+%   cell.dynamics = 'V''=(current)'; % note: set timelimits=[0 25000]
+%   net.cells=cell;
+%   net.connections.mechanisms='iSYN';
+%   net.connections.parameters=[];
+%   net.connections.label = 'E-E';
 else
   net = varargin{1};
 end
@@ -31,7 +32,7 @@ if ~isfield(net.cells,'label')
     net.cells(i).label=[];
   end
 end
-if ~isfield(net.cells,'parent')
+if ~isfield(net.cells,'parent') && isfield(net.cells,'label')
   for i=1:length(net.cells)
     net.cells(i).parent=net.cells(i).label;
   end
@@ -86,7 +87,6 @@ for i=1:length(allmechfiles)
   end
 end
 % initialize config
-cfg.focuscell = net.cells(1).parent;
 cfg.focuscomp = 1; % index to component-of-focus in spec.cells (start w/ root)
 cfg.focusmech = 1;
 cfg.focusconn = 1;
@@ -95,6 +95,7 @@ cfg.focus=cfg.focusmech;
 cfg.focuscolor = [.7 .7 .7];
 cfg.pauseflag = -1;
 cfg.quitflag = -1;
+cfg.changeflag = -1;
 cfg.tlast=-inf; 
 cfg.buffer = 20000;%10000;
 cfg.dt = .01;

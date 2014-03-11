@@ -13,4 +13,6 @@ addpath(sprintf('%s/research/analysis/mmil/matlab/eeglab_functions',r));
 addpath(sprintf('%s/research/external/tallie',r));
 addpath(sprintf('%s/research/external/tallie/funTA',r));
 addpath(sprintf('%s/research/external/grant',r));
+addpath(sprintf('%s/research/external/jsonlab',r));
+
 %addpath /usr3/graduate/sherfey/research/analysis/mmil/matlab/mmil_util % eg. mmil_args2parms()

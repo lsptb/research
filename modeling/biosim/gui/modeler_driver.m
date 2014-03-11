@@ -1,3 +1,16 @@
+%% Cell spiking in modeler()
+cell = [];
+cell.label = 'E';        % --> cell name
+cell.multiplicity = 2;   % --> number of cells
+cell.mechanisms = {'itonic' 'ileak','iK','iNa','noise'};
+cell.parameters = {'Cm',1};
+cell.dynamics = 'V''=(current)/Cm';
+net.cells=cell;
+net.connections.label = 'E-E';
+net.connections.mechanisms='iSYN';
+net.connections.parameters=[];
+modeler(net);
+
 %% Cell Modeler (1-compartment): driver to define initial cell model and launch the cell modeler
 %addpath /space/mdeh3/9/halgdev/projects/jsherfey/code/modeler;
 addpath('C:\Users\jsherfey\Desktop\My World\Code\modelers');

@@ -1,5 +1,6 @@
-# INa: HH sodium current
-gNa=50; ENa=50
+% INa: HH sodium current
+gNa=120; % mS/cm^2
+ENa=50; % mV
 aM(V) = (2.5-.1*(V+65))./(exp(2.5-.1*(V+65))-1)
 bM(V) = 4*exp(-(V+65)/18)
 aH(V) = .07*exp(-(V+65)/20)

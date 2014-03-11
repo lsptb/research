@@ -4,7 +4,7 @@ global cfg H CURRSPEC LASTSPEC %currspec lastspec
 prepare_spec;
 updatemodel(CURRSPEC);
 
-%% initialize GUI
+%% set up GUI
 
 % main figure
 sz = get(0,'ScreenSize'); 
@@ -18,14 +18,15 @@ fig = figure('position',[.005*sz(3) .07*sz(4) .938*sz(3) .83*sz(4)],'color','w',
   bmech=uicontrol('parent',fig,'style','pushbutton','tag','tab','units','normalized','position',[.1 .85 .1 .04],'string','mech','backgroundcolor',[1 1 1],'callback','set(findobj(''tag'',''ptoggle''),''visible'',''off''); set(findobj(''tag'',''tab''),''backgroundcolor'',[1 1 1]); set(findobj(''userdata'',''pmech''),''visible'',''on''); set(gcbo,''backgroundcolor'',[.7 .7 .7]);');
   bview=uicontrol('parent',fig,'style','pushbutton','tag','tab','units','normalized','position',[.3 .85 .1 .04],'string','model','backgroundcolor',[1 1 1],'callback','set(findobj(''tag'',''ptoggle''),''visible'',''off''); set(findobj(''tag'',''tab''),''backgroundcolor'',[1 1 1]); set(findobj(''userdata'',''pview''),''visible'',''on''); set(gcbo,''backgroundcolor'',[.7 .7 .7]);');
 % model controls:
-  bsave=uicontrol('parent',fig,'style','pushbutton','units','normalized','position',[.0+0 .98 .05 .025],'string','save','backgroundcolor',[.8 .8 .8],'callback',@Save_Spec);
-  bload=uicontrol('parent',fig,'style','pushbutton','units','normalized','position',[.0+.0525 .98 .02 .025],'string','o','backgroundcolor',[.8 .8 .8],'callback',@Load_Spec);
+  bsave=uicontrol('parent',fig,'style','pushbutton','units','normalized','position',[0 .98 .05 .025],'string','save','backgroundcolor',[.8 .8 .8],'callback',@Save_Spec);
+  bload=uicontrol('parent',fig,'style','pushbutton','units','normalized','position',[.0525 .98 .02 .025],'string','o','backgroundcolor',[.8 .8 .8],'callback',@Load_Spec);
+  bclear=uicontrol('parent',fig,'style','pushbutton','units','normalized','position',[.098 .98 .02 .025],'string','x','backgroundcolor',[.8 .8 .8],'callback',{@SelectCells,1});
   %bclear=uicontrol('parent',fig,'style','pushbutton','units','normalized','position',[.0+.075 .98 .02 .025],'string','x','backgroundcolor',[.8 .8 .8],'callback',[]);
   %bprint=uicontrol('parent',fig,'style','pushbutton','units','normalized','position',[.0+0 .955 .05 .02],'string','print','backgroundcolor',[.8 .8 .8],'callback',@printmodel);
 % change controls:
   %bapply=uicontrol('parent',fig,'style','pushbutton','units','normalized','position',[.2+.1 .98 .05 .025],'string','refresh','backgroundcolor',[.8 .8 .8],'callback',{@refresh,0});
   bapply=uicontrol('parent',fig,'style','pushbutton','units','normalized','position',[.34 .98 .05 .025],'string','refresh','backgroundcolor',[.8 .8 .8],'callback',{@refresh,0});
-  bundo=uicontrol('parent',fig,'style','pushbutton','units','normalized','position',[.0+.075 .98 .02 .025],'string','<-','backgroundcolor',[.8 .8 .8],'callback',@undo);
+  bundo=uicontrol('parent',fig,'style','pushbutton','units','normalized','position',[.075 .98 .02 .025],'string','<-','backgroundcolor',[.8 .8 .8],'callback',@undo);
   %bundo=uicontrol('parent',fig,'style','pushbutton','units','normalized','position',[.2+.1525 .98 .02 .025],'string','<-','backgroundcolor',[.8 .8 .8],'callback',@undo);
   %brevert=uicontrol('parent',fig,'style','pushbutton','units','normalized','position',[.2+.175 .98 .02 .025],'string','<=','backgroundcolor',[.8 .8 .8],'callback',{@refresh,2});
 
@@ -41,9 +42,9 @@ txt_model = uicontrol('parent',pview,'style','edit','units','normalized','tag','
   % enable horizontal scrolling
   jEdit = findjobj(txt_model);
   jEditbox = jEdit.getViewport().getComponent(0);
-  jEditbox.setWrapping(false);                %# turn off word-wrapping
-  jEditbox.setEditable(false);                %# non-editable
-  set(jEdit,'HorizontalScrollBarPolicy',30);  %# HORIZONTAL_SCROLLBAR_AS_NEEDED
+  jEditbox.setWrapping(false);                % turn off word-wrapping
+  jEditbox.setEditable(false);                % non-editable
+  set(jEdit,'HorizontalScrollBarPolicy',30);  % HORIZONTAL_SCROLLBAR_AS_NEEDED
   % maintain horizontal scrollbar policy which reverts back on component resize 
   hjEdit = handle(jEdit,'CallbackProperties');
   set(hjEdit, 'ComponentResizedCallback','set(gcbo,''HorizontalScrollBarPolicy'',30)')
@@ -54,7 +55,7 @@ p_net_connect = uipanel('parent',pnet,'Position',[.02 .44 .96 .34/1.5],'BorderWi
 p_net_kernel  = uipanel('parent',pnet,'Position',[.02 .01 .96 .42],'BorderWidth',.2,'BorderType','line','title','Cell connections'); % cell specification
 % compartment controls
 uicontrol('parent',p_net_select,'units','normalized','style','text','position',[0 .88 .25 .06],'string','Compartments','ListboxTop',0,'HorizontalAlignment','left');
-if ischar(net.cells(1).label)
+if ~isempty(net.cells) && ischar(net.cells(1).label)
   l1={net.cells.label}; 
   l2={net.cells.parent};
   l=cellfun(@(x,y)[x '.' y],l2,l1,'uni',0);
@@ -72,12 +73,6 @@ uicontrol('parent',p_net_select,'units','normalized','style','text','position',[
 uicontrol('parent',p_net_select,'units','normalized','style','text','position',[.51 .88 .15 .06],'string','mechanisms','ListboxTop',0,'HorizontalAlignment','left');
 
 % left panel: cell builder %GUI_cellpanel;
-currspec = getcell;
-if isfield(currspec.cells,'parent') && ischar(currspec.cells(1).parent)
-  cname=currspec.cells(1).parent;
-else
-  cname='cell';
-end
 p_cell_morph = uipanel('parent',pcell,'Position',[0 .6 .35 .35],'BorderWidth',.2,'BorderType','line','visible','off'); % cell morphology
 p_cell_parms = uipanel('parent',pcell,'Position',[0 .4 1 .6],'BorderWidth',.2,'BorderType','line','title','Parameters');
 p_cell_spec = uipanel('parent',pcell,'Position',[0 0 1 .4],'BorderWidth',.2,'BorderType','line','title','','fontangle','italic'); % cell specification
@@ -86,11 +81,24 @@ edit_comp_dynamics = uicontrol('parent',pcell,'style','edit','string','',...
   
 % left panel: mechanism editor %GUI_mechpanel;
 % compartment label
-str=CURRSPEC.(cfg.focustype)(cfg.focus).mechanisms;
-txt_comp = uicontrol('style','text','string',CURRSPEC.(cfg.focustype)(cfg.focus).label,...
+if ~isempty(CURRSPEC.(cfg.focustype))
+  tmp=CURRSPEC.(cfg.focustype)(cfg.focus);
+  str1=tmp.mechanisms;
+  str2=mech_spec2str(tmp.mechs(cfg.focusmech));
+  cl=tmp.label;
+  u.focustype=cfg.focustype; 
+  u.focus=cfg.focus; 
+  u.mechlabel=tmp.mechanisms{cfg.focusmech};  
+else
+  str1='';
+  str2='';
+  cl='';
+  u=[];
+end
+txt_comp = uicontrol('style','text','string',cl,...
   'units','normalized','position',[0 .95 .1 .05],'parent',pmech);
 % dropdown list of mechanisms for this compartment
-lst_mechs = uicontrol('style','popupmenu','value',min(1,length(str)),'string',str,...
+lst_mechs = uicontrol('style','popupmenu','value',min(1,length(str1)),'string',str1,...
   'units','normalized','position',[.11 .95 .2 .05],'parent',pmech,'callback',@Display_Mech_Info);
 % button to apply changes to mech text
 uicontrol('parent',pmech,'style','pushbutton','units','normalized','position',[.35 .97 .1 .03],...
@@ -98,13 +106,8 @@ uicontrol('parent',pmech,'style','pushbutton','units','normalized','position',[.
 % button to display list of mechs in DB
 uicontrol('parent',pmech,'style','pushbutton','units','normalized','position',[.95 .97 .05 .03],'string','DB','callback','global allmechs; msgbox({allmechs.label},''available'');');%msgbox(get_mechlist,''available'')');%'get_mechlist');
 % edit box with mech info
-tmp=CURRSPEC.(cfg.focustype)(cfg.focus);
-str=mech_spec2str(tmp.mechs(cfg.focusmech));
-u.focustype=cfg.focustype; 
-u.focus=cfg.focus; 
-u.mechlabel=tmp.mechanisms{cfg.focusmech};
 txt_mech = uicontrol('parent',pmech,'style','edit','units','normalized','BackgroundColor','w',... % [.9 .9 .9]
-  'position',[0 .6 1 .35],'string',str,'userdata',u,'FontName','courier','FontSize',10,'HorizontalAlignment','Left','Max',100);
+  'position',[0 .6 1 .35],'string',str2,'userdata',u,'FontName','courier','FontSize',10,'HorizontalAlignment','Left','Max',100);
 % mech plots associated w/ this compartment
 p_static_plots = uipanel('parent',pmech,'Position',[0 0 1 .6],'BackgroundColor','white','BorderWidth',.2,'BorderType','line','title','static');
 ax_static_plot = subplot('position',[.04 .45 .9 .5],'parent',p_static_plots,'linewidth',3,'color','w','fontsize',6); box on; 
@@ -112,17 +115,19 @@ lst_static_funcs = uicontrol('units','normalized','position',[.04 .02 .9 .35],'p
   'style','listbox','value',1:5,'string',{},'Max',50,'Callback',@DrawAuxFunctions);
 uicontrol('Style','edit', 'Units','normalized','Position',[0.8 0.45 0.2 0.05],...
           'String',sprintf('[%g,%g]',min(cfg.V),max(cfg.V)),'Callback',[],'parent',p_static_plots);
-maxlhs=20; maxlen=150; % limit how much is shown in the listbox
-funcs = CURRSPEC.cells(cfg.focuscomp).functions;
-len = min(maxlhs,max(cellfun(@length,funcs(:,1))));
-str = {};
-for i=1:size(funcs,1)
-  str{i} = sprintf(['%-' num2str(len) 's  = %s'],funcs{i,1},strrep(funcs{i,2},' ',''));
-  if length(str{i})>maxlen, str{i}=str{i}(1:maxlen); end
+if ~isempty(CURRSPEC.cells)
+  maxlhs=20; maxlen=150; % limit how much is shown in the listbox
+  funcs = CURRSPEC.cells(cfg.focuscomp).functions;
+  len = min(maxlhs,max(cellfun(@length,funcs(:,1))));
+  str = {};
+  for i=1:size(funcs,1)
+    str{i} = sprintf(['%-' num2str(len) 's  = %s'],funcs{i,1},strrep(funcs{i,2},' ',''));
+    if length(str{i})>maxlen, str{i}=str{i}(1:maxlen); end
+  end
+  val=get(lst_static_funcs,'value');
+  set(lst_static_funcs,'string',str);
+  set(lst_static_funcs,'value',val(val<=length(str)));
 end
-val=get(lst_static_funcs,'value');
-set(lst_static_funcs,'string',str);
-set(lst_static_funcs,'value',val(val<=length(str)));
 
 % right panel: simulation plots and controls %GUI_simpanel;
 psims=uipanel('parent',fig,'title','','visible','on','units','normalized','position',[.4 0 .6 1]);
@@ -183,22 +188,14 @@ H.lst_static_funcs = lst_static_funcs;
 H.edit_comp_dynamics = edit_comp_dynamics; % cell dynamics for focuscomp
 
 % populate controls
-SelectCells;
-DrawAuxView;
-DrawSimPlots;
-DrawUserParams([],[],[],0);
+if ~isempty(CURRSPEC.cells)
+  SelectCells;
+  DrawAuxView;
+  DrawSimPlots;
+  DrawUserParams([],[],[],0);
+end
 
 %% FUNCTIONS
-
-function currspec = getcell
-global CURRSPEC cfg
-if ~isempty(cfg.focuscomp) && cfg.focuscomp<=length(CURRSPEC.cells)
-  cfg.focuscell = CURRSPEC.cells(cfg.focuscomp).parent;
-end
-ind = find(cellfun(@(x)isequal(cfg.focuscell,x),{CURRSPEC.cells.parent}));
-currspec = CURRSPEC;
-currspec.cells = CURRSPEC.cells(ind);
-currspec.connections = CURRSPEC.connections(ind,ind);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function Load_Data(src,evnt)
@@ -246,9 +243,14 @@ if exist(datafile,'file')
         o.spec.cells=o.spec.entities;
       end
       o.spec=rmfield(o.spec,'entities');
+      if ~isfield(o.spec.cells,'parent')
+        for i=1:length(o.spec.cells)
+          o.spec.cells(i).parent=o.spec.cells(i).label;
+        end
+      end
     end
     global CURRSPEC
-    if isfield(CURRSPEC,'cells')
+    if isfield(CURRSPEC,'cells') && ~isempty(CURRSPEC.cells)
       n=length(o.spec.cells);
       CURRSPEC.cells(end+1:end+n) = o.spec.cells;
       for i=1:n
@@ -278,14 +280,34 @@ spec=CURRSPEC;
 fprintf('Saving model specification: %s\n',outfile);
 save(outfile,'spec');
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function SelectCells(src,evnt)
+function SelectCells(src,evnt,null)
 global H CURRSPEC cfg
+if nargin<3, null=0; end
+if null
+  CURRSPEC=[];
+  set(H.lst_comps,'string',{},'value',[]);
+  try
+    set(H.edit_comp_parent,'visible','off');
+    set(H.edit_comp_label,'visible','off');
+    set(H.edit_comp_N,'visible','off');
+    set(H.edit_comp_mechs,'visible','off');
+    set(H.btn_comp_copy,'visible','off');
+    set(H.btn_comp_delete,'visible','off');
+    set(H.btn_comp_edit,'visible','off');    
+    set(H.p_comp_mechs,'visible','off');    
+  end
+  return; 
+end
 v=get(H.lst_comps,'value'); 
 l=get(H.lst_comps,'string');
 if ischar(CURRSPEC.cells(1).label)
-  l1={CURRSPEC.cells.label}; 
-  l2={CURRSPEC.cells.parent};
-  l=cellfun(@(x,y)[x '.' y],l2,l1,'uni',0);
+  if isfield(CURRSPEC.cells,'parent') && ~isempty(CURRSPEC.cells(1).parent)
+    l1={CURRSPEC.cells.label}; 
+    l2={CURRSPEC.cells.parent};
+    l=cellfun(@(x,y)[x '.' y],l2,l1,'uni',0);
+  else
+    l={CURRSPEC.cells.label}; 
+  end
 else
   l={};
 end 
@@ -300,7 +322,11 @@ function DrawCellInfo(net)
 global H
 c=1.5; dy=-.07*c; 
 sel = get(H.lst_comps,'value');
-p={net.cells(sel).parent};
+if isfield(net.cells,'parent')
+  p={net.cells(sel).parent};
+else
+  [p{1:length(sel)}]=deal('');
+end
 l={net.cells(sel).label}; 
 N=[net.cells(sel).multiplicity];
 mechs={net.cells(sel).mechanisms};
@@ -355,7 +381,7 @@ for i=1:length(sel)
   end
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function DrawNetGrid(net)%,forceflag)
+function DrawNetGrid(net)
 global H
 dx=.15; x=.13; c=1.5; dy=-.07*c; 
 sel = get(H.lst_comps,'value');
@@ -408,7 +434,7 @@ for i=1:length(sel)
     end
   end
 end
-if isfield(H,'txt_to') && length(H.txt_to)>i
+if isfield(H,'txt_to') && length(H.txt_to)>length(sel)
   set(H.txt_to(i+1:end),'visible','off');
   set(H.txt_from(i+1:end),'visible','off');
   set(H.edit_conn_mechs(i+1:end,:),'visible','off');
@@ -463,6 +489,7 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function DrawAuxView
 global H CURRSPEC
+if isempty(CURRSPEC.cells), return; end
 % evaluate auxiliary variables
 a = CURRSPEC.model.auxvars;
 for i=1:size(a,1)
@@ -555,9 +582,25 @@ functions = CURRSPEC.model.functions;
 auxvars = CURRSPEC.model.auxvars;
 ode = CURRSPEC.model.ode;
 IC = CURRSPEC.model.IC;
+allvars=CURRSPEC.variables.labels;
+allinds=CURRSPEC.variables.entity;
 cfg.T = (0:cfg.buffer-1)*cfg.dt; % ms
 fh_pow = @(x,y) PowerSpecTA(x,y,[10 80],min(8000,cfg.buffer/2),'Normalized',[]);
 
+% get list of indices of vars to plot
+list=get(H.lst_comps,'string');
+sel=get(H.lst_comps,'value');
+if length(sel)>3, sel=sel(1:3); end
+plotvars=cell(size(sel));
+show=list(sel);
+for k=1:length(show)
+  this=sel(k);
+  list=get(H.lst_vars(k),'string');
+  vind=get(H.lst_vars(k),'value');
+  var = list{vind};% CURRSPEC.cells(this).ode_labels{1};
+  plotvars{k}=find(cellfun(@(x)isequal(x,var),allvars));
+end
+  
 % evaluate auxiliary variables (ie., adjacency matrices)
 for k = 1:size(auxvars,1)
   %try  % added to catch mask=mask-diag(diag(mask)) when mask is not square
@@ -579,6 +622,8 @@ cfg.record=zeros(length(IC),cfg.buffer);
 while cfg.quitflag<0 && (length(IC)==length(CURRSPEC.model.IC))
   if ~isequal(ode,CURRSPEC.model.ode)
     ode=CURRSPEC.model.ode;
+    allvars=CURRSPEC.variables.labels;
+    allinds=CURRSPEC.variables.entity;    
     F=eval(ode);
   end
   cnt=cnt+1;
@@ -609,6 +654,19 @@ while cfg.quitflag<0 && (length(IC)==length(CURRSPEC.model.IC))
   sel=get(H.lst_comps,'value');
   if length(sel)>3, sel=sel(1:3); end
   show=list(sel);
+  if cfg.changeflag>0
+    % get vars to plot from listboxes
+    for k=1:length(show)
+      this=sel(k);
+      numcell=CURRSPEC.cells(this).multiplicity;
+      list=get(H.lst_vars(k),'string');
+      vind=get(H.lst_vars(k),'value');
+      var = list{vind};% CURRSPEC.cells(this).ode_labels{1};
+      plotvars{k}=find(cellfun(@(x)isequal(x,var),allvars));
+      set(get(H.ax_state_plot(k),'title'),'string',sprintf('%s (n=%g/%g)',strrep(list{vind},'_','\_'),min(numcell,cfg.ncellshow),numcell));
+    end
+    cfg.changeflag=-1;
+  end
   for k=1:length(show)
     this=sel(k);
     numcell=CURRSPEC.cells(this).multiplicity;
@@ -618,27 +676,22 @@ while cfg.quitflag<0 && (length(IC)==length(CURRSPEC.model.IC))
     else
       inds = 1:numcell;
     end
-    % get vars to plot from listboxes ...
-    % ...
-    
-    var = CURRSPEC.cells(this).ode_labels{1};
-    var = find(cellfun(@(x)isequal(x,var),CURRSPEC.variables.labels));%CURRSPEC.cells(this).var_list));
     for j=1:length(inds)
-      set(H.simdat_alltrace(k,j),'ydata',cfg.record(var(inds(j)),:));
-    end    
-    if 0 
-      lfp=mean(cfg.record(var,:),1);
-      set(H.simdat_LFP(k),'ydata',lfp,'linewidth',4,'color','k','linestyle','-');
+      set(H.simdat_alltrace(k,j),'ydata',cfg.record(plotvars{k}(inds(j)),:));
     end
-    if 0 && mod(cnt,cfg.buffer)==0 && cnt>1
-      % update power spectrum
-      try
-        res = feval(fh_pow,cfg.T,lfp);
-        set(H.simdat_LFP_power(k),'xdata',res.f,'ydata',log10(res.Pxx));
-      catch
-        fprintf('power spectrum calc failed.\n');
-      end
-    end
+%     if 0 
+%       lfp=mean(cfg.record(plotvars{k},:),1);
+%       set(H.simdat_LFP(k),'ydata',lfp,'linewidth',4,'color','k','linestyle','-');
+%     end
+%     if 0 && mod(cnt,cfg.buffer)==0 && cnt>1
+%       % update power spectrum
+%       try
+%         res = feval(fh_pow,cfg.T,lfp);
+%         set(H.simdat_LFP_power(k),'xdata',res.f,'ydata',log10(res.Pxx));
+%       catch
+%         fprintf('power spectrum calc failed.\n');
+%       end
+%     end
   end
   drawnow
 end
@@ -659,17 +712,26 @@ list=get(H.lst_comps,'string');
 sel=get(H.lst_comps,'value');
 show=list(sel);
 if length(show)>3, show=show(1:3); end
+allvars=CURRSPEC.variables.labels;
+allinds=CURRSPEC.variables.entity;
+numcells=[CURRSPEC.cells.multiplicity];
 % data plots
 if isfield(H,'ax_state_plot')
   delete(H.simdat_alltrace(ishandle(H.simdat_alltrace)));
   delete(H.simdat_LFP(ishandle(H.simdat_LFP)));
   delete(H.ax_state_plot(ishandle(H.ax_state_plot)));
   delete(H.simdat_LFP_power(ishandle(H.simdat_LFP_power)));
+  delete(H.lst_vars(ishandle(H.lst_vars)));
   %delete(H.ax_state_power(ishandle(H.ax_state_power)));
   H=rmfield(H,{'simdat_alltrace','simdat_LFP','ax_state_plot','simdat_LFP_power'});%,'ax_state_power'});
 end
 for i=1:length(show) % i=1:ncomp
-  H.ax_state_plot(i) = subplot('position',[.05 .7+(i-1)*dy .9 -.8*dy],...
+  vars=unique(allvars(allinds==sel(i)));
+  vind=find(~cellfun(@isempty,regexp(vars,'_V$','once')));
+  if isempty(vind), vind=1; end
+  H.lst_vars(i) = uicontrol('parent',H.psims,'units','normalized','backgroundcolor','w',...
+    'style','listbox','position',[.8 .7+(i-1)*dy .2 -.8*dy],'value',vind,'string',vars,'Callback','global cfg;cfg.changeflag=1;');  
+  H.ax_state_plot(i) = subplot('position',[.03 .7+(i-1)*dy .76 -.8*dy],...
     'parent',H.psims,'linewidth',3,'color','w'); 
   for k=1:cfg.ncellshow
     H.simdat_alltrace(i,k)=line('color',cfg.colors(max(1,mod(k,length(cfg.colors)))),'LineStyle',cfg.lntype{max(1,mod(k,length(cfg.lntype)))},'erase','background','xdata',cfg.T,'ydata',zeros(1,cfg.buffer),'zdata',[]);
@@ -677,7 +739,9 @@ for i=1:length(show) % i=1:ncomp
   H.simdat_LFP(i)=line('color',cfg.colors(max(1,mod(k,length(cfg.colors)))),'LineStyle',cfg.lntype{max(1,mod(k,length(cfg.lntype)))},'erase','background','xdata',cfg.T,'ydata',zeros(1,cfg.buffer),'zdata',[],'linewidth',2);
   axis([cfg.T(1) cfg.T(end) -100 30]); 
   if i==length(show), xlabel('time (ms)'); end
-  title([show{i} '.V']);  %ylabel([show{i} '.V']);  
+  titlestr=sprintf('%s (n=%g/%g)',strrep(vars{vind},'_','\_'),min(numcells(sel(i)),cfg.ncellshow),numcells(sel(i)));
+  title(titlestr);
+  %title(strrep(vars{vind},'_','\_'));%[show{i} '.V']);  %ylabel([show{i} '.V']);  
   %H.ax_state_power(i) = subplot('position',[.7 .7+(i-1)*dy .25 -.8*dy],'parent',H.psims); 
   H.simdat_LFP_power(i)=line('color','k','LineStyle','-','erase','background','xdata',cfg.f,'ydata',zeros(size(cfg.f)),'zdata',[],'linewidth',2);
   %H.ax_state_img(i) = subplot('position',[.7 .7+(i-1)*dy .25 -.8*dy],'parent',H.psims); 
@@ -723,7 +787,6 @@ if isempty(findobj('tag','buffer'))
             'Position',[0.8  0.11 0.04 0.05],...
             'String',num2str(cfg.buffer),'tag','buffer','Callback','global cfg; cfg.buffer=str2num(get(gcbo,''string''));'); % start <=> pause
 end     
-
 % autoscale       
 uicontrol('Style','pushbutton', 'Units','normalized', ...
           'Position',[0.9 0.05 0.075 0.05],...
@@ -734,24 +797,24 @@ uicontrol('Style','pushbutton', 'Units','normalized', ...
           'String','sim study','Callback','StudyDriverUI;');      
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function setlimits(src,evnt,action)
-global cfg H
+global cfg H CURRSPEC
 if ~isfield(cfg,'record'), return; end
+allvars=CURRSPEC.variables.labels;
 switch action
   case 'autoscale'
-    ymin = min(cfg.record(:));
-    ymax = max(cfg.record(:));
-    if ymin~=ymax
-      set(H.ax_state_plot,'ylim',[ymin ymax]);
+    for i=1:length(H.ax_state_plot)
+      list=get(H.lst_vars(i),'string');
+      ind=get(H.lst_vars(i),'value');
+      var = list{ind};
+      ind = find(cellfun(@(x)isequal(x,var),allvars));
+      rec = cfg.record(ind,:);
+      ymin = min(rec(:));
+      ymax = max(rec(:));
+      if ymin~=ymax
+        set(H.ax_state_plot(i),'ylim',[ymin ymax]);
+      end
     end
 end
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function OpenCellModeler(src,evnt,compname)
-global CURRSPEC
-ind = strmatch(compname,{CURRSPEC.cells.label},'exact');
-if isfield(CURRSPEC.cells,'parent') && ischar(CURRSPEC.cells(ind).parent)
-  ind = find(cellfun(@(x)isequal(CURRSPEC.cells(ind).parent,x),{CURRSPEC.cells.parent}));
-end
-cellmodeler(CURRSPEC.cells(ind));
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function CopyCell(src,evnt,compname)
 global CURRSPEC H
@@ -884,42 +947,6 @@ spec.(u.focustype)(u.focus) = this;
 updatemodel(spec);
 DrawAuxFunctions;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function UpdateMechList(src,evnt,action)
-% apply user changes to the mechs included in a compartment model
-global H cfg currspec
-mechlist = currspec.cells(cfg.focuscomp).mechanisms;
-switch action
-  case 'toggle'
-    if strcmp(get(H.ui_mechlist_edit(cfg.focuscomp),'visible'),'off')
-      str=''; for j=1:length(mechlist),str=[str mechlist{j} ', ']; end; str=str(1:end-2);
-      set(H.ui_mechlist_edit(cfg.focuscomp),'visible','on','string',str);%,'units','normalized','position',[.1 .1 .2 .2]);
-      set(H.ui_comp_mechs(cfg.focuscomp,ishandle(H.ui_comp_mechs(cfg.focuscomp,:))),'visible','off');
-    else
-      set(H.ui_mechlist_edit(cfg.focuscomp),'visible','off');
-      set(H.ui_comp_mechs(cfg.focuscomp,ishandle(H.ui_comp_mechs(cfg.focuscomp,:))),'visible','on');
-    end
-  case 'update'
-    if strcmp(evnt.Key,'return')
-      pause(.5); 
-      newspec = currspec;
-      set(H.ui_mechlist_edit(cfg.focuscomp),'visible','off');
-      str = get(H.ui_mechlist_edit(cfg.focuscomp),'string');
-      if ~isempty(str)
-        newmechlist = strtrim(splitstr(str,','));
-        mechadded = setdiff(newmechlist,mechlist);
-        mechremoved = setdiff(mechlist,newmechlist);
-        if ~isempty(mechadded) || ~isempty(mechremoved)
-          newspec = removemech(newspec,mechremoved);
-          newspec = addmech(newspec,mechadded);
-          updatecellmodel(newspec);
-        end
-        DrawControls;
-      end
-    else
-      % do nothing
-    end
-end
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function UpdateCells(src,evnt,compname,field)
 % apply user changes to the compartment mechanisms
 global cfg CURRSPEC H 
@@ -984,6 +1011,7 @@ if ~isempty(mechadded) || ~isempty(mechremoved)
     newspec.connections(cfg.focusconn).label = [];
   end
   updatemodel(newspec);
+  DrawAuxView;
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function CURRSPEC = addmech(CURRSPEC,mechadded,type,index)
@@ -1029,73 +1057,19 @@ function updatemodel(newspec) % maybe use same specification as for "override"
 global CURRSPEC LASTSPEC cfg
 LASTSPEC = CURRSPEC;
 CURRSPEC = newspec;
-currspec = getcell;
-
-% check for updated cell model from CellModeler
-if isempty(currspec)
-  clear global currspec
-else
-  l={currspec.cells.label}; L={CURRSPEC.cells.label};
-  % update compartments in both models
-  [s1,s2]=match_str(L,l);
-  if ~isempty(s1) && isfield(CURRSPEC.cells,'mechs') && isfield(currspec.cells,'mechs') && (...
-      ~isequal({CURRSPEC.cells(s1).mechs},{currspec.cells(s2).mechs}) || ...
-      (isfield(CURRSPEC.cells,'parent') && ~isequal({CURRSPEC.cells(s1).parent},{currspec.cells(s2).parent})) || ...
-      ~isequal({CURRSPEC.cells(s1).parameters},{currspec.cells(s2).parameters})...
-                     )
-    CURRSPEC.cells(s1).mechanisms = currspec.cells(s2).mechanisms;
-    CURRSPEC.cells(s1).parameters = currspec.cells(s2).parameters;
-    CURRSPEC.cells(s1).dynamics = currspec.cells(s2).dynamics;
-    CURRSPEC.cells(s1).mechs = currspec.cells(s2).mechs;
-    if isfield(currspec.cells,'parent')
-      CURRSPEC.cells(s1).parent = currspec.cells(s2).parent;
-    end
-    warning('Incorporating external changes to cell model.');
-  end
-  % add new compartments to the network model
-  newcomps = setdiff(l,L);
-  if ~isempty(newcomps)
-    [s1,s2] = match_str(l,newcomps);
-    CURRSPEC.cells = cat(2,CURRSPEC.cells,currspec.cells(s1));
-    L={CURRSPEC.cells.label};
-    % add connections associated with the new compartments
-    CURRSPEC.connections(length(L),length(L)).label=[];
-    [I,J]=ind2sub(size(currspec.connections),find(~cellfun(@isempty,{currspec.connections.label})))
-    kp = ismember(I,s1) | ismember(J,s1);
-    I=I(kp); J=J(kp); % <== these are sub-indices to the new connections in the cell model
-    for k=1:length(I)
-      ii=strmatch(currspec.cells(I(k)).label,L); % <== these are indices in the network model
-      jj=strmatch(currspec.cells(J(k)).label,L);
-      CURRSPEC.connections(ii,jj) = currspec.connections(I(k),J(k));
-    end    
-  end
-%   if exist('H','var') && isfield(H,'f_cell') && ishandle(H.f_cell)
-%     close(H.f_cell);
-%   end
-end
 if 1
   % remove all connections for which gCOM=0 before building the model
   % ...
   [model,IC,functions,auxvars,CURRSPEC,sodes,svars,txt] = buildmodel2(CURRSPEC,'verbose',0);
-  try CURRSPEC.cells=CURRSPEC.entities; CURRSPEC=rmfield(CURRSPEC,'entities'); end
+  if isfield(CURRSPEC,'entities') && ~isfield(CURRSPEC,'cells')
+    CURRSPEC.cells=CURRSPEC.entities; CURRSPEC=rmfield(CURRSPEC,'entities'); 
+  end
   cfg.modeltext = txt;
   h=findobj('tag','modeltext');
   if ~isempty(h)
     set(h,'string',cfg.modeltext);
   end
   %fprintf('model updated successfully\n');
-  % update cell model
-%   try
-    ind = strmatch(currspec.cells(cfg.focuscomp).label,{CURRSPEC.cells.label},'exact');
-    if isfield(CURRSPEC.cells,'parent') && ischar(CURRSPEC.cells(ind).parent)
-      ind = find(cellfun(@(x)isequal(CURRSPEC.cells(ind).parent,x),{CURRSPEC.cells.parent}));
-    end
-    currspec = CURRSPEC;
-    currspec.cells = CURRSPEC.cells(ind);
-    currspec.connections = CURRSPEC.connections(ind,ind);
-%   catch
-%     error('failed to update cell model');
-%   end
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function undo(src,evnt)
@@ -1103,6 +1077,7 @@ function undo(src,evnt)
 global LASTSPEC
 updatemodel(LASTSPEC);
 SelectCells;
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function refresh(src,evnt,where)
 if 1
   % load all mech data (if db has changed)
@@ -1134,6 +1109,9 @@ elseif where==1 % get spec from base workspace
 end
 SelectCells;
 DrawSimPlots; % ??? should this be here???
+DrawAuxView;
+DrawUserParams([],[],[],0);
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function printmodel(src,evnt)
 global CURRSPEC
 buildmodel2(CURRSPEC,'verbose',1);
@@ -1191,6 +1169,7 @@ elseif ischar(val)
 else
   val = 'unrecognized';
 end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function N=get_neighb(n,xi,yi)
 % purpose: get neighborhood of a given grid element
 % N = linear identifiers for neighbors of compartment at (x,y) in grid
@@ -1222,7 +1201,6 @@ name=get(src,'string');
 [currspec.cells.parent]=deal(name);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function seladj(src,evnt)
-function selkernel(src,evnt)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function ZoomFunction(src,evnt)
 global H
@@ -1283,11 +1261,13 @@ for k=1:size(functions,1)
     'LineStyle',cfg.lntype{max(1,mod(k,length(cfg.lntype)))},'erase','background','xdata',X,'ydata',Y,'zdata',[]);
 end
 funclabels=cellfun(@(x)strrep(x,'_','\_'),functions(:,1),'uni',0);
-h=legend(H.ax_static_plot,funclabels); set(h,'fontsize',6,'location','EastOutside');
-if strcmp(axislimits,'tight')
-  axes(H.ax_static_plot); axis(axislimits);
-else
-  set(H.ax_static_plot,'xlim',axislimits(1:2),'ylim',axislimits(3:4));
+if isfield(H,'static_traces') && ~isempty(H.static_traces)
+  h=legend(H.ax_static_plot,funclabels); set(h,'fontsize',6,'location','EastOutside');
+  if strcmp(axislimits,'tight')
+    axes(H.ax_static_plot); axis(axislimits);
+  else
+    set(H.ax_static_plot,'xlim',axislimits(1:2),'ylim',axislimits(3:4));
+  end
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function DrawUserParams(src,evnt,focuscomp,movetabs)
@@ -1307,7 +1287,8 @@ if movetabs
 end  
   
 % set panel title to indicate the current compartment
-set(H.p_cell_parms,'Title',[this.parent '.' this.label ': override parameters'],'FontWeight','normal');
+if isfield(this,'parent') && ~isempty(this.parent), prefix=[this.parent '.']; else prefix=''; end
+set(H.p_cell_parms,'Title',[prefix this.label ': override parameters'],'FontWeight','normal');
 
 % set dynamics edit box
 set(H.edit_comp_dynamics,'string',[this.dynamics{:}],...

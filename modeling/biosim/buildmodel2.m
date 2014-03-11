@@ -23,6 +23,17 @@ if isfield(spec,'cells') && ~isfield(spec,'entities')
   spec.entities = spec.cells;
   spec = rmfield(spec,'cells');
 end
+if isempty(spec.entities)
+  model=[];
+  IC=[];
+  functions=[];
+  auxvars=[];
+  sys=spec;
+  Sodes=[];
+  Svars=[];
+  txt='';
+  return;
+end
 if isfield(spec,'connections') && any(size(spec.connections)<length(spec.entities))
   n=length(spec.entities);
   spec.connections(n,n)=spec.connections(1);
@@ -673,7 +684,7 @@ for i=1:N
       jj=mechdst{i}(connis(j));
       sys.connections(ii,jj).label=[EL{ii} '-' EL{jj}];
       sys.connections(ii,jj).parameters = sys.entities(i).connection_parameters{j};
-      if isempty(sys.connections(ii,jj).parameters) % pull default params from mech structure
+      if 0%isempty(sys.connections(ii,jj).parameters) % pull default params from mech structure
         p = sys.entities(i).connection_mechs(j).params;
         keys = fieldnames(p); 
         vals = struct2cell(p); 
