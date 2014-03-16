@@ -12,7 +12,7 @@ xpost = (linspace(1,Nmax,Npost)'*ones(1,Npre))';
 # gaussian kernel and threshold mask
 sigma=(SYNspan*Nmax);
 kernel=SYNscale*exp(-(xpre-xpost).^2/sigma^2);
-kernel=kernel-(1-SYNtoself)*diag(diag(kernel))
+kernel=kernel-(1-SYNtoself)*diag(diag(kernel))'
 #mask=abs(xpre-xpost)<=ceil(sigma/2);
 
 # gating dynamics

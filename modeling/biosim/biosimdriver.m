@@ -20,21 +20,24 @@ rootoutdir = parms.rootoutdir;
 prefix = parms.prefix;
 formats={'-dpng','-depsc'}; exts={'.png','.eps'}; % ,'-djpeg' ,'.jpg'
 filenames={};
+save_flag = parms.savefig_flag || parms.savedata_flag || parms.cluster_flag;
 
+try 
+  
 %% prepare output directory
-
-% create rootoutdir
-if ~exist(rootoutdir,'dir'), mkdir(rootoutdir); end
-if ~exist(fullfile(rootoutdir,'model'),'dir'), mkdir(fullfile(rootoutdir,'model')); end
-if ~exist(fullfile(rootoutdir,'data'),'dir'), mkdir(fullfile(rootoutdir,'data')); end
-if parms.cluster_flag
-  if ~exist(fullfile(rootoutdir,'logs'),'dir'), mkdir(fullfile(rootoutdir,'logs')); end
+if save_flag
+  % create rootoutdir
+  if ~exist(rootoutdir,'dir'), mkdir(rootoutdir); end
+  if ~exist(fullfile(rootoutdir,'model'),'dir'), mkdir(fullfile(rootoutdir,'model')); end
+  if ~exist(fullfile(rootoutdir,'data'),'dir'), mkdir(fullfile(rootoutdir,'data')); end
+  if parms.cluster_flag
+    if ~exist(fullfile(rootoutdir,'logs'),'dir'), mkdir(fullfile(rootoutdir,'logs')); end
+  end
+  % save spec in unique specfile in specs dir
+  specfile = fullfile(rootoutdir,'model',[prefix '_model-specification.mat']);
+  save(specfile,'spec','parms');
+  filenames{end+1}=specfile;
 end
-
-% save spec in unique specfile in specs dir
-specfile = fullfile(rootoutdir,'model',[prefix '_model-specification.mat']);
-save(specfile,'spec','parms');
-filenames{end+1}=specfile;
 
 %% simulate
 
@@ -62,7 +65,7 @@ dW = 5/1000;
 SimMech='iStepProtocol';
 
 % create directory for saving analysis results
-if ~exist(fullfile(rootoutdir,'analysis'),'dir'), mkdir(fullfile(rootoutdir,'analysis')); end
+if ~exist(fullfile(rootoutdir,'analysis'),'dir') && save_flag, mkdir(fullfile(rootoutdir,'analysis')); end
 
 % -----------------------------------------------------
 % LFP 
@@ -86,7 +89,7 @@ catch err
   disperror(err);
 end
 % save LFP data to lfp directory
-if ~isempty(vars)
+if ~isempty(vars) && save_flag
   if ~exist(fullfile(rootoutdir,'analysis','lfp'),'dir'), mkdir(fullfile(rootoutdir,'analysis','lfp')); end
   vars{end+1}='spec';
   outfile = fullfile(rootoutdir,'analysis','lfp',[prefix '_sim_data_LFPs.mat']);
@@ -102,11 +105,13 @@ try
   %window_size=30/1000; dW=5/1000;
   [h3,rates,tmins,spiketimes,spikeinds]=plotspk(sim_data,spec,'plot_flag',parms.plot_flag,...
                                   'window_size',window_size,'dW',dW); % firing rate(t) and FRH
-  if ~exist(fullfile(rootoutdir,'analysis','spikes'),'dir'), mkdir(fullfile(rootoutdir,'analysis','spikes')); end
-  % save spike data to spikes directory
-  outfile = fullfile(rootoutdir,'analysis','spikes',[prefix '_sim_data_spikes.mat']);
-  save(outfile,'rates','tmins','spiketimes','spikeinds','window_size','dW','spec','-v7.3');  
-  fprintf('Spike data saved to %s\n',outfile);
+  if save_flag
+    if ~exist(fullfile(rootoutdir,'analysis','spikes'),'dir'), mkdir(fullfile(rootoutdir,'analysis','spikes')); end
+    % save spike data to spikes directory
+    outfile = fullfile(rootoutdir,'analysis','spikes',[prefix '_sim_data_spikes.mat']);
+    save(outfile,'rates','tmins','spiketimes','spikeinds','window_size','dW','spec','-v7.3');  
+    fprintf('Spike data saved to %s\n',outfile);
+  end
 catch err
   h3=[];
   disperror(err);
@@ -201,6 +206,32 @@ if parms.cluster_flag
   cmd = sprintf('cp %s %s',errlog,outerrlog);
   [s,m] = system(cmd);
   if s, fprintf(logfid,'%s',m); end
+end
+
+if ~parms.savedata_flag
+  assignin('base','sim_data',sim_data);
+  assignin('base','spec',spec);
+  fprintf('sim_data and spec assigned to base workspace.\n');
+end
+
+catch err
+  disperror(err);
+  
+  % save cluster log
+  if parms.cluster_flag
+    [p,name]=fileparts(parms.jobname);
+    outlog=fullfile(parms.batchdir,'pbsout',[name '.out']);
+    errlog=fullfile(parms.batchdir,'pbsout',[name '.err']);
+    outoutlog=fullfile(rootoutdir,'logs',[prefix '_' name '.out']);
+    outerrlog=fullfile(rootoutdir,'logs',[prefix '_' name '.err']);
+    fprintf(logfid,'saving cluster log (%s) to %s.\n',outlog,outoutlog);
+    cmd = sprintf('cp %s %s',outlog,outoutlog);
+    [s,m] = system(cmd);
+    if s, fprintf(logfid,'%s',m); end
+    cmd = sprintf('cp %s %s',errlog,outerrlog);
+    [s,m] = system(cmd);
+    if s, fprintf(logfid,'%s',m); end
+  end
 end
 
 function disperror(err)

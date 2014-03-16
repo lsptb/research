@@ -250,6 +250,30 @@ if (nargin>2) && ischar(varargin{1})
   datafile = varargin{1};
 elseif (nargin>2) && isstruct(varargin{1})
   type = gettype(varargin{1});
+  if isstruct(varargin{1}) && numel(varargin{1})>1
+    tmp=varargin{1}(1);
+    [jnk,fld,pm] = ts_object_info(tmp); if iscell(pm), pm=pm{1}; end
+    nsmp=length(tmp.(fld)(1).time);
+    ntrl=[tmp.(fld).num_trials];
+    try
+      for i=2:length(varargin{1})
+        tmp2=varargin{1}(i);
+        [jnk,fld2,pm2]=ts_object_info(tmp2); if iscell(pm2), pm2=pm2{1}; end
+        nsmp2=length(tmp2.(fld2)(1).time);
+        ntrl2=[tmp2.(fld2).num_trials];
+        nch2=tmp2.num_sensors;
+        if numel(tmp2.(fld))~=numel(tmp.(fld)) || ~isequal(pm,pm2), continue; end
+        tmp.sensor_info = cat(2,tmp.sensor_info,tmp2.sensor_info);
+        tmp.num_sensors = tmp.num_sensors + nch2;
+        for j=1:length(tmp.(fld))
+          nt=min(ntrl(j),ntrl2(j));
+          ns=min(nsmp(j),nsmp2(j));
+          tmp.(fld)(j).(pm)(end+1:end+nch2,1:ns,1:nt) = tmp2.(fld2)(j).(pm)(:,1:ns,1:nt);
+        end
+      end
+      varargin{1}=tmp;
+    end
+  end
   UserData.(type).data{end+1} = varargin{1};
   load_flag = 0;
   filename  = 'tmp.mat';
@@ -1950,7 +1974,7 @@ xlim([-.6 .6]);
 ylim([-.6 .6]);
   
 function type = gettype(data)
-datatype = ts_object_info(data,'verbose',0);
+datatype = ts_object_info(data(1),'verbose',0);
 if strcmp(datatype,'epoch_data') || strcmp(datatype,'cont_data') || strcmp(datatype,'avg_data')
   type = 'Raw';
 elseif strcmp(datatype,'timefreq_data')

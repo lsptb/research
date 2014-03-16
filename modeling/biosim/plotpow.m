@@ -10,7 +10,8 @@ parms = mmil_args2parms( varargin, ...
                       'FreqRange',[10 80],[],...
                       'NormAbs','Normalized',[],...
                       'Notch',[],[],...
-                      'var',1,[],...
+                      'var',[],[],...
+                      'varlabel','V',[],...
                       'spectrogram_flag',1,[],...
                    }, false);
 fig=[];
@@ -40,6 +41,12 @@ npop = length(spec.entities);
 Fs = fix(data(1).sfreq);
 
 for pop=1:npop
+  labels = {data(pop).sensor_info.label};
+  if isempty(parms.var)
+    var = find(~cellfun(@isempty,regexp(labels,['_' parms.varlabel '$'])),1,'first');
+  else
+    var = parms.var;
+  end
   n = spec.entities(pop).multiplicity;
   t = data(pop).epochs.time;
   dat = double(squeeze(data(pop).epochs.data(var,:,1:n))');
@@ -91,12 +98,23 @@ if parms.plot_flag
     yi = floor((i-1)./ncols)+1;
     subplot('Position',[xpos(xi) ypos(yi) .9/ncols .9/nrows]); set(gca,'units','normalized');
     pop = ceil(i/ncols); % index to this population
+    labels = {data(pop).sensor_info.label};
+    if isempty(parms.var)
+      var = find(~cellfun(@isempty,regexp(labels,['_' parms.varlabel '$'])),1,'first');
+    else
+      var = parms.var;
+    end    
     lab = data(pop).sensor_info(var).label;
     if mod(i,ncols)==1 % plot power spectrum
       plot(f,log10(pows(pop,:)));
-      xlabel('freq [Hz]'); ylabel('power [normalized]');
+      ylabel('power [normalized]');
       title([strrep(lab,'_','\_') ' power spectrum'],'fontsize',14,'fontweight','bold');    
       xlim(plims);
+      if pop==npop
+        xlabel('freq [Hz]'); 
+      else
+        set(gca,'xtick',[],'xticklabel',[]);
+      end
    elseif parms.spectrogram_flag % plot spectrogram
      yo = squeeze(tfpows(pop,:,:));
      yy = (abs(yo)+eps).^2;
@@ -105,8 +123,13 @@ if parms.plot_flag
      caxis(zlims);
      ylim(plims); xlim([to(1) to(end)]);
      colorbar; %colormap(flipud(colormap('hot')));
-     xlabel('time [s]'), ylabel('freq [Hz]')   
+     ylabel('freq [Hz]')   
      title([strrep(lab,'_','\_') ' spectrogram (power z-score)'],'fontsize',14,'fontweight','bold');    
+      if pop==npop
+        xlabel('time [s]')
+      else
+        set(gca,'xtick',[],'xticklabel',[]);
+      end     
      %surf(to,fo,yo), shading interp, set(gca,'YScale','log','YTick',[[1:10] [15:5:50] [100 200]])
      %view(2), axis tight, ylim([1 250]), colormap(flipud(colormap('hot'))), colorbar
     end

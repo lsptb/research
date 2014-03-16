@@ -8,7 +8,7 @@ updatemodel(CURRSPEC);
 
 % main figure
 sz = get(0,'ScreenSize'); 
-fig = figure('position',[.005*sz(3) .07*sz(4) .938*sz(3) .83*sz(4)],'color','w','WindowScrollWheelFcn',@ZoomFunction,'CloseRequestFcn','delete(gcf); clear global H'); % [320 240 920 560]
+fig = figure('position',[.005*sz(3) .07*sz(4) .938*sz(3) .83*sz(4)],'color','w','name','Biosim Modeler','NumberTitle','off','WindowScrollWheelFcn',@ZoomFunction,'CloseRequestFcn','delete(gcf); clear global H'); % [320 240 920 560]
 
 % global controls (i.e., always present in main figure in all views)
   uicontrol('parent',fig,'style','text','string','biosim','fontsize',24,'units','normalized','position',[.1 .9 .2 .07],'backgroundcolor','w');
@@ -109,7 +109,7 @@ uicontrol('parent',pmech,'style','pushbutton','units','normalized','position',[.
 txt_mech = uicontrol('parent',pmech,'style','edit','units','normalized','BackgroundColor','w',... % [.9 .9 .9]
   'position',[0 .6 1 .35],'string',str2,'userdata',u,'FontName','courier','FontSize',10,'HorizontalAlignment','Left','Max',100);
 % mech plots associated w/ this compartment
-p_static_plots = uipanel('parent',pmech,'Position',[0 0 1 .6],'BackgroundColor','white','BorderWidth',.2,'BorderType','line','title','static');
+p_static_plots = uipanel('parent',pmech,'Position',[0 0 1 .6],'BackgroundColor','white','BorderWidth',.2,'BorderType','line','title','');
 ax_static_plot = subplot('position',[.04 .45 .9 .5],'parent',p_static_plots,'linewidth',3,'color','w','fontsize',6); box on; 
 lst_static_funcs = uicontrol('units','normalized','position',[.04 .02 .9 .35],'parent',p_static_plots,...
   'style','listbox','value',1:5,'string',{},'Max',50,'Callback',@DrawAuxFunctions);
@@ -145,6 +145,7 @@ plot_m = uimenu(fig,'Label','Plot');
 uimenu(plot_m,'Label','plotv','Callback','global CURRSPEC; if ismember(''sim_data'',evalin(''base'',''who'')), plotv(evalin(''base'',''sim_data''),CURRSPEC); else disp(''load data to plot''); end');
 uimenu(plot_m,'Label','plotpow','Callback','global CURRSPEC; if ismember(''sim_data'',evalin(''base'',''who'')), plotpow(evalin(''base'',''sim_data''),CURRSPEC); else disp(''load data to plot''); end');
 uimenu(plot_m,'Label','plotspk','Callback','global CURRSPEC; if ismember(''sim_data'',evalin(''base'',''who'')), plotspk(evalin(''base'',''sim_data''),CURRSPEC,''window_size'',30/1000,''dW'',5/1000); else disp(''load data to plot''); end');
+uimenu(plot_m,'Label','visualizer','Callback','global CURRSPEC; if ismember(''sim_data'',evalin(''base'',''who'')), visualizer(evalin(''base'',''sim_data'')); else disp(''load data to plot''); end');
 
 % collect object handles
 % figures
@@ -269,7 +270,7 @@ if exist(datafile,'file')
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function Save_Spec(src,evnt)
-[filename,pathname] = uiputfile({'*.mat;'},'Save as','model_specification.mat');
+[filename,pathname] = uiputfile({'*.mat;'},'Save as','model-specification.mat');
 if isequal(filename,0) || isequal(pathname,0)
   return;
 end
@@ -508,61 +509,69 @@ ll={CURRSPEC.connections.label};
 sel=find(~cellfun(@isempty,ll));
 if isempty(sel), return; end
 lst={}; % = list of connections: from-to.mechanism
+mech_u=[];
 for i=1:length(sel)
   m=CURRSPEC.connections(sel(i)).mechanisms;
   if ~iscell(m), m={m}; end
+  [from,to]=ind2sub(size(CURRSPEC.connections),sel(i));
   for j=1:length(m)
+    mech_u(end+1).conn_i=sel(i);
+    mech_u(end).mech_i=j;
+    mech_u(end).from=from;
+    mech_u(end).to=to;
+    mech_u(end).label=[l{from} '_' l{to}];
     lst{end+1} = [ll{sel(i)} '.' m{j}];
   end
   if i==1
-    [from,to]=ind2sub(size(CURRSPEC.connections),sel(i));
     prefix = [l{from} '_' l{to}];
+    % get expression for the last auxvar
+    a=CURRSPEC.connections(from,to).mechs(1).auxvars(end,:);
+    auxeqn=[a{1} ' = ' a{2}];
+    % get list of params for the first connection
+    parmlist=fieldnames(CURRSPEC.connections(from,to).mechs(1).params);
+    % get value of first parameter
+    parmval=CURRSPEC.connections(from,to).mechs(1).params.(parmlist{1});    
   end
 end
 % get list of auxvars for the first connection
 sel=strmatch([prefix '_'],CURRSPEC.model.auxvars(:,1));
 auxlist=CURRSPEC.model.auxvars(sel,1);
 if isempty(auxlist), return; end
-% get expression for the last auxvar
-a=CURRSPEC.connections(from,to).mechs(1).auxvars(end,:);
-auxeqn=[a{1} ' = ' a{2}];
-% get list of params for the first connection
-parmlist=fieldnames(CURRSPEC.connections(from,to).mechs(1).params);
-% get value of first parameter
-parmval=CURRSPEC.connections(from,to).mechs(1).params.(parmlist{1});
 % get auxvar matrix 
 auxmat=CURRSPEC.model.eval.(auxlist{end});
-midpt=round(size(auxmat,2)/2); lims=[.9*min(auxmat(:)) 1.1*max(auxmat(:))];
+midpt=round(size(auxmat,2)/2); 
+lims=[min(auxmat(:)) max(auxmat(:))];%[.9*min(auxmat(:)) 1.1*max(auxmat(:))];
 
 % dropdown box to select the connection to examine
 H.pop_sel_conn = uicontrol('style','popupmenu','string',lst,'parent',H.p_net_kernel,...
-  'units','normalized','position',[.1 .92 .3 .08],'value',1);
+  'units','normalized','position',[.1 .92 .3 .08],'value',1,'userdata',mech_u,...
+  'Callback',@UpdateAuxView);
 % listbox to select which auxvar to plot
 H.lst_auxvars = uicontrol('parent',H.p_net_kernel,'units','normalized',...
   'style','listbox','position',[.1 .1 .3 .3],'string',auxlist,'value',length(auxlist),...
-  'Callback',@SelectAuxVar); % 'backgroundcolor','w',
+  'Callback',@UpdateAuxView); % 'backgroundcolor','w',
 % edit box to modify defining expressions
 H.edit_auxvar_eqn = uicontrol('parent',H.p_net_kernel,'units','normalized',...
   'style','edit','position',[.1 .03 .3 .08],'backgroundcolor','w','string',auxeqn,...
   'HorizontalAlignment','left','fontsize',8);%,'Callback',{@UpdateParams,'change','cells'});
 % listbox to select a parameter to modify
 H.lst_auxparams = uicontrol('parent',H.p_net_kernel,'units','normalized',...
-  'style','listbox','position',[.44 .1 .3 .3],'string',parmlist,...
-  'Callback',@SelectAuxVar); % 'backgroundcolor','w',
+  'style','listbox','position',[.44 .1 .3 .3],'string',parmlist,'value',1,...
+  'Callback',@UpdateAuxView); % 'backgroundcolor','w',
 % edit box to modify parameter
 H.edit_auxparams = uicontrol('parent',H.p_net_kernel,'units','normalized',...
-  'style','edit','position',[.44 .03 .3 .08],'backgroundcolor','w','string',num2str(parmval),...
+  'style','text','position',[.44 .03 .3 .08],'backgroundcolor',[.9 .9 .9],'string',num2str(parmval),...
   'HorizontalAlignment','left');%,'Callback',{@UpdateParams,'change','cells'});
 
 % plots
 H.ax_conn_img = subplot('position',[.1 .5 .3 .4],'parent',H.p_net_kernel); 
-H.img_connect = imagesc(auxmat); axis xy; vline(midpt,'k'); caxis(lims);
-
-% callback should use: ginput() - select N points interactively...
+H.img_connect = imagesc(auxmat); axis xy; vline(midpt,'k'); 
+if lims(2)>lims(1), caxis(lims); end
+colorbar
 
 H.ax_conn_line = subplot('position',[.44 .5 .3 .4],'parent',H.p_net_kernel); 
 H.line_connect = line('ydata',1:size(auxmat,1),'xdata',auxmat(:,midpt),'color','k','LineStyle','-','erase','background');
-xlim(lims);
+if lims(2)>lims(1), xlim(lims); end
 % create button group for predefined adjacency matrices
 H.rad_adj = uibuttongroup('visible','off','units','normalized','Position',[.77 .5 .2 .3],'parent',H.p_net_kernel);
 H.rad_adj_1 = uicontrol('Style','radiobutton','String','1-to-1','units','normalized',...
@@ -574,6 +583,55 @@ H.rad_adj_3 = uicontrol('Style','radiobutton','String','random','units','normali
 set(H.rad_adj,'SelectionChangeFcn',@seladj);
 set(H.rad_adj,'SelectedObject',[]);  % No selection
 set(H.rad_adj,'Visible','on');
+
+function UpdateAuxView(src,evnt)
+global H CURRSPEC
+str=get(H.pop_sel_conn,'string');
+val=get(H.pop_sel_conn,'value');
+mech_u=get(H.pop_sel_conn,'userdata');
+mech_u=mech_u(val);
+from=mech_u.from;
+to=mech_u.to;
+label=mech_u.label;
+mech_i=mech_u.mech_i;
+% update aux list
+if strcmp(get(src,'style'),'popupmenu')
+  sel=strmatch([strrep(label,'-','_') '_'],CURRSPEC.model.auxvars(:,1));
+  auxlist=CURRSPEC.model.auxvars(sel,1);
+  auxind=length(auxlist);
+  set(H.lst_auxvars,'string',auxlist,'value',auxind);
+else
+  auxlist=get(H.lst_auxvars,'string');
+  auxind=get(H.lst_auxvars,'value');
+end
+if isempty(auxlist), return; end
+% get expression for aux var
+a=CURRSPEC.connections(from,to).mechs(mech_i).auxvars(auxind,:);
+auxeqn=[a{1} ' = ' a{2}];
+% get list of params
+%parmlist=fieldnames(CURRSPEC.connections(from,to).mechs(mech_i).params);
+parmlist=get(H.lst_auxparams,'string');
+parmsel=get(H.lst_auxparams,'value');
+% get value of first parameter
+try
+  parmval=CURRSPEC.connections(from,to).mechs(mech_i).params.(parmlist{parmsel});
+catch
+  parmval=[];
+end
+% get auxvar matrix 
+auxmat=CURRSPEC.model.eval.(auxlist{auxind});
+midpt=round(size(auxmat,2)/2); 
+lims=[min(auxmat(:)) max(auxmat(:))];
+% update uicontrols
+set(H.edit_auxvar_eqn,'string',auxeqn);
+set(H.lst_auxparams,'string',parmlist);
+set(H.edit_auxparams,'string',num2str(parmval));
+set(H.img_connect,'cdata',auxmat);
+set(H.line_connect,'ydata',1:size(auxmat,1),'xdata',auxmat(:,midpt));
+if lims(2)>lims(1)
+  set(H.ax_conn_img,'clim',lims);
+  set(H.ax_conn_line,'xlim',lims);
+end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function simulate(src,evnt,action)
 global CURRSPEC H cfg
@@ -649,51 +707,53 @@ while cfg.quitflag<0 && (length(IC)==length(CURRSPEC.model.IC))
       %set(H.ax_state_plot,'xtick',get(H.ax_state_plot(1),'xtick')+100*cfg.dt);
     %end
   end
-  % get output to plot
-  list=get(H.lst_comps,'string');
-  sel=get(H.lst_comps,'value');
-  if length(sel)>3, sel=sel(1:3); end
-  show=list(sel);
-  if cfg.changeflag>0
-    % get vars to plot from listboxes
+  if mod(cnt,round(cfg.buffer/50))==0
+    % get output to plot
+    list=get(H.lst_comps,'string');
+    sel=get(H.lst_comps,'value');
+    if length(sel)>3, sel=sel(1:3); end
+    show=list(sel);
+    if cfg.changeflag>0
+      % get vars to plot from listboxes
+      for k=1:length(show)
+        this=sel(k);
+        numcell=CURRSPEC.cells(this).multiplicity;
+        list=get(H.lst_vars(k),'string');
+        vind=get(H.lst_vars(k),'value');
+        var = list{vind};% CURRSPEC.cells(this).ode_labels{1};
+        plotvars{k}=find(cellfun(@(x)isequal(x,var),allvars));
+        set(get(H.ax_state_plot(k),'title'),'string',sprintf('%s (n=%g/%g)',strrep(list{vind},'_','\_'),min(numcell,cfg.ncellshow),numcell));
+      end
+      cfg.changeflag=-1;
+    end
     for k=1:length(show)
       this=sel(k);
       numcell=CURRSPEC.cells(this).multiplicity;
-      list=get(H.lst_vars(k),'string');
-      vind=get(H.lst_vars(k),'value');
-      var = list{vind};% CURRSPEC.cells(this).ode_labels{1};
-      plotvars{k}=find(cellfun(@(x)isequal(x,var),allvars));
-      set(get(H.ax_state_plot(k),'title'),'string',sprintf('%s (n=%g/%g)',strrep(list{vind},'_','\_'),min(numcell,cfg.ncellshow),numcell));
+      if numcell > cfg.ncellshow
+        tmp=randperm(numcell);
+        inds = sort(tmp(1:cfg.ncellshow));
+      else
+        inds = 1:numcell;
+      end
+      for j=1:length(inds)
+        set(H.simdat_alltrace(k,j),'ydata',cfg.record(plotvars{k}(inds(j)),:));
+      end
+  %     if 0 
+  %       lfp=mean(cfg.record(plotvars{k},:),1);
+  %       set(H.simdat_LFP(k),'ydata',lfp,'linewidth',4,'color','k','linestyle','-');
+  %     end
+  %     if 0 && mod(cnt,cfg.buffer)==0 && cnt>1
+  %       % update power spectrum
+  %       try
+  %         res = feval(fh_pow,cfg.T,lfp);
+  %         set(H.simdat_LFP_power(k),'xdata',res.f,'ydata',log10(res.Pxx));
+  %       catch
+  %         fprintf('power spectrum calc failed.\n');
+  %       end
+  %     end
     end
-    cfg.changeflag=-1;
+    drawnow
   end
-  for k=1:length(show)
-    this=sel(k);
-    numcell=CURRSPEC.cells(this).multiplicity;
-    if numcell > cfg.ncellshow
-      tmp=randperm(numcell);
-      inds = sort(tmp(1:cfg.ncellshow));
-    else
-      inds = 1:numcell;
-    end
-    for j=1:length(inds)
-      set(H.simdat_alltrace(k,j),'ydata',cfg.record(plotvars{k}(inds(j)),:));
-    end
-%     if 0 
-%       lfp=mean(cfg.record(plotvars{k},:),1);
-%       set(H.simdat_LFP(k),'ydata',lfp,'linewidth',4,'color','k','linestyle','-');
-%     end
-%     if 0 && mod(cnt,cfg.buffer)==0 && cnt>1
-%       % update power spectrum
-%       try
-%         res = feval(fh_pow,cfg.T,lfp);
-%         set(H.simdat_LFP_power(k),'xdata',res.f,'ydata',log10(res.Pxx));
-%       catch
-%         fprintf('power spectrum calc failed.\n');
-%       end
-%     end
-  end
-  drawnow
 end
 cfg.quitflag=-1;
 p=findobj('tag','pause');
@@ -1022,7 +1082,18 @@ if ~iscell(mechadded), mechadded={mechadded}; end
 for i=1:length(mechadded)
   newmech = mechadded{i};
   mechind = find(strcmp({allmechs.label},newmech));
-  newmech = allmechs(mechind);
+  if isempty(mechind) && exist(fullfile(pwd,[newmech '.txt.']),'file')
+    file=fullfile(pwd,[newmech '.txt.']);
+    this = parse_mech_spec(file,[]);
+    cfg.allmechfiles{end+1}=file;
+    this.label = newmech;
+    this.file = file;
+    allmechs(end+1)=this;
+    newmech=this;
+    mechind=length(allmechs);
+  else
+    newmech = allmechs(mechind);
+  end
   if isempty(newmech)
     warndlg([mechadded{i} ' not found. Check spelling and case.']);
     disp('known mechanisms include: '); disp(get_mechlist');
@@ -1256,9 +1327,11 @@ functions = functions(keep==1,:);
 X = cfg.V; 
 for k=1:size(functions,1)
   f = str2func(functions{k,2});
-  Y = f(X);
-  H.static_traces(k)=line('parent',H.ax_static_plot,'color',cfg.colors(max(1,mod(k,length(cfg.colors)))),...
-    'LineStyle',cfg.lntype{max(1,mod(k,length(cfg.lntype)))},'erase','background','xdata',X,'ydata',Y,'zdata',[]);
+  try
+    Y = f(X);
+    H.static_traces(k)=line('parent',H.ax_static_plot,'color',cfg.colors(max(1,mod(k,length(cfg.colors)))),...
+      'LineStyle',cfg.lntype{max(1,mod(k,length(cfg.lntype)))},'erase','background','xdata',X,'ydata',Y,'zdata',[]);
+  end
 end
 funclabels=cellfun(@(x)strrep(x,'_','\_'),functions(:,1),'uni',0);
 if isfield(H,'static_traces') && ~isempty(H.static_traces)

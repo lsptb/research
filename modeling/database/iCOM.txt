@@ -1,7 +1,7 @@
 # ohmic intercompartmental current
 
 # constants
-g_COM=.2; comspan=inf;
+g_COM=.2; comspan=.5;
 
 # precompute linear positions (index)
 UB = max(Npre,Npost)

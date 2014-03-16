@@ -8,7 +8,8 @@ parms = mmil_args2parms( varargin, ...
                       'dW',1/4,[],...
                       'spikethreshold',0,[],...
                       'smooth',[],[],... % integer span for moving average
-                      'var',1,[],...
+                      'var',[],[],...
+                      'varlabel','V',[],...
                       'dt',1/data(1).sfreq,[],...
                    }, false);
                  
@@ -23,6 +24,12 @@ fig = [];
 % prepare point process data
 spiketimes={}; spikeinds={}; rates={}; alldn={}; spikes={}; orders={};
 for pop=1:npop
+  labels = {data(pop).sensor_info.label};
+  if isempty(parms.var)
+    var = find(~cellfun(@isempty,regexp(labels,['_' parms.varlabel '$'])),1,'first');
+  else
+    var = parms.var;
+  end  
   t=data(pop).epochs.time;
   ncells=spec.entities(pop).multiplicity; %data(pop).epochs.num_trials;
   if pop==1
@@ -74,6 +81,12 @@ if parms.plot_flag
     yi = floor((i-1)./ncols)+1;
     subplot('Position',[xpos(xi) ypos(yi) .9/ncols .9/nrows]); set(gca,'units','normalized');
     pop = ceil(i/ncols); % index to this population
+    labels = {data(pop).sensor_info.label};
+    if isempty(parms.var)
+      var = find(~cellfun(@isempty,regexp(labels,['_' parms.varlabel '$'])),1,'first');
+    else
+      var = parms.var;
+    end    
     lab = data(pop).sensor_info(var).label;   
     r=rates{pop};
     rmin=min(r(:)); rmax=max(r(:)); dr=rmax-rmin;    
@@ -93,25 +106,34 @@ if parms.plot_flag
       end
       lims = [max(0,rmin-.2*dr) rmax+.2*dr];
       %lims = [max(0,min(r(:)) 1.3*max(r(:))]
-      ylim(lims);
+      if lims(1)~=lims(2), ylim(lims); end
       xlim([tmins(1) tmins(end)]); 
       %xlim([t(1) t(end)]);
-      xlabel('time [s]');
       ylabel('firing rate [Hz]');
       %text(min(xlim)+.2*diff(xlim),min(ylim)+.8*diff(ylim),[strrep(lab,'_','\_') ' spike rate (threshold=' num2str(threshold) ')'],'fontsize',14,'fontweight','bold');
       title([strrep(lab,'_','\_') ' spike rate (threshold=' num2str(threshold) ')'],'fontsize',14,'fontweight','bold');
+      if pop==npop
+        xlabel('time [s]');
+      else
+        set(gca,'xtick',[],'xticklabel',[]);
+      end      
     elseif mod(i,ncols)==2 % plot heat map
       imagesc(tmins, 1:ncells,r(orders{pop}, :)); axis xy
       %text(min(xlim)+.2*diff(xlim),min(ylim)+.8*diff(ylim),[strrep(lab,'_','\_') ' sorted heat map'],'fontsize',14,'fontweight','bold');
       title([strrep(lab,'_','\_') ' sorted heat map'],'fontsize',14,'fontweight','bold');
       ylabel('cell','fontsize',12); caxis(lims);
+      if pop<npop, set(gca,'xtick',[],'xticklabel',[]); end
       colorbar
     else % plot psth      
-      psth = spikes{pop}/ncells;
-      plot(t,psth,'LineWidth',3);
-      ylim([0, 1]); xlim([t(1) t(end)]);
-      %text(min(xlim)+.2*diff(xlim),min(ylim)+.8*diff(ylim),[strrep(lab,'_','\_') ' PSTH'],'fontsize',14,'fontweight','bold');
-      title([strrep(lab,'_','\_') ' PSTH'],'fontsize',14,'fontweight','bold');
+      imagesc(tmins, 1:ncells,r); axis xy
+      title([strrep(lab,'_','\_') ' unsorted heat map'],'fontsize',14,'fontweight','bold');
+      ylabel('cell','fontsize',12); caxis(lims);
+%       psth = spikes{pop}/ncells;
+%       plot(t,psth,'LineWidth',3);
+%       ylim([0, 1]); xlim([t(1) t(end)]);
+%       %text(min(xlim)+.2*diff(xlim),min(ylim)+.8*diff(ylim),[strrep(lab,'_','\_') ' PSTH'],'fontsize',14,'fontweight','bold');
+%       title([strrep(lab,'_','\_') ' PSTH'],'fontsize',14,'fontweight','bold');
+      if pop<npop, set(gca,'xtick',[],'xticklabel',[]); end
     end
   end
 end

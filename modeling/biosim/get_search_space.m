@@ -136,7 +136,7 @@ for s = 1:length(spec.simulation.scope)
             velem = var_elems{jj};
             fld = velem{1}; svar = fld;
             key = velem{2}; if ischar(key), svar = key; end
-            if ~strcmp(fld,'mechanisms')
+            if ~strcmp(fld,'mechanisms') && iscell(val)
               val = val{1}; % values are singular if not mech list
             end
             if jj==1, str2=svar; else str2=sprintf('%s-%s',str2,svar); end
@@ -272,7 +272,7 @@ function list = parse_spec(type,str,spec)
   list = {};
   pat = {}; lab = {};
   lab{end+1} = 'reserved';
-  pat{end+1} = '(mechanism[s]?)|(connection[s]?)'; % reserved literal strings
+  pat{end+1} = '(mechanism[s]?)|(connection[s]?|multiplicity)'; % reserved literal strings
   lab{end+1} = 'numeric_array';
   pat{end+1} = '^([-+]?\[)[\d\s:-+]*\]$';   % numeric array
   lab{end+1} = 'bracketed_equations';
@@ -366,6 +366,8 @@ function list = parse_spec(type,str,spec)
           elseif strmatch(str,'connections')
             error('variable connection formalisms have not been implemented yet');
             % TODO: implement it
+          else
+            list{1}{1} = {str,[]}; % e.g., multiplicity
           end
         case 'string'                   % single parameter to vary
           list{1}{1} = {'parameters',str};

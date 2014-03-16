@@ -58,16 +58,24 @@ elseif ischar(net.files) && exist(net.files,'dir')
   allmechfiles = {selmechfiles{:} allmechfiles{:}};
 elseif iscellstr(net.files)
   % todo: get mechs from spec
-%   selmechlist = {d(cellfun(@(x)any(regexp(x,'.txt$')),{d.name})).name};
-%   allmechlist = {selmechlist{:} allmechlist{:}}; % prepend user mechs
-%   selmechfiles = cellfun(@(x)fullfile(DBPATH,x),net.files,'unif',0);
-%   allmechfiles = {selmechfiles{:} allmechfiles{:}};  
+  selmechfiles = net.files(cellfun(@(x)any(regexp(x,'.txt$')),net.files));
+  allmechfiles = unique({selmechfiles{:} allmechfiles{:}});
+  selmechlist = cell(size(selmechfiles));
+  for i=1:length(selmechfiles)
+    [fpath,fname]=fileparts(selmechfiles{i});
+    selmechlist{i}=fname;
+  end
 end
 % only keep mech selection matching those included in the cell
 if isfield(net.cells,'mechanisms')
   cellmechs={net.cells.mechanisms}; cellmechs=[cellmechs{:}];
   connmechs={net.connections.mechanisms}; 
   connmechs=connmechs(~cellfun(@isempty,connmechs));
+  if ~iscell(cellmechs), cellmechs={cellmechs}; end
+  if ~iscell(connmechs), connmechs={connmechs}; end
+  if any(cellfun(@iscell,connmechs))
+    connmechs=[connmechs{:}];
+  end
   cellmechs={cellmechs{:} connmechs{:}};
   selmechlist = cellfun(@(x)strrep(x,'.txt',''),selmechlist,'unif',0);
   sel=cellfun(@(x)any(strmatch(x,cellmechs,'exact')),selmechlist);
@@ -102,8 +110,8 @@ cfg.dt = .01;
 for i=1:length(net.cells), cfg.userparams{i} = net.cells(i).parameters; end
 cfg.changes = {};
 cfg.lastchanges = {};
-cfg.selmechlist = selmechlist;
-cfg.allmechlist = allmechlist;
+% cfg.selmechlist = selmechlist;
+% cfg.allmechlist = allmechlist;
 cfg.allmechfiles = allmechfiles;
 cfg.allmechfiles_db = allmechfiles_db;
 cfg.DBPATH = DBPATH;

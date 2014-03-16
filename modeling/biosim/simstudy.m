@@ -45,25 +45,56 @@ if ischar(logfile) && ~isempty(logfile), logfid = fopen(logfile,'w'); else logfi
 % define output directory structure
 scopes = cellfun(@(x)x.simulation.scope,allspecs,'uni',0);
 vars = cellfun(@(x)x.simulation.variable,allspecs,'uni',0);
+vals = cellfun(@(x)x.simulation.values,allspecs,'uni',0);
 uniqscopes = unique(scopes);
 outdirs={}; dirinds=zeros(size(allspecs));
 for k=1:length(uniqscopes)
   scopeparts = regexp(uniqscopes{k},'[^\(\)]*','match');
-  inds = strmatch(uniqscopes{k},scopes,'exact');
-  varparts = regexp(vars{inds(1)},'[^\(\)]*','match');
+  uniqscopeparts = unique(scopeparts);
+  specind = find(strcmp(uniqscopes{k},scopes));
+  varparts = regexp(vars{specind(1)},'[^\(\)]*','match');
   dirname = '';
-  for j=1:length(scopeparts)
-    dirname = [dirname '_' strrep(scopeparts{j},',','_') '-' varparts{j}];
+  for j=1:length(uniqscopeparts)
+    selind = find(strcmp(uniqscopeparts{j},scopeparts));
+    dirname = [dirname '__' strrep(uniqscopeparts{j},',','+')];
+    for i=1:length(selind)
+      dirname = [dirname '-' strrep(varparts{selind(i)},'_','')];
+    end
   end
-  outdirs{end+1} = dirname(2:end);
-  dirinds(inds) = k;
+  outdirs{end+1} = dirname(3:end);
+  dirinds(specind)=k;
 end
+%   inds = strmatch(uniqscopes{k},scopes,'exact');
+%   varparts = regexp(vars{inds(1)},'[^\(\)]*','match');
+%   dirname = '';
+%   for j=1:length(scopeparts)
+%     dirname = [dirname '_' strrep(scopeparts{j},',','') '-' strrep(varparts{j},'_','')];
+%   end
+%   outdirs{end+1} = dirname(2:end);
+%   dirinds(inds) = k;
+% end
 rootoutdir={}; prefix={};
 timestamp = datestr(now,'yyyymmdd-HHMMSS');
 for i=1:length(allspecs)
   rootoutdir{i} = fullfile(spec.simulation.rootdir,timestamp,outdirs{dirinds(i)});
-  tmp=regexp(allspecs{i}.simulation.description,'[^\d_].*','match');
-  prefix{i}=strrep([tmp{:}],',','_');
+  try
+    scopeparts=regexp(allspecs{i}.simulation.scope,'[^\(\)]*','match');
+    varparts = regexp(allspecs{i}.simulation.variable,'[^\(\)]*','match');
+    valparts = regexp(allspecs{i}.simulation.values,'[^\(\)]*','match');
+    uniqscopeparts = unique(scopeparts);
+    pname='';
+    for j=1:length(uniqscopeparts)
+      selind = find(strcmp(uniqscopeparts{j},scopeparts));
+      pname = [pname '__' strrep(uniqscopeparts{j},',','+')];
+      for k=1:length(selind)
+        pname = [pname '-' strrep(varparts{selind(k)},'_','') strrep(valparts{selind(k)},'.','pt')];
+      end
+    end
+    prefix{i}=pname(3:end);
+  catch
+    tmp=regexp(allspecs{i}.simulation.description,'[^\d_].*','match');
+    prefix{i}=strrep([tmp{:}],',','_');
+  end
   fprintf(logfid,'%s: %s\n',rootoutdir{i},prefix{i});
 end
 % save allspecs(i) results in rootoutdir{i}
@@ -131,7 +162,8 @@ else
   for specnum = 1:length(allspecs) % loop over elements of search space
     modelspec = allspecs{specnum};
     fprintf(logfid,'processing simulation...');
-    biosimdriver(modelspec,'rootoutdir',rootoutdir{specnum},'prefix',prefix{specnum},'verbose',0);
+    biosimdriver(modelspec,'rootoutdir',rootoutdir{specnum},'prefix',prefix{specnum},'verbose',1,...
+      'savefig_flag',0,'savedata_flag',0);
     fprintf(logfid,'done (%g of %g)\n',specnum,length(allspecs));
   end
 end

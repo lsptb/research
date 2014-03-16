@@ -4,7 +4,8 @@ function [fig,lfps,T]=plotv(data,spec,varargin)
 parms = mmil_args2parms( varargin, ...
                    {  'plot_flag',1,[],...
                       'maxtraces',10,[],...
-                      'var',1,[],...
+                      'var',[],[],...
+                      'varlabel','V',[],...
                    }, false);
                  
 if ~isfield(spec,'entities') && isfield(spec,'cells')
@@ -37,6 +38,12 @@ if parms.plot_flag
     yi = floor((i-1)./ncols)+1;
     subplot('Position',[xpos(xi) ypos(yi) .9/ncols .9/nrows]); set(gca,'units','normalized');
     pop = ceil(i/ncols); % index to this population
+    labels = {data(pop).sensor_info.label};
+    if isempty(parms.var)
+      var = find(~cellfun(@isempty,regexp(labels,['_' parms.varlabel '$'])),1,'first');
+    else
+      var = parms.var;
+    end
     if mod(i,2)==1 % odd, plot trace
       T = data(pop).epochs.time;
       n = spec.entities(pop).multiplicity; 

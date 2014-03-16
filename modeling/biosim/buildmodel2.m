@@ -389,7 +389,9 @@ for i=1:N
     end
   end
 end
-
+% ----------------------------------
+Stype(ismember(Svars(:,1),Tsubst(:,1)))=0; % make global if in substitution term
+% ----------------------------------
 % [Mid,Mlabels,Minputs] % mech ids, labels, input populations
 % Sodes: (differential equation = F: var'=F )
 % Svars: {label, prefix_label, indices, IC}
@@ -439,9 +441,9 @@ for m=1:nmech
     old3{k}=[old{k} '[1]']; 
     new3{k}= [EL{k1} new{k}(find(new{k}=='_',1,'first'):end)]; 
   end
-  [o,t]=substitute(old3,new3,o,t);
-  [o,t]=substitute(old2,new2,o,t);
-  [o,t]=substitute(old,new,o,t);
+  [f,o,t]=substitute(old3,new3,f,o,t);
+  [f,o,t]=substitute(old2,new2,f,o,t);
+  [f,o,t]=substitute(old,new,f,o,t);
   for k=1:length(old), old2{k}=[old{k} 'post']; new2{k}=new{k}; end
   for k=1:length(old)
     old3{k}=[old{k} 'pre']; 
@@ -466,6 +468,11 @@ for e=1:length(E)
   old={'Npost','N[0]','Npop','dt'}; n0=NE(e);
   new={n0,n0,n0,dt};
   o=substitute(old,new,o);
+  % ----------------------------------
+  tmp=ismember(Tsubst(:,1),Hfunc(:,1));
+  old=Tsubst(tmp,1); new=Tsubst(tmp,2);
+  o=substitute(old,new,o);
+  % ----------------------------------
   Sodes(idx)=o;
 end
 
@@ -485,7 +492,7 @@ if parms.nofunctions
         submatch = regexp(target,[Hfunc{ind,2} '\([\w\s,]*\)'],'match');      
         %submatch = regexp(target,[Hfunc{ind,2} '\(.*\)'],'match');
         subvars = regexp(strrep(submatch,Hfunc{ind,2},''),'\([a-zA-Z]\w*\)','match');
-        subvars = [subvars{:}];
+        subvars = unique([subvars{:}]);
         subvars = cellfun(@(s)strrep(s,'(',''),subvars,'unif',0);
         subvars = cellfun(@(s)strrep(s,')',''),subvars,'unif',0);
         str = Hfunc{ind,3};
@@ -511,9 +518,9 @@ if parms.nofunctions
     funcinds=find(~cellfun(@isempty,cellfun(@(s)regexp(target,pat(s)),Hfunc(:,2),'unif',0)));
     for f=1:length(funcinds)
       ind = funcinds(f);
-      submatch = regexp(target,[Hfunc{ind,2} '\([\w\s,]*\)'],'match');      
-      %submatch = regexp(target,[Hfunc{ind,2} '\(.*\)'],'match');
-      subvars = regexp(strrep(submatch,Hfunc{ind,2},''),'\([a-zA-Z]\w*\)','match');
+      submatch = regexp(target,[Hfunc{ind,2} '\([\w\s,]*\)'],'match');       %submatch = regexp(target,[Hfunc{ind,2} '\(.*\)'],'match');
+      %subvars = regexp(strrep(submatch,Hfunc{ind,2},''),'\([a-zA-Z]\w*\)','match');
+      subvars = regexp(strrep(submatch,Hfunc{ind,2},''),'[a-zA-Z]\w*','match');
       subvars = [subvars{:}];
       subvars = cellfun(@(s)strrep(s,'(',''),subvars,'unif',0);
       subvars = cellfun(@(s)strrep(s,')',''),subvars,'unif',0);
@@ -540,7 +547,8 @@ if parms.nofunctions
     for f=1:length(funcinds)
       ind = funcinds(f);
       submatch = regexp(Tsubst{t,2},[Hfunc{ind,2} '\(.*\)'],'match');
-      subvars = regexp(strrep(submatch,Hfunc{ind,2},''),'\w+','match');
+      subvars = regexp(strrep(submatch,Hfunc{ind,2},''),'[a-z_A-Z]\w*','match');
+      %subvars = regexp(strrep(submatch,Hfunc{ind,2},''),'\w+','match');
       subvars = [subvars{:}];
       str = Hfunc{ind,3};
       vars = regexp(str,'@\([\s\w,]*\)','match');
