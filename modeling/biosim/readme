@@ -1,19 +1,36 @@
 BioSim Setup on SCC:
 
+# launch VNC server on SCC
 ssh scc2.bu.edu:
   vncstart -geometry RESOLUTION
     note session #: 59XX
   vncpassword ...
 
+# create ssh tunnel from your local machine to SCC
 ssh USER@scc2.bu.edu -L 2015:localhost:59XX
+
+# connect to VNC session
 vncviewer: localhost:2015
 
-cp -R /project/crc-nak/sherfey/code/research ~/
+# copy/clone biosim-containing repository
+# cp -R /project/crc-nak/sherfey/code/research ~/
+git clone git@github.com:jsherfey/research.git
 
+# setup your CRC project directory
 cd /project/crc-nak
 mkdir USERDIR
 cd USERDIR
 
+# launch matlab and add biosim to your matlab path 
 matlab:
 run ~/research/startup.m
 
+# main biosim functions:
+modeler()
+ --> build compartmental cell/network models
+simstudy(modelspec,scope,variable,values,args)
+ --> submit batch simulations exploring model/parameter space
+    modelspec = model specification structure saved by modeler()
+    scope = scope of thing to vary (e.g., cell or connection label)
+    variable = thing to vary (e.g., multiplicity, mechanisms, parameters)
+    values = values of the thing to vary
