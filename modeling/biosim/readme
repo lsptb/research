@@ -28,7 +28,6 @@ run ~/research/startup.m
 #################################################################
 
 BioSim user functions:
-
 1. modeler()
  --> build compartmental cell/network models
 2. simstudy(modelspec,scope,variable,values,args)
@@ -42,11 +41,12 @@ BioSim user functions:
       () = group elements
       {} = permute elements
 
-# create mechanism files
- --> text files with mechanism model equations (e.g., ion currents, buffers, noise, inputs, etc)
- e.g., see examples in ~/research/modeling/database
+BioSim approach to modeling and simulation:
+1. create mechanism files:
+   text files with mechanism model equations (e.g., ion currents, buffers, noise, inputs, etc)
+   e.g., see examples in ~/research/modeling/database
 
-# create model using modeler()
+2. create model using modeler()
 # GUI method
   modeler;
    --> add compartment. comma-separated list of mechanisms (use filenames without extension). run simulation.
@@ -59,3 +59,5 @@ BioSim user functions:
    cell.parameters = {'Cm',1};
    modeler(cell);
 modeler tip: use (File -> Save spec) to save .mat with model specification that can be passed to simstudy().
+
+3. run simulation study using simstudy() (see function notes above)
