@@ -65,5 +65,5 @@ modeler tip: use (File -> Save spec) to save .mat with model specification that 
 
 3. run simulation study using simstudy() (see function notes above)
 
-4. do batch-level analysis and metric space visualization (work in progress)
+4. do batch-level analysis and metric visualization over parameter space (work in progress)
 
