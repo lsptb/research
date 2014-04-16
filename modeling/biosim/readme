@@ -46,7 +46,7 @@ BioSim approach to modeling and simulation:
 1. create mechanism files:
    text files with mechanism model equations (e.g., ion currents, buffers, noise, inputs, etc)
    e.g., see examples in ~/research/modeling/database
-   tip: can list predefined mechanisms in ~/research/modeling/database
+   tip: can use predefined mechanisms in ~/research/modeling/database
    wip: linking Matlab to MySQL database of predefined models
 
 2. create model using modeler()
