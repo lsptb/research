@@ -31,6 +31,10 @@ modeler()
 simstudy(modelspec,scope,variable,values,args)
  --> submit batch simulations exploring model/parameter space
     modelspec = model specification structure saved by modeler()
-    scope = scope of thing to vary (e.g., cell or connection label)
-    variable = thing to vary (e.g., multiplicity, mechanisms, parameters)
-    values = values of the thing to vary
+    scope = scope of thing to vary (e.g., cell or connection label; 'E', 'I-E', '(E,I)')
+    variable = thing to vary (e.g., 'multiplicity', 'mechanisms', parameters; 'gNa')
+    values = values of the thing to vary (e.g., [5:5:50], {'iNap','iK','iM'})
+    syntax:
+      [] = iterate over set
+      () = group elements
+      {} = permute elements
