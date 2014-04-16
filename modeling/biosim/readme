@@ -61,7 +61,9 @@ BioSim approach to modeling and simulation:
    cell.mechanisms = {'iNa','iK','itonic','noise'};
    cell.parameters = {'Cm',1};
    modeler(cell);
-modeler tip: use (File -> Save spec) to save .mat with model specification that can be passed to simstudy().
+   tip: use (File -> Save spec) to save .mat with model specification that can be passed to simstudy().
+   wip: modifying NeuroML=>NEURON converter for outputing BioSim models in NEURON-readable format.
+   wip: creating BioSim-to-CellML converter for generic simulator-independent model specification.
 
 3. run simulation study using simstudy() (see function notes above)
 
