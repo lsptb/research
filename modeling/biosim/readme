@@ -1,0 +1,18 @@
+BioSim Setup on SCC:
+
+ssh scc2.bu.edu:
+  vncstart -geometry RESOLUTION
+    note session #: 59XX
+  vncpassword ...
+
+ssh USER@scc2.bu.edu -L 2015:localhost:59XX
+vncviewer: localhost:2015
+
+cd /project/crc-nak
+mkdir USERDIR
+cd USERDIR
+
+matlab:
+cp -R /project/crc-nak/sherfey/code/research ~/
+run ~/research/startup.m
+
