@@ -15,6 +15,7 @@ vncviewer: localhost:2015
 # copy/clone biosim-containing repository
 # cp -R /project/crc-nak/sherfey/code/research ~/
 git clone git@github.com:jsherfey/research.git
+# note: until released under GPL, request access at sherfey@bu.edu or https://github.com/jsherfey
 
 # setup your CRC project directory
 cd /project/crc-nak
