@@ -36,7 +36,7 @@ BioSim user functions:
  --> build compartmental cell/network models
 2. simstudy(modelspec,scope,variable,values,args)
  --> submit (to SGE cluster) embarrassingly-parallel batch simulations exploring model/parameter space 
-     (requires ~/research/csh in your OS path; proper .bashrc changes are given above)
+     (requires ~/research/csh to be in your OS path; proper .bashrc changes are given above)
     modelspec = model specification structure saved by modeler()
     scope = scope of thing to vary (cell or connection label; e.g., 'E', 'I-E', '(E,I)')
     variable = thing to vary (e.g., 'gNa'; reserved options: 'multiplicity', 'mechanisms')
