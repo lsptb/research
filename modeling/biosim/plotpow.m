@@ -39,7 +39,7 @@ if ~isfield(spec,'entities') && isfield(spec,'cells')
 end
 npop = length(spec.entities);
 Fs = fix(data(1).sfreq);
-
+pows=[]; f=[];
 for pop=1:npop
   labels = {data(pop).sensor_info.label};
   if isempty(parms.var)
@@ -47,32 +47,51 @@ for pop=1:npop
   else
     var = parms.var;
   end
-  n = spec.entities(pop).multiplicity;
+  if spec.entities(pop).multiplicity <= data(pop).epochs.num_trials
+    n=spec.entities(pop).multiplicity;
+  else
+    n=data(pop).epochs.num_trials;%spec.entities(pop).multiplicity; %data(pop).epochs.num_trials;
+  end  
   t = data(pop).epochs.time;
   dat = double(squeeze(data(pop).epochs.data(var,:,1:n))');
   lfp = mean(dat,1)';
-  res = PowerSpecTA(t,lfp,parms.FreqRange,WINDOW,parms.NormAbs,parms.Notch);
+  try
+    res = PowerSpecTA(t,lfp,parms.FreqRange,WINDOW,parms.NormAbs,parms.Notch);
       % res.AreaPower (in FreqRange)
       % res.PeakPower
       % res.OscFreq
       % res.Pxx_HzPerBin = Bins/Fs
-  f = res.f;
+  catch
+    res = [];
+  end
   if pop==1
     lfps = zeros(npop,length(t));
-    pows = zeros(npop,length(f)); 
   end
   lfps(pop,:) = lfp;
-  pows(pop,:) = res.Pxx;
+  if isempty(f) && ~isempty(res)
+    f = res.f;    
+    pows = zeros(npop,length(f)); 
+  end
+  if ~isempty(res)
+    pows(pop,:) = res.Pxx;
+  end
   if parms.spectrogram_flag
-    [yo,fo,to] = specmw(detrend(lfp),NFFT,Fs,WINDOW,NOVERLAP);
-    %[yo,fo,to] = mtmspecTA2(detrend(dat),NFFT,Fs,WINDOW,NOVERLAP);
-    %[yo,fo,to] = mtmspecTA(detrend(dat),NFFT,Fs,WINDOW,NOVERLAP,2.5);
+    try
+      [yo,fo,to] = specmw(detrend(lfp),NFFT,Fs,WINDOW,NOVERLAP);
+      %[yo,fo,to] = mtmspecTA2(detrend(dat),NFFT,Fs,WINDOW,NOVERLAP);
+      %[yo,fo,to] = mtmspecTA(detrend(dat),NFFT,Fs,WINDOW,NOVERLAP,2.5);
+    catch
+      yo=[];
+    end
     if pop==1
       tfpows = zeros(npop,length(to),length(fo));
     end
-    tfpows(pop,:,:) = yo';
+    if ~isempty(yo)
+      tfpows(pop,:,:) = yo';
+    end
   end
 end
+if isempty(f), return; end
 
 % Fill screen with subplots:
 nrows = npop;

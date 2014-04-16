@@ -1,4 +1,4 @@
-function [fig,rates,tmins,spiketimes,spikeinds]=plotspk(data,spec,varargin)
+function [fig,rates,tmins,spiketimes,spikeinds,alldn]=plotspk(data,spec,varargin)
 % Purpose: plot firing rate(t) and FRH
 
 parms = mmil_args2parms( varargin, ...
@@ -31,7 +31,11 @@ for pop=1:npop
     var = parms.var;
   end  
   t=data(pop).epochs.time;
-  ncells=spec.entities(pop).multiplicity; %data(pop).epochs.num_trials;
+  if spec.entities(pop).multiplicity <= data(pop).epochs.num_trials
+    ncells=spec.entities(pop).multiplicity;
+  else
+    ncells=data(pop).epochs.num_trials;%spec.entities(pop).multiplicity; %data(pop).epochs.num_trials;
+  end
   if pop==1
     tmins = t(1):parms.dW:t(end)-parms.window_size;
     tmaxs = tmins+parms.window_size;
@@ -47,7 +51,9 @@ for pop=1:npop
     if ~isempty(parms.smooth)
       dat = smooth(dat,parms.smooth);
     end
+    warning off
     [~,ind] = findpeaks(double(dat),'MinPeakHeight',threshold);
+    warning on
     dn(cell,ind) = 1;
     spiketimes{pop}{cell}=t(ind);
     spikeinds{pop}{cell}=ind;
@@ -98,7 +104,7 @@ if parms.plot_flag
         spikes=t(alldn{pop}==1);
         M=rmax+.1*dr;
         for k=1:length(spikes)
-          text(double(spikes(k)),M,'|','color',plot_color);
+          text(double(spikes(k)),M,'|','color','b');
         end
       else
         % overlay mean
@@ -106,8 +112,8 @@ if parms.plot_flag
       end
       lims = [max(0,rmin-.2*dr) rmax+.2*dr];
       %lims = [max(0,min(r(:)) 1.3*max(r(:))]
-      if lims(1)~=lims(2), ylim(lims); end
-      xlim([tmins(1) tmins(end)]); 
+      if numel(lims)==2 && lims(1)~=lims(2), ylim(lims); end
+      if numel(tmins)>1, xlim([tmins(1) tmins(end)]); end
       %xlim([t(1) t(end)]);
       ylabel('firing rate [Hz]');
       %text(min(xlim)+.2*diff(xlim),min(ylim)+.8*diff(ylim),[strrep(lab,'_','\_') ' spike rate (threshold=' num2str(threshold) ')'],'fontsize',14,'fontweight','bold');
@@ -121,13 +127,15 @@ if parms.plot_flag
       imagesc(tmins, 1:ncells,r(orders{pop}, :)); axis xy
       %text(min(xlim)+.2*diff(xlim),min(ylim)+.8*diff(ylim),[strrep(lab,'_','\_') ' sorted heat map'],'fontsize',14,'fontweight','bold');
       title([strrep(lab,'_','\_') ' sorted heat map'],'fontsize',14,'fontweight','bold');
-      ylabel('cell','fontsize',12); caxis(lims);
+      ylabel('cell','fontsize',12); 
+      if numel(lims)==2 && lims(1)~=lims(2), caxis(lims); end
       if pop<npop, set(gca,'xtick',[],'xticklabel',[]); end
       colorbar
     else % plot psth      
       imagesc(tmins, 1:ncells,r); axis xy
       title([strrep(lab,'_','\_') ' unsorted heat map'],'fontsize',14,'fontweight','bold');
-      ylabel('cell','fontsize',12); caxis(lims);
+      ylabel('cell','fontsize',12); 
+      if numel(lims)==2 && lims(1)~=lims(2), caxis(lims); end
 %       psth = spikes{pop}/ncells;
 %       plot(t,psth,'LineWidth',3);
 %       ylim([0, 1]); xlim([t(1) t(end)]);

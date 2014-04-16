@@ -12,6 +12,7 @@ Xpost = (linspace(1,Nmax,Npost)'*ones(1,Npre))'
 
 # compute mask
 fanout=(span*Nmax)/2
+kernel=exp(-(Xpre-Xpost).^2/fanout^2);
 mask = abs(Xpre-Xpost)<=fanout
 gbar = g_SYN / mean(sum(mask,1))
 
@@ -22,7 +23,7 @@ sSYNpre' = -sSYNpre./tauDx + ((1-sSYNpre)/tauRx).*(1+tanh(Vpre/10))
 sSYNpre(0)=IC+IC_noise.*rand(Npre,1)
 
 # synaptic current
-ISYN(V,s) = (gbar.*(s'*mask)'.*(V-E_SYN))
+ISYN(V,s) = (gbar.*(s'*(mask.*kernel))'.*(V-E_SYN))
 
 # interface statement
 current => -ISYN(Vpost,sSYNpre)

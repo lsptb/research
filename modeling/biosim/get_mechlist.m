@@ -1,5 +1,8 @@
 function [list,files]=get_mechlist(DBPATH)
 if nargin<1
+  DBPATH = '~/research/modeling/database';
+end
+if ~exist(DBPATH,'dir')
   DBPATH = '/space/mdeh3/9/halgdev/projects/jsherfey/code/modeler/database';
 end
 if ~exist(DBPATH,'dir')

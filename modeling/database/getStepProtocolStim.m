@@ -28,6 +28,8 @@ if nargin<9
 end
 if nargin<10
   timelimits = [0 nsections*nsteps*isi+bltime+tonictime];
+elseif numel(timelimits)==1
+  timelimits = [0 timelimits];
 end
 %stepsize = 100; % pA. typically: 100-500pA (.1-.5nA)
 %membranearea = 1500; % um^2. typically: 1000-2000 um2
@@ -45,7 +47,7 @@ for a=1:nsections
   I1=[I1 -a*I0];
   I2=[I2 a*I0];
 end
-ramprate=50;
+ramprate=20;
 I3 = linspace(0,nsections*Iapp*ramprate,round(tonictime/dt));
 Iinj = [bl I1 I2 I3];
 allt = timelimits(1):dt:timelimits(2);

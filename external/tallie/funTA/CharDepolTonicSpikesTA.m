@@ -110,6 +110,7 @@ if ~all(cell2mat(cellfun(@isnan,AngLoc,'Uni',0)))
     for k = 1:length(AngLoc)
     if ~isnan(AngLoc{k})
         for kso = 1:size(so{k},2)
+          try
             [~,SpikeSt_i] = max(diff(diff(so{k}(:,kso))));
             SpikeSt_pk = so{k}(SpikeSt_i,kso);
             Spike_amp_mV{k}(kso) = (amp_m{k}(kso)-SpikeSt_pk);
@@ -130,6 +131,7 @@ if ~all(cell2mat(cellfun(@isnan,AngLoc,'Uni',0)))
                 ahp_halfWidth{k}(kso) = ((cross_i_ahp(2)-cross_i_ahp(1))*10)/Fs;
             else ahp_halfWidth{k}(kso) = NaN;
             end
+          end
         end
     else Spike_amp_mV{k} = NaN;
         Spike_width_ms{k} = NaN;

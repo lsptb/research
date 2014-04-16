@@ -11,6 +11,7 @@ parms = mmil_args2parms( varargin, ...
                          }, false);
 if numel(parms.timelimits)==1, parms.timelimits=[0 parms.timelimits]; end
 
+clear global statedata
 timelimits = parms.timelimits;
 fileID = parms.logfid;
 dt = parms.dt;

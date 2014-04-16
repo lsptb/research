@@ -127,19 +127,37 @@ if parms.plot_flag && parms.savefig_flag
     if ~exist(fullfile(rootoutdir,'images','rawv'),'dir'), mkdir(fullfile(rootoutdir,'images','rawv')); end
     filenames{end+1} = fullfile(rootoutdir,'images','rawv',[prefix '_rawv']);
     fprintf('saving plots - voltage traces: %s\n',filenames{end});
-    for i=1:length(exts), try print(h1,formats{i},[filenames{end} exts{i}]); end; end %print(h1,[filename '.jpg'],'-djpeg'); %print(h1,[filename '.png'],'-dpng'); %print(h1,[filename '.eps'],'-depsc');
+    for i=1:length(exts)
+      try 
+        print(h1,formats{i},[filenames{end} exts{i}]); 
+      catch err
+        disperror(err);
+      end; 
+    end %print(h1,[filename '.jpg'],'-djpeg'); %print(h1,[filename '.png'],'-dpng'); %print(h1,[filename '.eps'],'-depsc');
   end
   if ~isempty(h2)
     if ~exist(fullfile(rootoutdir,'images','power'),'dir'), mkdir(fullfile(rootoutdir,'images','power')); end
     filenames{end+1} = fullfile(rootoutdir,'images','power',[prefix '_power']);
     fprintf('saving plots - field power: %s\n',filenames{end});
-    for i=1:length(exts), try print(h2,formats{i},[filenames{end} exts{i}]); end; end
+    for i=1:length(exts)
+      try 
+        print(h2,formats{i},[filenames{end} exts{i}]); 
+      catch err
+        disperror(err);        
+      end; 
+    end
   end
   if ~isempty(h3)
     if ~exist(fullfile(rootoutdir,'images','spikes'),'dir'), mkdir(fullfile(rootoutdir,'images','spikes')); end
     filenames{end+1} = fullfile(rootoutdir,'images','spikes',[prefix '_rates']);
     fprintf('saving plots - spike rates: %s\n',filenames{end});
-    for i=1:length(exts), try print(h3,formats{i},[filenames{end} exts{i}]); end; end
+    for i=1:length(exts)
+      try 
+        print(h3,formats{i},[filenames{end} exts{i}]); 
+      catch err
+        disperror(err);        
+      end; 
+    end
   end
 end
 
@@ -176,7 +194,13 @@ if parms.savedata_flag && ismember(SimMech,spec.entities(1).mechanisms)
         for i=1:length(h)
           filenames{end+1} = fullfile(rootoutdir,'images','cell_characteristics',[prefix '_cell_characteristics_' spec.entities(i).label]);
           fprintf('saving plots - cell characteristics (%s): %s\n',filenames{end},spec.entities(i).label);
-          for j=1:length(exts), try print(h(i),formats{j},[filenames{end} exts{j}]); end; end
+          for j=1:length(exts)
+            try
+              print(h(i),formats{j},[filenames{end} exts{j}]); 
+            catch err
+              disperror(err);              
+            end; 
+          end
         end
       end
       figs = [figs h];

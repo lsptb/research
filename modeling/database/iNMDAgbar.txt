@@ -8,13 +8,14 @@ Nmax = max(Npre,Npost)
 Xpre = linspace(1,Nmax,Npre)'*ones(1,Npost)
 Xpost = (linspace(1,Nmax,Npost)'*ones(1,Npre))'
 fanout=(NMspan*Nmax)/2
+kernel=exp(-(Xpre-Xpost).^2/fanout^2);
 mask = abs(Xpre-Xpost)<=fanout
 gbar = g_NMDA / mean(sum(mask,1))
 
 % Functions:
 BMg(V) = 1./(1+exp(-.062*V)*Mg0/3.57)
 NT(V) = Tmax./(1+exp(-(V-Vpp)/Kp))
-INMDA(V,s) = gbar.*BMg(V).*(s'*mask)'.*(V-E_NMDA)
+INMDA(V,s) = gbar.*BMg(V).*(s'*(mask.*kernel))'.*(V-E_NMDA)
 
 % gating dynamics
 sNMDApre' = alphar*NT(Vpre).*(1-sNMDApre)-sNMDApre/NtauD #betar*sNMDApre

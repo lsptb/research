@@ -143,7 +143,7 @@ uimenu(file_m,'Label','Update spec from base','Callback',{@refresh,1});
 uimenu(file_m,'Label','Exit','Callback','global CURRSPEC H cfg; close(H.fig); clear CURRSPEC H cfg;');
 plot_m = uimenu(fig,'Label','Plot');
 uimenu(plot_m,'Label','plotv','Callback','global CURRSPEC; if ismember(''sim_data'',evalin(''base'',''who'')), plotv(evalin(''base'',''sim_data''),CURRSPEC); else disp(''load data to plot''); end');
-uimenu(plot_m,'Label','plotpow','Callback','global CURRSPEC; if ismember(''sim_data'',evalin(''base'',''who'')), plotpow(evalin(''base'',''sim_data''),CURRSPEC); else disp(''load data to plot''); end');
+uimenu(plot_m,'Label','plotpow','Callback','global CURRSPEC; if ismember(''sim_data'',evalin(''base'',''who'')), plotpow(evalin(''base'',''sim_data''),CURRSPEC,''spectrogram_flag'',0); else disp(''load data to plot''); end');
 uimenu(plot_m,'Label','plotspk','Callback','global CURRSPEC; if ismember(''sim_data'',evalin(''base'',''who'')), plotspk(evalin(''base'',''sim_data''),CURRSPEC,''window_size'',30/1000,''dW'',5/1000); else disp(''load data to plot''); end');
 uimenu(plot_m,'Label','visualizer','Callback','global CURRSPEC; if ismember(''sim_data'',evalin(''base'',''who'')), visualizer(evalin(''base'',''sim_data'')); else disp(''load data to plot''); end');
 

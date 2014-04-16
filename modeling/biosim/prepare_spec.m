@@ -37,6 +37,13 @@ if ~isfield(net.cells,'parent') && isfield(net.cells,'label')
     net.cells(i).parent=net.cells(i).label;
   end
 end
+if ~isfield(net,'connections')
+  net.connections.mechanisms=[];
+  net.connections.parameters=[];
+  net.connections.label = [];
+  [net.connections(1:numel(net.cells),1:numel(net.cells))] = deal(net.connections);
+end
+
 % get list of all known mechs (stored in DB)
 % TODO: read list fom MySQL DB (see http://introdeebee.wordpress.com/2013/02/22/connecting-matlab-to-mysql-database-using-odbc-open-database-connector-for-windows-7/)
 DBPATH = '/space/mdeh3/9/halgdev/projects/jsherfey/code/modeler/database';

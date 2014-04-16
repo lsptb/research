@@ -150,10 +150,13 @@ if plot_flag
   GX = gx(1)+(range(gx)/20); GY = gy(1)+(range(gy)/20);
   if isnan(offset_voltage), text(GX,GY,'(offset voltage unknown)'), end
   for k = 1:length(IhSta1)
+    try
       scatter([bl(1)/Fs bl(end)/Fs IhSta1{k}/Fs IhSta2{k}/Fs StepFin1{k}/Fs StepFin2{k}/Fs IhSta12{k}/Fs IhSta22{k}/Fs ],...
           [O.Baseline_mV O.Baseline_mV O.Ih_Peak_mV{k} O.Ih_Peak_mV{k} O.Ih_End_mV{k} O.Ih_End_mV{k} O.Ih_Peak2_mV{k} O.Ih_Peak2_mV{k}],[],cmap,'filled');
+    end
   end
   axis tight, set(gca,'Box','on'), xlabel('Time (s)'), ylabel('Membrane Potential (mV)'), title('Plot to show accuracy in getting event points')
+  xlim([0 numel(y_mean{1})/Fs]);
 end
 O.Fs = Fs;
 O.step_sections_x = [1/Fs:1/Fs:length(y_mean{1})/Fs];

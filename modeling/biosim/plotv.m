@@ -46,16 +46,22 @@ if parms.plot_flag
     end
     if mod(i,2)==1 % odd, plot trace
       T = data(pop).epochs.time;
-      n = spec.entities(pop).multiplicity; 
+      if spec.entities(pop).multiplicity <= data(pop).epochs.num_trials
+        n=spec.entities(pop).multiplicity;
+      else
+        n=data(pop).epochs.num_trials;%spec.entities(pop).multiplicity; %data(pop).epochs.num_trials;
+      end              
+%      n = data(pop).epochs.num_trials;%spec.entities(pop).multiplicity; 
       dat = squeeze(data(pop).epochs.data(var,:,1:n))';
       lab = data(pop).sensor_info(var).label;
-      imagesc(T,1:n,dat); axis xy;
+      imagesc(T,1:n,dat); axis xy; colormap(1-gray); colorbar
       xlabel('time [s]'); ylabel('cell');
       % calc LFP to overlay with traces
       text(min(xlim)+.2*diff(xlim),min(ylim)+.8*diff(ylim),strrep(lab,'_','\_'),'fontsize',14,'fontweight','bold');
       lfp = mean(dat,1)';
       if i==1, lfps = zeros(npop,length(T)); end
       lfps(pop,:) = lfp;
+      xlim([T(1) T(end)]);
     else % even, plot spectrum
       nshow=min(maxtraces,n);
       show=randperm(n);
@@ -65,13 +71,24 @@ if parms.plot_flag
       plot(T,lfp,'k-','linewidth',3);
       xlabel('time [s]'); ylabel('V');
       text(min(xlim)+.2*diff(xlim),min(ylim)+.8*diff(ylim),[strrep(lab,'_','\_') ' (' num2str(nshow) '-cell subset)'],'fontsize',14,'fontweight','bold');
+      xlim([T(1) T(end)]);
     end
   end
 else
   fig = [];
   for i=1:npop
     T = data(i).epochs.time;
-    n = spec.entities(i).multiplicity;
+    if spec.entities(pop).multiplicity <= data(pop).epochs.num_trials
+      n=spec.entities(pop).multiplicity;
+    else
+      n=data(pop).epochs.num_trials;%spec.entities(pop).multiplicity; %data(pop).epochs.num_trials;
+    end      
+%     try
+%       n=spec.entities(pop).multiplicity;
+%     catch
+%       n=data(pop).epochs.num_trials;%spec.entities(pop).multiplicity; %data(pop).epochs.num_trials;
+%     end      
+%    n = data(pop).epochs.num_trials;%spec.entities(i).multiplicity;
     dat = squeeze(data(i).epochs.data(var,:,1:n))';
     if i==1, lfps = zeros(npop,length(T)); end
     lfps(i,:) = mean(dat,1)';

@@ -9,6 +9,9 @@ function O = CharDepolStepTA(x,y,offset_voltage,tonic_injected_current,sections_
 %
 % CHANGELOG:
 % 20140223 - added plot_flag to suppress plotting; default=1
+% 20140331 - added changes to mloc_on/off from Tallie's version emailed on
+%            03-Mar-2014; and assume fac=0 (missing SectionInputsTA)
+
 if nargin<10, plot_flag=1; end
 
 warning('off') %#ok<WNOFF>
@@ -70,8 +73,12 @@ if length(bl)<50
     bl_factor = std(diff(y(bl:bl+50)))*7;
 else bl_factor = std(diff(y(bl)))*3;
 end
-[~,mloc_on] = findpeaks(diff(y)*(-1),'MinPeakHeight',bl_factor,'NPeaks',1);
-mloc_off = round(mloc_on + (step_length*Fs) - 5); % the 'minus five' takes it back to the stimulus artifact peak in the positive direction
+% [~,mloc_on] = findpeaks(diff(y)*(-1),'MinPeakHeight',bl_factor,'NPeaks',1);
+% mloc_off = round(mloc_on + (step_length*Fs) - 5); % the 'minus five' takes it back to the stimulus artifact peak in the positive direction
+for k = 1:length(sections_start_sec)
+    [~,mloc_on{k}] = findpeaks(diff(y(sl{k}))*(-1),'MinPeakHeight',bl_factor,'NPeaks',1);
+    mloc_off{k} = round(mloc_on{k} + (step_length*Fs) - round(5*Fs/5000)); % the 'minus five' takes it back to the stimulus artifact peak in the positive direction
+end
 
 % each {k} below is a section
 y_sections = cellfun(@(x) y(x),sl,'Uni',0);
@@ -83,7 +90,8 @@ y_sect_mat = cellfun(@(x,y) reshape(x,Fs,y),y_sections,rl,'Uni',0);
 % are there peaks in here?  If there are, spikes analysis.
 for kys = 1:length(y_sect_mat)
     for k = 1:size(y_sect_mat{kys},2)
-        [spike_height{kys}{k},spike_rloc{kys}{k}] = findpeaks(y_sect_mat{kys}(mloc_on:mloc_off,k),'MinPeakHeight',O.Baseline_mV+40);
+      [spike_height{kys}{k},spike_rloc{kys}{k}] = findpeaks(y_sect_mat{kys}(mloc_on{kys}:mloc_off{kys},k),'MinPeakHeight',O.Baseline_mV+40);
+      %[spike_height{kys}{k},spike_rloc{kys}{k}] = findpeaks(y_sect_mat{kys}(mloc_on:mloc_off,k),'MinPeakHeight',O.Baseline_mV+40);
         if isempty(spike_height{kys}{k})
             NoSpike_TF{kys}(k) = 1;
         else NoSpike_TF{kys}(k) = 0;
@@ -91,7 +99,8 @@ for kys = 1:length(y_sect_mat)
     end
 end
 
-O.VoltOff = cellfun(@(x,y) mean(mean(x(mloc_off-200:mloc_off-100,logical(y)),2)),y_sect_mat,NoSpike_TF,'Uni',0);
+%O.VoltOff = cellfun(@(x,y) mean(mean(x(mloc_off-200:mloc_off-100,logical(y)),2)),y_sect_mat,NoSpike_TF,'Uni',0);
+O.VoltOff = cellfun(@(x,y,z) mean(mean(x(z-200:z-100,logical(y)),2)),y_sect_mat,NoSpike_TF,mloc_off,'Uni',0);
 
 y_mean = cellfun(@(x,y) mean(x(:,logical(y)),2),y_sect_mat,NoSpike_TF,'Uni',0);
 y_mean2 = cellfun(@(x,y) x(:,logical(~y)),y_sect_mat,NoSpike_TF,'Uni',0);
@@ -117,12 +126,22 @@ if plot_flag
   gx = get(gca,'XLim'); gy = get(gca,'YLim');
   GX = gx(1)+(range(gx)/20); GY = gy(1)+(range(gy)/20);
   if isnan(offset_voltage), text(GX,GY,'(offset voltage unknown)'), end
+%   for k = 1:length(O.VoltOff)
+%       scatter([bl(1)/Fs bl(end)/Fs (mloc_off-200)/Fs (mloc_off-100)/Fs],...
+%           [O.Baseline_mV O.Baseline_mV O.VoltOff{k} O.VoltOff{k}],[],cmap,'filled');
+%       for k2 = 1:length(spike_rloc{k}), scatter((spike_rloc{k}{k2}+mloc_on)/Fs,spike_height{k}{k2},[],'*g'), end
+%   end
   for k = 1:length(O.VoltOff)
-      scatter([bl(1)/Fs bl(end)/Fs (mloc_off-200)/Fs (mloc_off-100)/Fs],...
+      if 0%fac==1;
+      scatter([(bl(1)/Fs)-sections_start_sec(1)+x(1) (bl(end)/Fs)-sections_start_sec(1)+x(1) (mloc_off{k}-200)/Fs (mloc_off{k}-100)/Fs],...
           [O.Baseline_mV O.Baseline_mV O.VoltOff{k} O.VoltOff{k}],[],cmap,'filled');
-      for k2 = 1:length(spike_rloc{k}), scatter((spike_rloc{k}{k2}+mloc_on)/Fs,spike_height{k}{k2},[],'*g'), end
-  end
+      else scatter([0 0 (mloc_off{k}-200)/Fs (mloc_off{k}-100)/Fs],...
+          [O.Baseline_mV O.Baseline_mV O.VoltOff{k} O.VoltOff{k}],[],cmap,'filled');
+      end
+      for k2 = 1:length(spike_rloc{k}), scatter((spike_rloc{k}{k2}+mloc_on{k})/Fs,spike_height{k}{k2},[],'*g'), end
+  end  
   axis tight, set(gca,'Box','on'), xlabel('Time (s)'), ylabel('Membrane Potential (mV)'), title('Plot to show accuracy in getting event points')
+  xlim([0 numel(y_mean{1})/Fs]);
 end
 
 % further analysis for any subsections that contained spikes
@@ -150,6 +169,8 @@ for k = 1:length(y_mean2)
     O.y_Spiking_sect(1:size(y_mean2{k},1),1:size(y_mean2{k},2),k) = y_mean2{k};
 end
 O.y_Spiking_sect(O.y_NoSpike_sect==0) = NaN;
+
+%O.y_sect_mat = y_sect_mat;
 
 warning('on') %#ok<WNON>
     

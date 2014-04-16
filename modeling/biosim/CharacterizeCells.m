@@ -1,9 +1,10 @@
-function [results,parms] = CharacterizeCells(file,type,funlist,parms)
+function [results,parms] = CharacterizeCells(file,type,funlist,parms,plot_flag)
 % Purpose: extract feature set from a single file
 %   if experimental file: return one feature set for the one cell it contains
 %   if simulation file: return one feature set for each cell in the population
 
 funnames = {'CharHyperpolStepTA','CharDepolStepTA','CharDepolTonicSpikesTA'};
+if nargin<5, plot_flag=0; end
 
 %features = {};
 %feature_labels = {};
@@ -19,7 +20,7 @@ if nargin<2
   end
 end
 
-var='V'; plot_flag=0; 
+var='V'; 
 SimMech='iStepProtocol';
 if ~any(which(funnames{1}))
   addpath(genpath('/project/crc-nak/sherfey/code/research/external/tallie'));

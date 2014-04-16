@@ -1,5 +1,5 @@
 %% Cell spiking in modeler()
-cell = [];
+cell = []; net=[];
 cell.label = 'E';        % --> cell name
 cell.multiplicity = 2;   % --> number of cells
 cell.mechanisms = {'itonic' 'ileak','iK','iNa','noise'};
