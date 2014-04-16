@@ -26,10 +26,12 @@ matlab:
 run ~/research/startup.m
 
 #################################################################
-# main biosim functions:
-modeler()
+
+BioSim user functions:
+
+1. modeler()
  --> build compartmental cell/network models
-simstudy(modelspec,scope,variable,values,args)
+2. simstudy(modelspec,scope,variable,values,args)
  --> submit batch simulations exploring model/parameter space
     modelspec = model specification structure saved by modeler()
     scope = scope of thing to vary (cell or connection label; e.g., 'E', 'I-E', '(E,I)')
