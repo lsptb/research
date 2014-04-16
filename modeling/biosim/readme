@@ -8,11 +8,12 @@ ssh scc2.bu.edu:
 ssh USER@scc2.bu.edu -L 2015:localhost:59XX
 vncviewer: localhost:2015
 
+cp -R /project/crc-nak/sherfey/code/research ~/
+
 cd /project/crc-nak
 mkdir USERDIR
 cd USERDIR
 
 matlab:
-cp -R /project/crc-nak/sherfey/code/research ~/
 run ~/research/startup.m
 
