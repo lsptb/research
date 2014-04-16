@@ -38,3 +38,21 @@ simstudy(modelspec,scope,variable,values,args)
       [] = iterate over set
       () = group elements
       {} = permute elements
+
+# create mechanism files
+ --> text files with mechanism model equations (e.g., ion currents, buffers, noise, inputs, etc)
+ e.g., see examples in ~/research/modeling/database
+
+# create model using modeler()
+# GUI method
+  modeler;
+   --> add compartment. comma-separated list of mechanisms (use filenames without extension). run simulation.
+# Script method
+  m-file (or command line):
+   cell.label = 'E';
+   cell.multiplicity = 1;
+   cell.dynamics = 'V''=(current)/Cm';
+   cell.mechanisms = {'iNa','iK','itonic','noise'};
+   cell.parameters = {'Cm',1};
+   modeler(cell);
+modeler tip: use (File -> Save spec) to save .mat with model specification that can be passed to simstudy().
