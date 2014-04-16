@@ -40,7 +40,7 @@ BioSim user functions:
       [a,b,c] = iterate over set
       (a,b,c) = group elements
       {a,b,c} = permute elements
-      note: all three set options are optional and available to scopes, variables, and values
+      note: all three set options are optional and available for scopes, variables, and values
 
 BioSim approach to modeling and simulation:
 1. create mechanism files:
