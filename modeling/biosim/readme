@@ -48,10 +48,10 @@ BioSim approach to modeling and simulation:
    e.g., see examples in ~/research/modeling/database
 
 2. create model using modeler()
-# GUI method
+  # GUI method
   modeler;
    --> add compartment. comma-separated list of mechanisms (use filenames without extension). run simulation.
-# Script method
+  # Script method
   m-file (or command line):
    cell.label = 'E';
    cell.multiplicity = 1;
