@@ -36,10 +36,11 @@ BioSim user functions:
     scope = scope of thing to vary (cell or connection label; e.g., 'E', 'I-E', '(E,I)')
     variable = thing to vary (e.g., 'gNa'; reserved options: 'multiplicity', 'mechanisms')
     values = values of the thing to vary (e.g., [5:5:50], {'iNap','iK','iM'})
-    syntax:
-      [] = iterate over set
-      () = group elements
-      {} = permute elements
+    syntax (for arbitrary elements a,b,c):
+      [a,b,c] = iterate over set
+      (a,b,c) = group elements
+      {a,b,c} = permute elements
+      note: all three set options are optional and available to scopes, variables, and values
 
 BioSim approach to modeling and simulation:
 1. create mechanism files:
@@ -61,3 +62,6 @@ BioSim approach to modeling and simulation:
 modeler tip: use (File -> Save spec) to save .mat with model specification that can be passed to simstudy().
 
 3. run simulation study using simstudy() (see function notes above)
+
+4. do batch-level analysis and metric space visualization (work in progress)
+
