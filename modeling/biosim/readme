@@ -25,6 +25,7 @@ cd USERDIR
 matlab:
 run ~/research/startup.m
 
+#################################################################
 # main biosim functions:
 modeler()
  --> build compartmental cell/network models
