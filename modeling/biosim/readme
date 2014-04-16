@@ -17,6 +17,9 @@ vncviewer: localhost:2015
 git clone git@github.com:jsherfey/research.git
 # note: until released under GPL, request git access at sherfey@bu.edu or https://github.com/jsherfey
 
+# add to ~/.bashrc if you want easy batch management for SGE cluster jobs
+export PATH=$PATH:$HOME/research/csh
+
 # setup your CRC project directory
 cd /project/crc-nak
 mkdir USERDIR
@@ -32,7 +35,8 @@ BioSim user functions:
 1. modeler()
  --> build compartmental cell/network models
 2. simstudy(modelspec,scope,variable,values,args)
- --> submit batch simulations exploring model/parameter space
+ --> submit batch simulations exploring model/parameter space 
+     (requires ~/research/csh in your OS path; proper .bashrc changes are given above)
     modelspec = model specification structure saved by modeler()
     scope = scope of thing to vary (cell or connection label; e.g., 'E', 'I-E', '(E,I)')
     variable = thing to vary (e.g., 'gNa'; reserved options: 'multiplicity', 'mechanisms')
