@@ -46,7 +46,6 @@ end
 
 % get list of all known mechs (stored in DB)
 % TODO: read list fom MySQL DB (see http://introdeebee.wordpress.com/2013/02/22/connecting-matlab-to-mysql-database-using-odbc-open-database-connector-for-windows-7/)
-global BIOSIMROOT
 if ischar(BIOSIMROOT)
   DBPATH = fullfile(BIOSIMROOT,'database');
 else
