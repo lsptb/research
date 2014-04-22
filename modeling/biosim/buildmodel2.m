@@ -72,8 +72,8 @@ end
 %   spec.files = allmechfiles;
 % end
 
-global HOME
-[allmechlist,allmechfiles]=get_mechlist([HOME '/modeling/database']);
+global BIOSIMROOT
+[allmechlist,allmechfiles]=get_mechlist([BIOSIMROOT '/modeling/database']);
 spec.files = allmechfiles;
 
 Elabels = {spec.entities.label}; % Entity labels
