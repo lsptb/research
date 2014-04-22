@@ -57,19 +57,24 @@ fileID = parms.logfid;
 if ischar(spec)
   spec=loadspec(spec);
 end
-if isfield(spec,'files')
-  spec.files = unique(spec.files);
-else
-  if isempty(parms.DBPATH)
-    parms.DBPATH = '/space/mdeh3/9/halgdev/projects/jsherfey/code/modeler/database';
-  end
-  if ~exist(parms.DBPATH,'dir')
-    parms.DBPATH = 'C:\Users\jsherfey\Desktop\My World\Code\modelers\database';
-  end
-  [allmechlist,allmechfiles]=get_mechlist(parms.DBPATH);
-  % use stored mechs if user did not provide list of mech files
-  spec.files = allmechfiles;
-end
+
+% if isfield(spec,'files')
+%   spec.files = unique(spec.files);
+% else
+%   if isempty(parms.DBPATH)
+%     parms.DBPATH = '/space/mdeh3/9/halgdev/projects/jsherfey/code/modeler/database';
+%   end
+%   if ~exist(parms.DBPATH,'dir')
+%     parms.DBPATH = 'C:\Users\jsherfey\Desktop\My World\Code\modelers\database';
+%   end
+%   [allmechlist,allmechfiles]=get_mechlist(parms.DBPATH);
+%   % use stored mechs if user did not provide list of mech files
+%   spec.files = allmechfiles;
+% end
+
+global RESEARCH_DIR
+[allmechlist,allmechfiles]=get_mechlist([RESEARCH_DIR '/modeling/database']);
+spec.files = allmechfiles;
 
 Elabels = {spec.entities.label}; % Entity labels
 Clabels = {spec.connections.label};

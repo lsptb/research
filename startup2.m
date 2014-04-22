@@ -35,4 +35,8 @@
 % addpath([ pwd() '/external/circ_stats']);
 
 % What about this? --GMF [4/22/14]
+% pwd()
 addpath(genpath(pwd));
+
+global RESEARCH_DIR
+RESEARCH_DIR = pwd();
