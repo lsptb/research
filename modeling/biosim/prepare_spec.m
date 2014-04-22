@@ -46,7 +46,11 @@ end
 
 % get list of all known mechs (stored in DB)
 % TODO: read list fom MySQL DB (see http://introdeebee.wordpress.com/2013/02/22/connecting-matlab-to-mysql-database-using-odbc-open-database-connector-for-windows-7/)
-DBPATH = '/space/mdeh3/9/halgdev/projects/jsherfey/code/modeler/database';
+if ischar(BIOSIMROOT)
+  DBPATH = fullfile(BIOSIMROOT,'database');
+else
+  DBPATH = '/space/mdeh3/9/halgdev/projects/jsherfey/code/modeler/database';
+end
 if ~exist(DBPATH,'dir')
   DBPATH = 'C:\Users\jsherfey\Desktop\My World\Code\modelers\database';
 end
