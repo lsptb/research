@@ -1420,6 +1420,9 @@ g = H.(['ui_' type '_paramedit']);
 f = H.(['ui_' type '_paramadd']);
 newspec = CURRSPEC;
 list = get(h,'string');
+if isempty(list)
+  list = {};
+end
 if strcmp(type,'connections')
   if strcmp(action,'show') || strcmp(action,'change')
     label = splitstr(list{get(h,'value')},'.');
