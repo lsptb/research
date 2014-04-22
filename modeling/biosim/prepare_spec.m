@@ -32,6 +32,16 @@ if ~isfield(net.cells,'label')
     net.cells(i).label=sprintf('cell%g',i);
   end
 end
+if ~isfield(net.cells,'multiplicity')
+  for i=1:length(net.cells)
+    net.cells(i).multiplicity = 1;
+  end
+end
+if ~isfield(net.cells,'parameters')
+  for i=1:length(net.cells)
+    net.cells(i).parameters = [];
+  end
+end
 if ~isfield(net.cells,'parent') && isfield(net.cells,'label')
   for i=1:length(net.cells)
     net.cells(i).parent=net.cells(i).label;
