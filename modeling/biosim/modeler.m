@@ -1,6 +1,6 @@
 function modeler(varargin)
-clear global cfg H CURRSPEC BIOSIMROOT
-global cfg H CURRSPEC LASTSPEC %currspec lastspec
+clear global cfg H CURRSPEC
+global cfg H CURRSPEC LASTSPEC BIOSIMROOT %currspec lastspec
 prepare_spec;
 updatemodel(CURRSPEC);
 
