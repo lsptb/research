@@ -29,7 +29,7 @@ end
 if isfield(net.cells,'files'), net.files = net.cells(1).files; end
 if ~isfield(net.cells,'label')
   for i=1:length(net.cells)
-    net.cells(i).label=[];
+    net.cells(i).label=sprintf('cell%g',i);
   end
 end
 if ~isfield(net.cells,'parent') && isfield(net.cells,'label')
