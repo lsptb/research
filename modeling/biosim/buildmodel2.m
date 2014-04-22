@@ -72,8 +72,8 @@ end
 %   spec.files = allmechfiles;
 % end
 
-global RESEARCH_DIR
-[allmechlist,allmechfiles]=get_mechlist([RESEARCH_DIR '/modeling/database']);
+global HOME
+[allmechlist,allmechfiles]=get_mechlist([HOME '/modeling/database']);
 spec.files = allmechfiles;
 
 Elabels = {spec.entities.label}; % Entity labels
