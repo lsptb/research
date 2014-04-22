@@ -23,7 +23,9 @@ if ~isfield(net,'cells')
     net.cells = net.entities;
     net = rmfield(net,'entities');
   else
-    net.cells = net;
+    tmpnet.cells=net;
+    net=tmpnet;
+    clear tmpnets
   end
 end
 if isfield(net.cells,'files'), net.files = net.cells(1).files; end
