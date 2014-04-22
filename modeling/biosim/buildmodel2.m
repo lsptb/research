@@ -707,6 +707,10 @@ for i=1:N
         sys.connections(ii,jj).mechanisms{end+1}=sys.entities(i).mechanisms{connis(j)};
       end
     end
+  else
+    sys.entities(i).connection_mechanisms = [];
+    sys.entities(i).connection_parameters = [];
+    sys.entities(i).connection_mechs = [];
   end
   if any(mechtype{i}==1) % intrinsic mechanisms
     sys.entities(i).intrinsic_parameters = sys.entities(i).parameters(mechtype{i}==1);

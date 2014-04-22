@@ -253,6 +253,12 @@ if exist(datafile,'file')
     global CURRSPEC
     if isfield(CURRSPEC,'cells') && ~isempty(CURRSPEC.cells)
       n=length(o.spec.cells);
+      [addflds,I]=setdiff(fieldnames(CURRSPEC.cells),fieldnames(o.spec.cells));
+      [jnk,I]=sort(I);
+      addflds=addflds(I);
+      for i=1:length(addflds)
+        o.spec.cells(1).(addflds{i})=[];
+      end
       CURRSPEC.cells(end+1:end+n) = o.spec.cells;
       for i=1:n
         CURRSPEC.connections(end+i,end+1:end+n) = o.spec.connections(i,:);
@@ -1055,7 +1061,12 @@ if isempty(connname) % first connection b/w these compartments...
   set(src,'ButtonDownFcn',{@Display_Mech_Info,connname,{},'connections'});
 end
 cfg.focusconn = find(cellfun(@(x)isequal(connname,x),{newspec.connections.label}));
-mechlist = newspec.connections(cfg.focusconn).mechanisms;
+if ~isempty(cfg.focusconn)
+  mechlist = newspec.connections(cfg.focusconn).mechanisms;
+else
+  cfg.focusconn = 1;
+  mechlist = {};
+end
 str = get(src,'string');
 if isempty(str)
   newmechlist = {};
@@ -1099,7 +1110,7 @@ for i=1:length(mechadded)
     disp('known mechanisms include: '); disp(get_mechlist');
   else
     newmech = rmfield(newmech,'file');
-    if isfield(CURRSPEC.(type)(index),'mechs') && isstruct(CURRSPEC.(type)(index).mechs)
+    if ~isempty(CURRSPEC.(type)(index)) && isfield(CURRSPEC.(type)(index),'mechs') && isstruct(CURRSPEC.(type)(index).mechs)
       CURRSPEC.(type)(index).mechs(end+1)=newmech;
     else
       CURRSPEC.(type)(index).mechs = newmech;
