@@ -1,4 +1,4 @@
-[o,r]=system('echo $HOME'); % get home directory
+[o,r]=system('echo $REPOS'); % get home directory
 r=r(1:end-1); % remove new line
 addpath(genpath(sprintf('%s/research/modeling',r)));
 addpath(genpath(sprintf('%s/research/analysis/mmil/matlab/timesurfer',r)));
