@@ -664,7 +664,8 @@ for k=1:length(show)
   var = list{vind};% CURRSPEC.cells(this).ode_labels{1};
   plotvars{k}=find(cellfun(@(x)isequal(x,var),allvars));
 end
-  
+plotfuncs=cell(size(sel));
+
 % evaluate auxiliary variables (ie., adjacency matrices)
 for k = 1:size(auxvars,1)
   %try  % added to catch mask=mask-diag(diag(mask)) when mask is not square
@@ -682,6 +683,8 @@ F = eval(ode);
 X=IC; 
 t=0; 
 cnt=0; 
+var_flag=ones(size(sel));
+tvec=zeros(1,cfg.buffer);
 cfg.record=zeros(length(IC),cfg.buffer);
 while cfg.quitflag<0 && (length(IC)==length(CURRSPEC.model.IC))
   if ~isequal(ode,CURRSPEC.model.ode)
@@ -689,6 +692,18 @@ while cfg.quitflag<0 && (length(IC)==length(CURRSPEC.model.IC))
     allvars=CURRSPEC.variables.labels;
     allinds=CURRSPEC.variables.entity;    
     F=eval(ode);
+    functions = CURRSPEC.model.functions;
+    auxvars = CURRSPEC.model.auxvars;
+    % update auxiliary variables (ie., adjacency matrices)
+    for k = 1:size(auxvars,1)
+      %try  % added to catch mask=mask-diag(diag(mask)) when mask is not square
+        eval(sprintf('%s = %s;',auxvars{k,1},auxvars{k,2}) );
+      %end
+    end
+    % update anonymous functions
+    for k = 1:size(functions,1)
+      eval(sprintf('%s = %s;',functions{k,1},functions{k,2}) );
+    end      
   end
   cnt=cnt+1;
   % speed?
@@ -707,8 +722,10 @@ while cfg.quitflag<0 && (length(IC)==length(CURRSPEC.model.IC))
   t = t + cfg.dt;
   if cnt<=cfg.buffer
     cfg.record(:,cnt)=X;
+    tvec(cnt)=t;
   else
     cfg.record = [cfg.record(:,2:end) X];
+    tvec(2:end)=t;
     %if mod(cnt,100)==0
       %set(H.ax_state_plot,'xtick',get(H.ax_state_plot(1),'xtick')+100*cfg.dt);
     %end
@@ -727,9 +744,18 @@ while cfg.quitflag<0 && (length(IC)==length(CURRSPEC.model.IC))
         list=get(H.lst_vars(k),'string');
         vind=get(H.lst_vars(k),'value');
         var = list{vind};% CURRSPEC.cells(this).ode_labels{1};
-        plotvars{k}=find(cellfun(@(x)isequal(x,var),allvars));
-        set(get(H.ax_state_plot(k),'title'),'string',sprintf('%s (n=%g/%g)',strrep(list{vind},'_','\_'),min(numcell,cfg.ncellshow),numcell));
-      end
+        if ismember(var,allvars) % plot state var
+          var_flag(k)=1;
+          plotvars{k}=find(cellfun(@(x)isequal(x,var),allvars));
+        elseif ismember(var,functions(:,1)) % plot aux function
+          var_flag(k)=0;
+        end
+        if var_flag(k)==1
+          set(get(H.ax_state_plot(k),'title'),'string',sprintf('%s (n=%g/%g)',strrep(list{vind},'_','\_'),min(numcell,cfg.ncellshow),numcell));
+        else
+          set(get(H.ax_state_plot(k),'title'),'string',sprintf('%s (n=%g/%g): %s',strrep(list{vind},'_','\_'),min(numcell,cfg.ncellshow),numcell,strrep(functions{find(strcmp(var,functions(:,1))),2},'_','\_')));
+        end
+      end    
       cfg.changeflag=-1;
     end
     for k=1:length(show)
@@ -741,9 +767,76 @@ while cfg.quitflag<0 && (length(IC)==length(CURRSPEC.model.IC))
       else
         inds = 1:numcell;
       end
-      for j=1:length(inds)
-        set(H.simdat_alltrace(k,j),'ydata',cfg.record(plotvars{k}(inds(j)),:));
-      end
+      %for j=1:length(inds)
+        if var_flag(k)==1 % plot state var
+          for j=1:length(inds)
+            set(H.simdat_alltrace(k,j),'ydata',cfg.record(plotvars{k}(inds(j)),:));
+          end
+        elseif var_flag(k)==0 % plot aux function
+          % -----------------------------------------------------------
+          list=get(H.lst_vars(k),'string');
+          vind=get(H.lst_vars(k),'value');
+          var = list{vind};% CURRSPEC.cells(this).ode_labels{1};          
+          thisfunc=find(strcmp(var,functions(:,1)));
+          basename=functions{thisfunc,3};
+          funceqn=functions{thisfunc,2};
+          args=regexp(funceqn,'^@\([\w,]*\)','match');
+          args=splitstr(args{1}(3:end-1),',');
+          plotfargs=cell(1,length(args));
+          % loop over args
+          plotfunc_flag=1;
+          for a=1:length(args)
+            plotfargs{a}=zeros(numcell,cfg.buffer);
+            arg=args{a}; 
+            if isequal(arg,'t') % current time vector
+              for b=1:numcell
+                plotfargs{a}(b,:)=tvec;%t+(0:cfg.buffer-1)*cfg.dt;
+              end
+            elseif ismember(arg,allvars) % known state var
+              tmp=find(cellfun(@(x)isequal(x,arg),allvars));
+              plotfargs{a}(:,:)=cfg.record(tmp,:);
+            else % unknown var. need to map var labels to get state var indices
+              try
+                spc=CURRSPEC.cells(this);
+                ii=find(~cellfun(@isempty,{spc.mechs.functions}));
+                jj=arrayfun(@(x)any(ismember(basename,x.functions(:,1))),spc.mechs(ii));
+                if any(jj)
+                  m=ii(jj);
+                  args2=regexp(spc.mechs(m).substitute(:,2),[basename '\([\w,]*\)'],'match');
+                else
+                  ii=find(~cellfun(@isempty,{spc.connection_mechs.functions}));
+                  jj=arrayfun(@(x)any(ismember(basename,x.functions(:,1))),spc.connection_mechs(ii));
+                  m=ii(jj);
+                  args2=regexp(spc.connection_mechs(m).substitute(:,2),[basename '\([\w,]*\)'],'match');
+                end
+                args2=args2{1};
+                if iscell(args2), args2=args2{1}; end
+                args2=splitstr(args2((length(basename)+2):end-1),',');
+                for b=a:length(args2)
+                  origvar=args2{a};
+                  thisarg=spc.var_list{strmatch(origvar,spc.orig_var_list)};
+                  if ismember(thisarg,allvars)
+                    tmp=find(cellfun(@(x)isequal(x,thisarg),allvars));
+                    plotfargs{a}(:,:)=cfg.record(tmp,:);
+                  end
+                end
+                plotfunc_flag=1;
+              catch
+                plotfunc_flag=0;
+              end
+            end
+          end
+          for j=1:length(inds)
+            if plotfunc_flag
+              plotfuncs=eval(sprintf('%s(plotfargs{:})',var)); %feval(var,plotfargs{:});      
+              set(H.simdat_alltrace(k,j),'ydata',plotfuncs(inds(j),:));
+            else
+              set(H.simdat_alltrace(k,j),'ydata',zeros(1,cfg.buffer));
+            end
+          end
+          % -----------------------------------------------------------
+        end
+      %end
   %     if 0 
   %       lfp=mean(cfg.record(plotvars{k},:),1);
   %       set(H.simdat_LFP(k),'ydata',lfp,'linewidth',4,'color','k','linestyle','-');
@@ -792,7 +885,10 @@ if isfield(H,'ax_state_plot')
   H=rmfield(H,{'simdat_alltrace','simdat_LFP','ax_state_plot','simdat_LFP_power'});%,'ax_state_power'});
 end
 for i=1:length(show) % i=1:ncomp
+  % get var labels
   vars=unique(allvars(allinds==sel(i)));
+  % add function labels
+  vars=cat(2,vars,CURRSPEC.cells(sel(i)).functions(:,1)');
   vind=find(~cellfun(@isempty,regexp(vars,'_V$','once')));
   if isempty(vind), vind=1; end
   H.lst_vars(i) = uicontrol('parent',H.psims,'units','normalized','backgroundcolor','w',...
@@ -869,11 +965,16 @@ allvars=CURRSPEC.variables.labels;
 switch action
   case 'autoscale'
     for i=1:length(H.ax_state_plot)
-      list=get(H.lst_vars(i),'string');
-      ind=get(H.lst_vars(i),'value');
-      var = list{ind};
-      ind = find(cellfun(@(x)isequal(x,var),allvars));
-      rec = cfg.record(ind,:);
+%       list=get(H.lst_vars(i),'string');
+%       ind=get(H.lst_vars(i),'value');
+%       var = list{ind};
+%       ind = find(cellfun(@(x)isequal(x,var),allvars));
+%       if ~isempty(ind)
+%         rec = cfg.record(ind,:);
+%       else
+        rec = get(H.simdat_alltrace(i,:),'ydata');
+        rec = [rec{:}];
+%       end
       ymin = min(rec(:));
       ymax = max(rec(:));
       if ymin~=ymax
