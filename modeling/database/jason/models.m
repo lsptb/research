@@ -1,3 +1,4 @@
+%% Kramer model
 
 %{
 "ID"	"N"	"Mechanisms"	"Key/Value Pairs"
@@ -36,8 +37,11 @@ cells(end).mechanisms = {'itonic' 'noise' 'iNaF' 'iKDR' 'iM'};
 cells(end).parameters = {'hNaF_IC' [.5] 'mKDR_IC' [.34] 'mM_IC' [.05] 'mCaH_IC' [.2] 'stim' [4] 'V_noise' [.5] 'IC_noise' [0.01] 'E_l' [-70] 'g_l' [.25] 'Cm' [.9] 'gKDR' [5] 'KDR_V1' [29.5] 'KDR_d1' [10] 'KDR_v2' [10] 'KDR_d2' [10] 'E_KDR' [-95] 'gNaF' [100] 'NaF_V0' [34.5] 'NaF_V1' [59.4] 'NaF_d1' [10.7] 'NaF_V2' [33.5] 'NaF_d2' [15] 'E_NaF' [50] 'c_MaM' [1.5] 'c_MbM' [.75] 'gM' [1.5] 'E_M' [-95]};
 [cells.multiplicity]=deal(1);
 [cells.dynamics]=deal('V''=(current)');
-net.cells=cells;
-modeler(net); set(gcf,'position',[325 30 1260 630])
+%net.cells=cells;
+%modeler(net); set(gcf,'position',[30 30 1260 650])
+
+cells=cells(7);
+modeler(cells); set(gcf,'position',[30 30 1260 650])
 
 % for laptop use:
 % set(gcf,'position',[325 30 1260 630])
@@ -49,7 +53,7 @@ cells(end+1).label = 'IBa';
 cells(end).mechanisms = {'itonic' 'noise' 'iNaF' 'iKDR' 'iM'};
 cells(end).parameters = {'hNaF_IC' [.5] 'mKDR_IC' [.34] 'mM_IC' [.05] 'mCaH_IC' [.2] 'stim' [4] 'V_noise' [.5] 'IC_noise' [0.01] 'E_l' [-70] 'g_l' [.25] 'Cm' [.9] 'gKDR' [5] 'KDR_V1' [29.5] 'KDR_d1' [10] 'KDR_v2' [10] 'KDR_d2' [10] 'E_KDR' [-95] 'gNaF' [100] 'NaF_V0' [34.5] 'NaF_V1' [59.4] 'NaF_d1' [10.7] 'NaF_V2' [33.5] 'NaF_d2' [15] 'E_NaF' [50] 'c_MaM' [1.5] 'c_MbM' [.75] 'gM' [1.5] 'E_M' [-95]};
 cells(end).dynamics = 'V''=(current)/Cm';
-modeler(cells); set(gcf,'position',[325 30 1260 630])
-
+modeler(cells); 
+set(gcf,'position',[30 30 1260 650])
 
 
