@@ -127,6 +127,7 @@ cfg.focuscolor = [.7 .7 .7];
 cfg.pauseflag = -1;
 cfg.quitflag = -1;
 cfg.changeflag = -1;
+cfg.publish = 0;
 cfg.tlast=-inf; 
 cfg.buffer = 20000;%10000;
 cfg.dt = .01;

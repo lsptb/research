@@ -491,7 +491,8 @@ if parms.nofunctions
         ind = funcinds(f);
         submatch = regexp(target,[Hfunc{ind,2} '\([\w\s,]*\)'],'match');      
         %submatch = regexp(target,[Hfunc{ind,2} '\(.*\)'],'match');
-        subvars = regexp(strrep(submatch,Hfunc{ind,2},''),'\([a-zA-Z]\w*\)','match');
+        %subvars = regexp(strrep(submatch,Hfunc{ind,2},''),'\([a-zA-Z]\w*\)','match');
+        subvars = regexp(strrep(submatch,Hfunc{ind,2},''),'[a-zA-Z]\w*','match');
         subvars = unique([subvars{:}]);
         subvars = cellfun(@(s)strrep(s,'(',''),subvars,'unif',0);
         subvars = cellfun(@(s)strrep(s,')',''),subvars,'unif',0);

@@ -531,8 +531,12 @@ for i=1:length(sel)
   if i==1
     prefix = [l{from} '_' l{to}];
     % get expression for the last auxvar
-    a=CURRSPEC.connections(from,to).mechs(1).auxvars(end,:);
-    auxeqn=[a{1} ' = ' a{2}];
+    if ~isempty(CURRSPEC.connections(from,to).mechs(1).auxvars)
+      a=CURRSPEC.connections(from,to).mechs(1).auxvars(end,:);
+      auxeqn=[a{1} ' = ' a{2}];
+    else
+      auxeqn='';
+    end
     % get list of params for the first connection
     parmlist=fieldnames(CURRSPEC.connections(from,to).mechs(1).params);
     % get value of first parameter
@@ -640,7 +644,8 @@ if lims(2)>lims(1)
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function simulate(src,evnt,action)
-global CURRSPEC H cfg
+global CURRSPEC H cfg eventdata
+clear global eventdata
 DrawSimPlots;
 functions = CURRSPEC.model.functions;
 auxvars = CURRSPEC.model.auxvars;
@@ -709,6 +714,14 @@ while cfg.quitflag<0 && (length(IC)==length(CURRSPEC.model.IC))
   % speed?
   if get(findobj('tag','speed'),'value')~=0
     pause(0.1*get(findobj('tag','speed'),'value')^1);
+  end
+  if cfg.publish~=0
+    tmp_data = ts_matrix2data(cfg.record,'sfreq',1/cfg.dt);
+    [tmp_data.sensor_info.label] = deal(allvars{:});
+    assignin('base','sim_data',tmp_data);
+    assignin('base','spec',CURRSPEC);
+    clear tmp_data
+    cfg.publish=0;
   end
   % pause?
   p=findobj('tag','pause');
@@ -931,6 +944,11 @@ if isempty(findobj('tag','pause'))
             'Position',[0.80  0.05 0.04 0.05],...
             'String','pause','tag','pause','Callback','global cfg;cfg.pauseflag;cfg.pauseflag=-cfg.pauseflag;');
 end
+if isempty(findobj('tag','publish'))
+  uicontrol('Style','pushbutton', 'Units','normalized', ...
+            'Position',[0.85  0.11 0.04 0.05],...
+            'String','publish','Callback','global cfg;cfg.publish=1;');
+end
 if isempty(findobj('tag','stop'))
   % btn: stop
   uicontrol('Style','pushbutton', 'Units','normalized', ...
@@ -957,6 +975,7 @@ uicontrol('Style','pushbutton', 'Units','normalized', ...
 uicontrol('Style','pushbutton', 'Units','normalized', ...
           'Position',[0.9 0.11 0.075 0.05],...
           'String','sim study','Callback','StudyDriverUI;');      
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function setlimits(src,evnt,action)
 global cfg H CURRSPEC
@@ -1346,7 +1365,7 @@ end
 function val=dat2str(val)
 % purpose: convert various data classes into a character form for readable display
 if isnumeric(val)
-  val = num2str(val);
+  val = ['[' num2str(val) ']'];
 elseif ischar(val)
   % do nothing
 else
