@@ -156,7 +156,7 @@ if spec.simulation.sim_cluster_flag % run on cluster
   end
   % log errors
   if s, fprintf(logfid,'%s',m); end
-  fprintf(logfid,'Jobs submitted.\n');        
+  fprintf(logfid,'%g jobs submitted.\n',length(allspecs));        
 else
   % run on local machine
   for specnum = 1:length(allspecs) % loop over elements of search space
