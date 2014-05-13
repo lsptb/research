@@ -311,7 +311,7 @@ function list = parse_spec(type,str,spec)
           list{1}{1} = {s.objecttype{1},s.index};
         case 'bracketed_strings'        % iterate over elements
           % get elements
-          elems = regexp(str,'[\w\.]+','match'); % '[X,Y,Z]' or '[X Y Z]' => {X,Y,Z}
+          elems = regexp(str,'[\w\.-]+','match'); % '[X,Y,Z]' or '[X Y Z]' => {X,Y,Z}
           % loop over elements
           for k = 1:length(elems)
             s = check_scope(elems{k},spec);
@@ -319,7 +319,7 @@ function list = parse_spec(type,str,spec)
           end
         case 'parenthetical_strings'    % change elements together
           % get elements
-          elems = regexp(str,'[\w\.]+','match');
+          elems = regexp(str,'[\w\.-]+','match');
           % add each to list of sync elements
           for k = 1:length(elems)
             s = check_scope(elems{k},spec);
@@ -328,7 +328,7 @@ function list = parse_spec(type,str,spec)
         case 'braced-strings'           % permute elements
 %           error('permuting sets delimited by braces not yet implemented.');
           % get elements
-          elems = regexp(str,'[\w\.]+','match');
+          elems = regexp(str,'[\w\.-]+','match');
           inds = permutesets(length(elems));
           for l = 1:size(inds,1)
             ind = unique(inds(l,:));
@@ -342,7 +342,7 @@ function list = parse_spec(type,str,spec)
           % get elements
           elems = regexp(str,'\([\w\.,]+\)','match');
           for l = 1:length(elems)
-            subelems = regexp(elems{l},'[\w\.]+','match');
+            subelems = regexp(elems{l},'[\w\.-]+','match');
             for m = 1:length(subelems)
               s = check_scope(subelems{m},spec);
               list{l,m} = {s.objecttype{1},s.index};
