@@ -1,6 +1,7 @@
 function modeler(varargin)
 clear global cfg H CURRSPEC
 global cfg H CURRSPEC LASTSPEC BIOSIMROOT %currspec lastspec
+warning off
 prepare_spec;
 updatemodel(CURRSPEC);
 
@@ -140,7 +141,7 @@ uimenu(file_m,'Label','Load spec','Callback',@Load_Spec);
 uimenu(file_m,'Label','Save spec','Callback',@Save_Spec);
 uimenu(file_m,'Label','Grab spec','Callback','global CURRSPEC; assignin(''base'',''spec'',CURRSPEC);');
 uimenu(file_m,'Label','Update spec from base','Callback',{@refresh,1});
-uimenu(file_m,'Label','Exit','Callback','global CURRSPEC H cfg; close(H.fig); clear CURRSPEC H cfg;');
+uimenu(file_m,'Label','Exit','Callback','global CURRSPEC H cfg; close(H.fig); clear CURRSPEC H cfg; warning on');
 plot_m = uimenu(fig,'Label','Plot');
 uimenu(plot_m,'Label','plotv','Callback','global CURRSPEC; if ismember(''sim_data'',evalin(''base'',''who'')), plotv(evalin(''base'',''sim_data''),CURRSPEC); else disp(''load data to plot''); end');
 uimenu(plot_m,'Label','plotpow','Callback','global CURRSPEC; if ismember(''sim_data'',evalin(''base'',''who'')), plotpow(evalin(''base'',''sim_data''),CURRSPEC,''spectrogram_flag'',0); else disp(''load data to plot''); end');
