@@ -1,4 +1,4 @@
-BioSim Setup on SCC:
+DNS Setup on SCC:
 
 # launch VNC server on SCC
 ssh scc2.bu.edu:
@@ -47,7 +47,7 @@ BioSim user functions:
       {a,b,c} = permute elements
       note: all three set options are optional and available for scopes, variables, and values
 
-BioSim approach to modeling and simulation:
+DNS approach to modeling and simulation:
 1. create mechanism files:
    text files with mechanism model equations (e.g., ion currents, buffers, noise, inputs, etc)
    e.g., see examples in ~/research/modeling/database
