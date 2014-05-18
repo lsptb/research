@@ -74,3 +74,16 @@ DNS approach to modeling and simulation:
 
 4. do batch-level analysis and metric visualization over parameter space (work in progress)
 
+##################################################
+
+net = [];
+net.cells.label = 'E';
+net.cells.multiplicity = 1;
+net.cells.dynamics = 'V''=(current)/Cm';
+net.cells.mechanisms = {'iNa','iK','itonic','noise'};
+net.cells.parameters = {'Cm',1};
+net.connections.label = 'E-E';
+net.connections.mechanisms = {'iSYN'};
+modeler(net);
+
+
