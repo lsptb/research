@@ -1,6 +1,9 @@
 function [model,IC,functions,auxvars,sys,Sodes,Svars,txt] = buildmodel2(spec,varargin)
 % get input structure into the right form
-
+if isempty(spec)
+  model=[]; IC=[]; functions=[]; auxvars=[]; sys=[]; Sodes=[]; Svars=[]; txt=[];
+  return;
+end
 if ~isfield(spec,'connections')
   if isfield(spec,'mechanisms')
     if isfield(spec,'N')
@@ -134,7 +137,11 @@ mechsrc=[]; mechdst=[];
 for i=1:N % loop over entities
   clear m1 m2 p1 p2 inp1 inp2
   m1 = spec.entities(i).mechanisms;
-  [p1{1:length(m1)}]=deal(spec.entities(i).parameters);
+  if length(m1)>0
+    [p1{1:length(m1)}]=deal(spec.entities(i).parameters);
+  else
+    p1=spec.entities(i).parameters;
+  end
   inp1=num2cell(i*ones(1,length(m1)));
   m2={spec.connections(:,i).mechanisms};
   p2={spec.connections(:,i).parameters};
@@ -168,7 +175,12 @@ for i=1:N % loop over entities
   if size(m2,1)>1, m2=m2'; end
   mechs=cat(2,m1,m2); % combine intrinsic and connection mechanisms
   sys.entities(i).mechanisms = mechs;
+%   if isempty(p1) || (iscell(p1) && isempty([p1{:}])), p1={}; end % added 23-May-2014
+%   if isempty(p2) || (iscell(p2) && isempty([p2{:}])), p2={}; end % added 23-May-2014
   sys.entities(i).parameters = cat(2,p1,p2);
+%   if ~isempty(sys.entities(i).parameters) && iscellstr(sys.entities(i).parameters(1:2:end))
+%     sys.entities(i).parameters={sys.entities(i).parameters};     % added 23-May-2014
+%   end
   sys.entities(i).inputs = cat(2,inp1,inp2);
   if ~iscell(sys.entities(i).dynamics)
     sys.entities(i).dynamics = splitstr(sys.entities(i).dynamics,' ');
@@ -188,7 +200,11 @@ for i=1:N % loop over entities
     if issubfield(tmpc,'mechs.label') %any(arrayfun(@(x)issubfield(x,'mechs.label'),sys.connections(:,i))) %issubfield(sys.connections(i),'mechs.label')
       if any(cellfun(@(x)isequal(ML,x),{tmpc.mechs.label}))
         idx = find(cellfun(@(x)isequal(ML,x),{tmpc.mechs.label}));
-        sys.entities(i).mechs(j) = tmpc.mechs(idx(1));
+        if isempty(sys.entities(i).mechs)
+          sys.entities(i).mechs = tmpc.mechs(idx(1));
+        else
+          sys.entities(i).mechs(j) = tmpc.mechs(idx(1));
+        end
         continue;
       end
     end
@@ -232,16 +248,85 @@ end
 
 % Compute total number of state vars, params, funcs, expressions
 nGvar=sum(cellfun(@length,{sys.entities.dynamics}));
-nMvar=sum(cellfun(@sum,arrayfun(@(x)sum(cellfun(@(y)size(y,1),{x.mechs.odes})),sys.entities,'unif',0)));
-nGparm=0; nMparm=0;
+nMvar=0; 
+nGparm=0; 
+nMparm=0; 
+nfunc=0;
+nexpr=0;
+nsubst=0;
+nmech=0;
 for k=1:N
-  nMparm=nMparm+sum(arrayfun(@(x)length(fieldnames(x.params)),sys.entities(k).mechs));
-  nGparm=nGparm+sum(cellfun(@(x)length(x),sys.entities(k).parameters)/2);
+  if isfield(sys.entities(k),'mechs')
+    nmech=nmech+length(sys.entities(k).mechs);
+  else
+    continue;
+  end
+  if issubfield(sys.entities(k),'mechs.params')
+    if any(arrayfun(@(x)isempty(x.params),sys.entities(k).mechs))
+      for i=1:length(sys.entities(k).mechs)
+        if ~isempty(sys.entities(k).mechs(i).params)
+          nMparm=nMparm+length(fieldnames(sys.entities(k).mechs(i).params));
+        end
+      end
+    else
+      nMparm=nMparm+sum(arrayfun(@(x)length(fieldnames(x.params)),sys.entities(k).mechs));
+    end
+  end
+  if ~isempty(sys.entities(k).parameters) && ischar(sys.entities(k).parameters{1})
+    nGparm=nGparm+length(sys.entities(k).parameters)/2;
+  else
+    nGparm=nGparm+sum(cellfun(@(x)length(x),sys.entities(k).parameters)/2);
+  end  
+  if issubfield(sys.entities(k),'mechs.odes')
+    nMvar=nMvar+sum(cellfun(@(y)size(y,1),{sys.entities(k).mechs.odes}));
+  end
+  if issubfield(sys.entities(k),'mechs.functions')
+    nfunc=nfunc+sum(cellfun(@(y)size(y,1),{sys.entities(k).mechs.functions}));
+  end
+  if issubfield(sys.entities(k),'mechs.auxvars')
+    nexpr=nexpr+sum(cellfun(@(y)size(y,1),{sys.entities(k).mechs.auxvars}));
+  end
+  if issubfield(sys.entities(k),'mechs.substitute')
+    nsubst=nsubst+sum(cellfun(@(y)size(y,1),{sys.entities(k).mechs.substitute}));
+  end
 end
-nfunc=sum(cellfun(@sum,arrayfun(@(x)sum(cellfun(@(y)size(y,1),{x.mechs.functions})),sys.entities,'unif',0)));
-nexpr=sum(cellfun(@sum,arrayfun(@(x)sum(cellfun(@(y)size(y,1),{x.mechs.auxvars})),sys.entities,'unif',0)));
-nsubst=sum(cellfun(@sum,arrayfun(@(x)sum(cellfun(@(y)size(y,1),{x.mechs.substitute})),sys.entities,'unif',0)));
-nmech=sum(cellfun(@length,{sys.entities.mechs}));
+
+% if issubfield(sys.entities,'mechs.odes')
+%   nMvar=sum(cellfun(@sum,arrayfun(@(x)sum(cellfun(@(y)size(y,1),{x.mechs.odes})),sys.entities,'unif',0)));
+% else
+%   nMvar=0;
+% end
+% nGparm=0; nMparm=0;
+% for k=1:N
+%   if issubfield(sys.entities,'mechs.params')
+%     nMparm=nMparm+sum(arrayfun(@(x)length(fieldnames(x.params)),sys.entities(k).mechs));
+%   end
+%   if ~isempty(sys.entities(k).parameters) && ischar(sys.entities(k).parameters{1})
+%     nGparm=nGparm+length(sys.entities(k).parameters)/2;
+%   else
+%     nGparm=nGparm+sum(cellfun(@(x)length(x),sys.entities(k).parameters)/2);
+%   end
+% end
+% if issubfield(sys.entities,'mechs.functions')
+%   nfunc=sum(cellfun(@sum,arrayfun(@(x)sum(cellfun(@(y)size(y,1),{x.mechs.functions})),sys.entities,'unif',0)));
+% else
+%   nfunc=0;
+% end
+% if issubfield(sys.entities,'mechs.auxvars')
+%   nexpr=sum(cellfun(@sum,arrayfun(@(x)sum(cellfun(@(y)size(y,1),{x.mechs.auxvars})),sys.entities,'unif',0)));
+% else
+%   nexpr=0;
+% end
+% if issubfield(sys.entities,'mechs.substitute')
+%   nsubst=sum(cellfun(@sum,arrayfun(@(x)sum(cellfun(@(y)size(y,1),{x.mechs.substitute})),sys.entities,'unif',0)));
+% else
+%   nsubst=0;
+% end
+% if isfield(sys.entities,'mechs')
+%   nmech=sum(cellfun(@length,{sys.entities.mechs}));
+% else
+%   nmech=0;
+% end
 nvar=nGvar+nMvar;
 nparm=nGparm+nMparm;
 %[nGvar nMvar nvar nGparm nMparm nparm nfunc nexpr nmech]
@@ -302,6 +387,17 @@ for i=1:N
   Smech(I)=0;
   Stype(I)=0;                               % var scope (0=global)
   scnt=scnt+n;
+  if length(E.mechanisms)==0
+    if ~isempty(E.parameters) && ~iscell(E.parameters{1})  % USER PARAMETERS
+      n=length(E.parameters)/2; I=pcnt+(1:n);
+      tmp=E.parameters(1:2:end); [Pdata{I,1}]=deal(tmp{:});
+      tmp=E.parameters(2:2:end); [Pdata{I,2}]=deal(tmp{:});
+      Ppop(I)=i;
+      Pmech(I)=0;%mcnt;
+      Ptype(I)=0;
+      pcnt=pcnt+n;
+    end    
+  end
   for m=1:length(E.mechanisms)
     mcnt=mcnt+1;
     Mid(mcnt)=mcnt;
@@ -520,6 +616,7 @@ if parms.nofunctions
     for f=1:length(funcinds)
       ind = funcinds(f);
       submatch = regexp(target,[Hfunc{ind,2} '\([\w\s,]*\)'],'match');       %submatch = regexp(target,[Hfunc{ind,2} '\(.*\)'],'match');
+%       if isempty(submatch), continue; end
       %subvars = regexp(strrep(submatch,Hfunc{ind,2},''),'\([a-zA-Z]\w*\)','match');
       subvars = regexp(strrep(submatch,Hfunc{ind,2},''),'[a-zA-Z]\w*','match');
       subvars = [subvars{:}];
@@ -548,6 +645,7 @@ if parms.nofunctions
     for f=1:length(funcinds)
       ind = funcinds(f);
       submatch = regexp(Tsubst{t,2},[Hfunc{ind,2} '\(.*\)'],'match');
+%       if isempty(submatch), continue; end
       subvars = regexp(strrep(submatch,Hfunc{ind,2},''),'[a-z_A-Z]\w*','match');
       %subvars = regexp(strrep(submatch,Hfunc{ind,2},''),'\w+','match');
       subvars = [subvars{:}];
@@ -572,6 +670,48 @@ for t=1:size(Tsubst,1)
   %old=Tsubst{t,1}; new=['(' Tsubst{t,2} ')+' old];
   old=Tsubst{t,1}; new=['((' Tsubst{t,2} ')+' old ')'];
   Sodes(idx)=substitute(old,new,o);
+end
+
+% Insert global entity state vars into other entity dnamics
+% ADDED: 21-May-2014 (trial code - if broken, check here or where handling for no mechs was added)
+alloldvars=Svars(:,1);
+allnewvars=Svars(:,2);
+for i=1:nvar % loop over all state vars
+  if Stype(i)==1 % skip intrinsic variables
+    continue; 
+  end
+  str=Sodes{i};
+  for j=1:N % loop over all populations
+    if Spop(i)==j % do not substitute this var's label here
+      continue; 
+    end
+    % get state vars for this population
+    vars=alloldvars(Spop==j);
+    newvars=allnewvars(Spop==j);
+    types=Stype(Spop==j);
+    if isempty(vars), continue; end
+    for k=1:length(vars)
+      if types(k)==1
+        continue;
+      end
+      var=vars{k};
+      subvar=newvars{k};    
+%       var='U'; subvar='y_U';
+%       str='V./ U+E_V';%'E_V+U./';
+      ops='+-/^\.\s\*';
+      pat1=['^' var '$'];
+      pat2=['^' var '[' ops ']'];
+      pat3=['[' ops '\(]' var '[' ops '\)]'];
+      pat4=['[' ops ']' var '$'];
+      pat=sprintf('(%s|%s|%s|%s)',pat1,pat2,pat3,pat4);
+      matches=regexp(str,pat,'match');
+      for l=1:length(matches)
+        newsub=strrep(matches{l},var,subvar);
+        str=strrep(str,matches{l},newsub);
+      end
+    end
+  end
+  Sodes{i}=str;
 end
 
 % Evaluate ICs and determine state vector indices
@@ -658,6 +798,7 @@ for i=1:N
     p=sys.entities(i).parameters{j};
     if isempty(p), continue; end
     m=sys.entities(i).mechs(j);
+    if ~isstruct(m.params), continue; end
     flds=fieldnames(m.params);
     if isempty(flds), continue; end
     [s1,s2]=match_str(flds,p(1:2:end));
@@ -719,9 +860,15 @@ for i=1:N
     sys.entities(i).parameters = sys.entities(i).parameters{find(mechtype{i}==1,1,'first')};
     sys.entities(i).mechs = sys.entities(i).mechs(mechtype{i}==1);
   end
+  if iscell(sys.entities(i).parameters) && ~isempty(sys.entities(i).parameters) && isempty(sys.entities(i).parameters{1})
+    sys.entities(i).parameters=[];
+  end
 end
 tmp={sys.entities.var_list};
 sys.variables.labels = [tmp{:}];
+sys.variables.global_entity=Spop(Stype==0);
+sys.variables.global_oldlabel=alloldvars(Stype==0)';
+sys.variables.global_newlabel=allnewvars(Stype==0)';
 sys.model.functions = functions;
 sys.model.auxvars = auxvars;
 sys.model.ode = model;
@@ -826,12 +973,12 @@ txt={};
 if nargout>7
   % Print model info
   sgind=find(Stype==0);
-  txt{end+1}=sprintf('\nModel Description\n----------------------------------\n\n');
-  txt{end+1}=sprintf('Specification files:\n');
-  for f = 1:length(spec.files)
-    txt{end+1}=sprintf('%s\n',spec.files{f});
-  end
-  txt{end+1}=sprintf('\nPopulations:');
+  txt{end+1}=sprintf('Model Description\n----------------------------------\n');
+%   txt{end+1}=sprintf('Specification files:\n');
+%   for f = 1:length(spec.files)
+%     txt{end+1}=sprintf('%s\n',spec.files{f});
+%   end
+  txt{end+1}=sprintf('Populations:');
   for i = 1:N
     txt{end+1}=sprintf('\n%-6.6s (n=%g):\n',EL{i},NE(i));
     ind=find(Spop==i & Stype==0);
@@ -845,9 +992,10 @@ if nargout>7
       for j = 2:length(M)
         txt{end+1}=sprintf(', %s',M{j});
       end
+      txt{end+1}=sprintf('\n');
     end
     if length(P)>=2
-      txt{end+1}=sprintf('\n\tparameters: %s=%g',P{1},P{2});
+      txt{end+1}=sprintf('\tparameters: %s=%g',P{1},P{2});
       for j = 2:length(P)/2
         txt{end+1}=sprintf(', %s=%g',P{2*j-1},P{2*j});
       end
@@ -917,6 +1065,10 @@ if nargout>7
   if nvar>=2,for k=2:nvar,txt{end+1}=sprintf(',''%s''',strrep(Svars{k,2},'_','\_')); end; end
   if nvar>=1,txt{end+1}=sprintf('); end\n'); end
   txt{end+1}=sprintf('%%-----------------------------------------------------------\n\n');
+  txt{end+1}=sprintf('Specification files:\n');
+  for f = 1:length(spec.files)
+    txt{end+1}=sprintf('%s\n',spec.files{f});
+  end  
   txt=[txt{:}];
 end  
 

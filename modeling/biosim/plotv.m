@@ -30,6 +30,7 @@ xpos = .02+xstep*dx;
 ypos = .02+1-ystep*dy;
  
 if parms.plot_flag
+  cnt=1;
   screensize = get(0,'screensize');
   fig=figure('position',screensize);
   set(gca,'Units','normalized','Position',[0 0 1 1]);
@@ -44,6 +45,7 @@ if parms.plot_flag
     else
       var = parms.var;
     end
+    if isempty(var), continue; end
     if mod(i,2)==1 % odd, plot trace
       T = data(pop).epochs.time;
       if spec.entities(pop).multiplicity <= data(pop).epochs.num_trials
@@ -59,8 +61,9 @@ if parms.plot_flag
       % calc LFP to overlay with traces
       text(min(xlim)+.2*diff(xlim),min(ylim)+.8*diff(ylim),strrep(lab,'_','\_'),'fontsize',14,'fontweight','bold');
       lfp = mean(dat,1)';
-      if i==1, lfps = zeros(npop,length(T)); end
+      if cnt==1, lfps = zeros(npop,length(T)); end
       lfps(pop,:) = lfp;
+      cnt=cnt+1;
       xlim([T(1) T(end)]);
     else % even, plot spectrum
       nshow=min(maxtraces,n);
@@ -75,13 +78,20 @@ if parms.plot_flag
     end
   end
 else
-  fig = [];
+  fig = []; cnt=1;
   for i=1:npop
-    T = data(i).epochs.time;
-    if spec.entities(pop).multiplicity <= data(pop).epochs.num_trials
-      n=spec.entities(pop).multiplicity;
+    labels = {data(i).sensor_info.label};
+    if isempty(parms.var)
+      var = find(~cellfun(@isempty,regexp(labels,['_' parms.varlabel '$'])),1,'first');
     else
-      n=data(pop).epochs.num_trials;%spec.entities(pop).multiplicity; %data(pop).epochs.num_trials;
+      var = parms.var;
+    end    
+    if isempty(var), continue; end
+    T = data(i).epochs.time;
+    if spec.entities(i).multiplicity <= data(i).epochs.num_trials
+      n=spec.entities(i).multiplicity;
+    else
+      n=data(i).epochs.num_trials;%spec.entities(pop).multiplicity; %data(pop).epochs.num_trials;
     end      
 %     try
 %       n=spec.entities(pop).multiplicity;
@@ -90,7 +100,8 @@ else
 %     end      
 %    n = data(pop).epochs.num_trials;%spec.entities(i).multiplicity;
     dat = squeeze(data(i).epochs.data(var,:,1:n))';
-    if i==1, lfps = zeros(npop,length(T)); end
+    if cnt==1, lfps = zeros(npop,length(T)); end
     lfps(i,:) = mean(dat,1)';
+    cnt=cnt+1;
   end
 end

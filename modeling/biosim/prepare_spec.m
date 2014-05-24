@@ -55,7 +55,11 @@ if ~isfield(net,'connections')
   net.connections.label = [];
   [net.connections(1:numel(net.cells),1:numel(net.cells))] = deal(net.connections);
 end
-
+if ~isfield(net.connections,'parameters')
+  for i=1:numel(net.connections)
+    net.connections(i).parameters = [];
+  end
+end
 % get list of all known mechs (stored in DB)
 % TODO: read list fom MySQL DB (see http://introdeebee.wordpress.com/2013/02/22/connecting-matlab-to-mysql-database-using-odbc-open-database-connector-for-windows-7/)
 if ischar(BIOSIMROOT)
@@ -106,6 +110,21 @@ if isfield(net.cells,'mechanisms')
   selmechfiles = selmechfiles(sel);
   net.files = selmechfiles;
 end
+if ~isfield(net,'history')
+  net.history=[];
+end
+if isempty(net.cells)
+  net.cells.label='a';
+  net.cells.multiplicity=1;
+  net.cells.dynamics='V''=0';
+  net.cells.mechanisms={};
+  net.cells.parameters=[];
+  net.cells.parent='x';
+  net.cells.mechs=[];
+  focusmech=[];
+else
+  focusmech=1;
+end
 % load all mech data
 global allmechs
 for i=1:length(allmechfiles)
@@ -119,13 +138,13 @@ for i=1:length(allmechfiles)
 end
 % initialize config
 cfg.focuscomp = 1; % index to component-of-focus in spec.cells (start w/ root)
-cfg.focusmech = 1;
+cfg.focusmech = focusmech;
 cfg.focusconn = 1;
 cfg.focustype = 'cells';
-cfg.focus=cfg.focusmech;
+cfg.focus=1;
 cfg.focuscolor = [.7 .7 .7];
 cfg.pauseflag = -1;
-cfg.quitflag = -1;
+cfg.quitflag = 1;
 cfg.changeflag = -1;
 cfg.publish = 0;
 cfg.tlast=-inf; 

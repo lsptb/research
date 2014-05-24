@@ -19,3 +19,7 @@ addpath(sprintf('%s/research/external/circ_stats',r));
 global BIOSIMROOT
 BIOSIMROOT = fullfile(r,'research','modeling');
 clear o r
+
+% randomize seed
+rng(now);
+% - exception: rand in parfor does not use this new seed

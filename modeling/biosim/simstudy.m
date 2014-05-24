@@ -1,4 +1,4 @@
-function [allspecs] = simstudy(spec,scope,variable,values,varargin)
+function [allspecs,timestamp] = simstudy(spec,scope,variable,values,varargin)
 % allspecs = simstudy(spec,scope,variable,values)
 % allspecs = get_search_space(net,'E','multiplicity','[10:10:50]','sim_cluster','scc1.bu.edu');
 % allspecs = get_search_space(net,{'{E,I}','E'},{'mechanisms','multiplicity'},{'{iNa,iK,ileak}','[10 20 30]'})
@@ -29,13 +29,26 @@ spec.simulation = mmil_args2parms( varargin, ...
                       'override',[],[],...
                       'timelimits',[],[],...
                       'dsfact',[],[],...
+                      'timestamp',datestr(now,'yyyymmdd-HHMMSS'),[],...
+                      'savedata_flag',1,[],...
+                      'savepopavg_flag',1,[],...
+                      'savespikes_flag',1,[],...
+                      'saveplot_flag',1,[],...
+                      'plotvars_flag',1,[],...
+                      'plotrates_flag',1,[],...
+                      'plotpower_flag',1,[],...                      
                    }, false);
-                 
+
 % get search space
 spec.simulation.scope = scope;
 spec.simulation.variable = variable;
 spec.simulation.values = values;
 allspecs = get_search_space(spec);
+
+timestamp = spec.simulation.timestamp;
+p=spec.simulation;
+plot_flag = p.plotvars_flag || p.plotrates_flag || p.plotpower_flag; % whether to plot anything at all
+save_flag = p.savedata_flag || p.savepopavg_flag || p.savespikes_flag || (p.saveplot_flag && plot_flag); % whether to save anything at all
 
 % log file
 logfile=spec.simulation.logfile;
@@ -64,17 +77,8 @@ for k=1:length(uniqscopes)
   outdirs{end+1} = dirname(3:end);
   dirinds(specind)=k;
 end
-%   inds = strmatch(uniqscopes{k},scopes,'exact');
-%   varparts = regexp(vars{inds(1)},'[^\(\)]*','match');
-%   dirname = '';
-%   for j=1:length(scopeparts)
-%     dirname = [dirname '_' strrep(scopeparts{j},',','') '-' strrep(varparts{j},'_','')];
-%   end
-%   outdirs{end+1} = dirname(2:end);
-%   dirinds(inds) = k;
-% end
+
 rootoutdir={}; prefix={};
-timestamp = datestr(now,'yyyymmdd-HHMMSS');
 for i=1:length(allspecs)
   rootoutdir{i} = fullfile(spec.simulation.rootdir,timestamp,outdirs{dirinds(i)});
   try
@@ -95,7 +99,9 @@ for i=1:length(allspecs)
     tmp=regexp(allspecs{i}.simulation.description,'[^\d_].*','match');
     prefix{i}=strrep([tmp{:}],',','_');
   end
-  fprintf(logfid,'%s: %s\n',rootoutdir{i},prefix{i});
+  if save_flag
+    fprintf(logfid,'%s: %s\n',rootoutdir{i},prefix{i});
+  end
 end
 % save allspecs(i) results in rootoutdir{i}
 
@@ -131,7 +137,7 @@ if spec.simulation.sim_cluster_flag % run on cluster
     save(specfile,'modelspec');
     jobs{end+1} = sprintf('job%g.m',k);
     fileID = fopen(jobs{end},'wt');
-    fprintf(fileID,'load(''%s'',''modelspec''); %s(modelspec,''rootoutdir'',''%s'',''prefix'',''%s'',''cluster_flag'',1,''batchdir'',''%s'',''jobname'',''%s'');\n',specfile,scriptname,rootoutdir{k},prefix{k},batchdir,jobs{end});
+    fprintf(fileID,'load(''%s'',''modelspec''); %s(modelspec,''rootoutdir'',''%s'',''prefix'',''%s'',''cluster_flag'',1,''batchdir'',''%s'',''jobname'',''%s'',''savedata_flag'',%g,''savepopavg_flag'',%g,''savespikes_flag'',%g,''saveplot_flag'',%g,''plotvars_flag'',%g,''plotrates_flag'',%g,''plotpower_flag'',%g);\n',specfile,scriptname,rootoutdir{k},prefix{k},batchdir,jobs{end},p.savedata_flag,p.savepopavg_flag,p.savespikes_flag,p.saveplot_flag,p.plotvars_flag,p.plotrates_flag,p.plotpower_flag);
     fprintf(fileID,'exit\n');
     fclose(fileID);
   end
@@ -163,7 +169,9 @@ else
     modelspec = allspecs{specnum};
     fprintf(logfid,'processing simulation...');
     biosimdriver(modelspec,'rootoutdir',rootoutdir{specnum},'prefix',prefix{specnum},'verbose',1,...
-      'savefig_flag',0,'savedata_flag',0);
+     'savedata_flag',p.savedata_flag,'savepopavg_flag',p.savepopavg_flag,'savespikes_flag',p.savespikes_flag,...
+     'saveplot_flag',p.saveplot_flag,'plotvars_flag',p.plotvars_flag,'plotrates_flag',p.plotrates_flag,'plotpower_flag',p.plotpower_flag);
+      %'savefig_flag',0,'savedata_flag',0);
     fprintf(logfid,'done (%g of %g)\n',specnum,length(allspecs));
   end
 end
