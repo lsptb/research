@@ -154,7 +154,11 @@ for s = 1:length(spec.simulation.scope)
                 temp.(obj)(ind).(fld) = val;
               end
             else
-              keyind = find(cellfun(@(x)isequal(key,x),temp.(obj)(ind).(fld)));
+              if isempty(temp.(obj)(ind).(fld))
+                keyind=[];
+              else
+                keyind = find(cellfun(@(x)isequal(key,x),temp.(obj)(ind).(fld)));
+              end
               temp.simulation.variable{end+1} = key; %[fld '.' key];
               if isempty(keyind)
                 if isfield(temp.(obj),key)

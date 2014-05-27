@@ -16,7 +16,7 @@ fig = figure('position',sz,'color','w','name','contact: jason@infinitebrain.org'
 % global controls (i.e., always present in main figure in all views)
 titlestring = 'Dynamic Neural Simulator'; % DNSim
 username = 'nak-crc';
-  uicontrol('parent',fig,'style','text','string',titlestring,'fontsize',20,'units','normalized','position',[.08 .9 .25 .07],'backgroundcolor','w');
+  uicontrol('parent',fig,'style','text','string',titlestring,'fontsize',19,'units','normalized','position',[.08 .895 .25 .07],'backgroundcolor','w');
   uicontrol('parent',fig,'style','text','string',['user: ' username],'fontsize',12,'units','normalized','position',[.08 .86 .25 .07],'backgroundcolor','w');
 % tabs:
   bbuild=uicontrol('parent',fig,'style','pushbutton','tag','tab','units','normalized','position',[0 .85 .1 .04],'string','build','backgroundcolor',[.7 .7 .7],'callback','set(findobj(''tag'',''ptoggle''),''visible'',''off''); set(findobj(''tag'',''tab''),''backgroundcolor'',[1 1 1]); set(findobj(''userdata'',''pbuild''),''visible'',''on''); set(gcbo,''backgroundcolor'',[.7 .7 .7]);');
@@ -29,7 +29,7 @@ username = 'nak-crc';
   bappend=uicontrol('parent',fig,'style','pushbutton','units','normalized','position',[.07 .98 .04 .025],'string','append','backgroundcolor',[.8 .8 .8],'callback',{@Load_File,[],1});
   %bclear=uicontrol('parent',fig,'style','pushbutton','units','normalized','position',[.098 .98 .02 .025],'string','x','backgroundcolor',[.8 .8 .8],'callback',{@SelectCells,1});
   bundo=uicontrol('parent',fig,'style','pushbutton','units','normalized','position',[.11 .98 .035 .025],'string','undo','backgroundcolor',[.8 .8 .8],'callback',@undo);
-  bapply=uicontrol('parent',fig,'style','pushbutton','units','normalized','position',[.35 .98 .05 .025],'string','refresh','backgroundcolor',[.8 .8 .8],'callback',{@refresh,0});
+  bapply=uicontrol('parent',fig,'style','pushbutton','units','normalized','position',[.35 .98 .05 .025],'string','refresh','backgroundcolor',[.8 .8 .8],'callback',{@refresh,0},'visible','off');
 
 % left panels for cell, network, and mechanism controls
 pbuild=uipanel('parent',fig,'title','model builder','visible','on','tag','ptoggle','userdata','pbuild','units','normalized','position',[0 0 .4 .85]);
@@ -114,7 +114,7 @@ txt_comp = uicontrol('style','text','string',cl,'units','normalized','position',
 % lst_mechs = uicontrol('style','popupmenu','value',min(1,length(str1)),'string',str1,...
 %   'units','normalized','position',[.11 .95 .2 .05],'parent',pmech,'callback',@Display_Mech_Info);
 % button to apply changes to mech text
-uicontrol('parent',pmech,'style','pushbutton','units','normalized','position',[.75 .97 .1 .04],'string','apply','callback',@UpdateMech);
+uicontrol('parent',pmech,'style','pushbutton','units','normalized','position',[.75 .97 .1 .04],'string','apply','callback',@UpdateMech,'visible','off');
 % button to create a new mechanism
 uicontrol('parent',pmech,'style','pushbutton','units','normalized','position',[.85 .97 .1 .04],'string','write','callback',@SaveMech);
 % button to display list of mechs in DB
@@ -122,7 +122,7 @@ uicontrol('parent',pmech,'style','pushbutton','units','normalized','position',[.
 % edit box with mech info
 lst_mechs = uicontrol('units','normalized','position',[0 .42 .2 .55],'parent',pmech,'BackgroundColor',[.9 .9 .9],...
   'style','listbox','value',1,'string',str1,'Max',1,'Callback',@Display_Mech_Info,'ButtonDownFcn',@RenameMech,'TooltipString','Right-click to edit mechanism name');
-txt_mech = uicontrol('parent',pmech,'style','edit','units','normalized','BackgroundColor','w',... % [.9 .9 .9]
+txt_mech = uicontrol('parent',pmech,'style','edit','units','normalized','BackgroundColor','w','callback',@UpdateMech,... % [.9 .9 .9]
   'position',[.2 .42 .8 .55],'string',str2,'userdata',u,'FontName','courier','FontSize',10,'HorizontalAlignment','Left','Max',100);
 % mech plots associated w/ this compartment
 p_static_plots = uipanel('parent',pmech,'Position',[0 0 1 .4],'BackgroundColor','white','BorderWidth',.2,'BorderType','line','title','');
@@ -444,28 +444,28 @@ for i=1:length(sel)
     H.edit_comp_label(i) = uicontrol('parent',H.p_net_select,'units','normalized','visible','off',...
       'style','edit','position',[.24 .8+dy*(i-1) .1 ht],'backgroundcolor','w','string',l{i},...
       'HorizontalAlignment','left','Callback',{@UpdateCells,l{i},'label'},'ButtonDownFcn',{@DrawUserParams,sel(i)});
-    H.edit_comp_N(i) = uicontrol('parent',H.p_net_select,'units','normalized',...
-      'style','edit','position',[.24 .8+dy*(i-1) .06 ht],'backgroundcolor','w','string',N(i),...
-      'HorizontalAlignment','left','Callback',{@UpdateCells,l{i},'multiplicity'},'TooltipString',l{i});
     H.btn_comp_delete(i) = uicontrol('parent',H.p_net_select,'units','normalized',...
       'style','pushbutton','fontsize',10,'string','-','callback',{@DeleteCell,l{i}},...
       'position',[.205 .8+dy*(i-1) .03 ht],'TooltipString',l{i});%,'BackgroundColor','white');    
+    H.edit_comp_N(i) = uicontrol('parent',H.p_net_select,'units','normalized',...
+      'style','edit','position',[.24 .8+dy*(i-1) .06 ht],'backgroundcolor','w','string',N(i),...
+      'HorizontalAlignment','left','Callback',{@UpdateCells,l{i},'multiplicity'},'TooltipString',l{i});
+    H.edit_comp_dynamics(i) = uicontrol('parent',H.p_net_select,'units','normalized',...
+      'style','edit','position',[.3 .8+dy*(i-1) .28 ht],'backgroundcolor','w','string',[net.cells(sel(i)).dynamics{:}],...
+      'HorizontalAlignment','left','Callback',{@UpdateCells,l{i},'dynamics'},...
+      'ButtonDownFcn',{@Display_Mech_Info,l{i},{},'cells'},'fontsize',9,'TooltipString',l{i});    
+    H.edit_comp_mechs(i) = uicontrol('parent',H.p_net_select,'units','normalized',...
+      'style','edit','position',[.58 .8+dy*(i-1) .38 ht],'backgroundcolor','w','string',str,...
+      'HorizontalAlignment','left','Callback',{@UpdateCells,l{i},'mechanisms'},...
+      'ButtonDownFcn',{@Display_Mech_Info,l{i},{},'cells'},'fontsize',9,'TooltipString',l{i});
+    H.p_comp_mechs(i) = uipanel('parent',H.p_net_select,'units','normalized',...
+      'position',[.51 .8+dy*(i-1) .42 ht],'visible','off');    
     H.btn_comp_copy(i) = uicontrol('parent',H.p_net_select,'units','normalized',...
       'style','pushbutton','fontsize',10,'string','+','callback',{@CopyCell,l{i}},...
       'position',[.965 .8+dy*(i-1) .03 ht],'TooltipString',l{i});%,'BackgroundColor','white');    
     H.btn_comp_edit(i) = uicontrol('parent',H.p_net_select,'units','normalized','visible','off',...
       'style','pushbutton','fontsize',10,'string','...','callback',{@ShowClickMechList,i,'cells'},...%{@OpenCellModeler,l{i}},...
       'position',[.965 .8+dy*(i-1) .03 ht]);%,'BackgroundColor','white');            
-    H.edit_comp_mechs(i) = uicontrol('parent',H.p_net_select,'units','normalized',...
-      'style','edit','position',[.58 .8+dy*(i-1) .38 ht],'backgroundcolor','w','string',str,...
-      'HorizontalAlignment','left','Callback',{@UpdateCells,l{i},'mechanisms'},...
-      'ButtonDownFcn',{@Display_Mech_Info,l{i},{},'cells'},'fontsize',9,'TooltipString',l{i});
-    H.edit_comp_dynamics(i) = uicontrol('parent',H.p_net_select,'units','normalized',...
-      'style','edit','position',[.3 .8+dy*(i-1) .28 ht],'backgroundcolor','w','string',[net.cells(sel(i)).dynamics{:}],...
-      'HorizontalAlignment','left','Callback',{@UpdateCells,l{i},'dynamics'},...
-      'ButtonDownFcn',{@Display_Mech_Info,l{i},{},'cells'},'fontsize',9,'TooltipString',l{i});    
-    H.p_comp_mechs(i) = uipanel('parent',H.p_net_select,'units','normalized',...
-      'position',[.51 .8+dy*(i-1) .42 ht],'visible','off');    
   else
     % update properties
     set(H.edit_comp_parent(i),'string',p{i},'visible','off','Callback',{@UpdateCells,l{i},'parent'});
@@ -1240,11 +1240,19 @@ CURRSPEC.files{end+1}=outfile;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function UpdateMech(src,evnt)%,htxt,connname,mechname)
 % purpose: apply user changes to the mech model
-global CURRSPEC H
+global CURRSPEC H cfg allmechs
 u=get(H.txt_mech,'userdata');
 txt = get(H.txt_mech,'string');
 newmech = parse_mech_spec(txt);
 newmech.label = u.mechlabel;
+if ismember(newmech.label,cfg.newmechs)
+  ind=find(strcmp(newmech.label,{allmechs.label})); % index into allmechs
+  ind2=ismember(cfg.newmechs,newmech.label); % index into cfg.newmechs
+  tmp=newmech;
+  tmp.file=allmechs(ind).file;
+  allmechs(ind)=tmp;
+  cfg.newmechs(ind2)=[];
+end
 spec=CURRSPEC;
 this = spec.(u.focustype)(u.focus);
 if ~iscell(this.mechanisms), this.mechanisms={this.mechanisms}; end
@@ -1376,6 +1384,7 @@ for i=1:length(mechadded)
     allmechs(end+1)=this;
     newmech=this;
     mechind=length(allmechs);
+    cfg.newmechs{end+1}=this.label;
     %warndlg([mechadded{i} ' not found. Check spelling and case.']);
     %disp('known mechanisms include: '); disp(get_mechlist');
   end
@@ -1678,16 +1687,16 @@ if ~isfield(H,'lst_parms') || ~ishandle(H.lst_parms)
   H.lst_parms = uicontrol('parent',H.pcell,'units','normalized','BackgroundColor',[.9 .9 .9],'Max',1,'TooltipString','Right-click to edit parameter name. Hit ''d'' to delete.',...
     'position',[0 0 .2 1],'style','listbox','value',parmind,'string',parmlabels,...
     'ButtonDownFcn',@RenameParm,'Callback',{@UpdateParams,'show'},'KeyPressFcn',{@UpdateParams,'delete'},'userdata',uparm);
-  uicontrol('style','text','parent',H.pcell,'units','normalized','string','new parameter:',...
+  uicontrol('style','text','parent',H.pcell,'units','normalized','string','add/update parameter:',...
     'position',[.3 .85 .6 .05],'HorizontalAlign','Left');
   H.edit_parmadd = uicontrol('parent',H.pcell,'units','normalized','style','edit','TooltipString','format: source-target.param = value',...
     'position',[.3 .8 .6 .05],'backgroundcolor','w','string','name = value',...
     'HorizontalAlignment','left','Callback',{@UpdateParams,'add'});
-  uicontrol('style','text','parent',H.pcell,'units','normalized','string','update value:',...
-    'position',[.3 .7 .6 .05],'HorizontalAlign','Left');
+%   uicontrol('style','text','parent',H.pcell,'units','normalized','string','update value:',...
+%     'position',[.3 .7 .6 .05],'HorizontalAlign','Left');
   H.edit_parmedit = uicontrol('parent',H.pcell,'units','normalized','style','edit','TooltipString','select parameter in list and enter new value here',...
-    'position',[.3 .65 .6 .05],'backgroundcolor','w','string',parmval,...
-    'HorizontalAlignment','left','Callback',{@UpdateParams,'change'});
+    'position',[0 0 .2 .05],'backgroundcolor','w','string',parmval,...
+    'HorizontalAlignment','left','Callback',{@UpdateParams,'change'},'visible','off');
 else
   set(H.lst_parms,'value',parmind,'string',parmlabels,'userdata',uparm);
   set(H.edit_parmedit,'string',parmval);
@@ -1700,7 +1709,10 @@ uparm=get(H.lst_parms,'userdata');
 sel=get(H.lst_parms,'value');
 switch action
   case 'show'
-    set(H.edit_parmedit,'string',num2str(uparm(sel).parmvalue));
+    s=get(H.lst_parms,'string');
+    val=num2str(uparm(sel).parmvalue);
+    set(H.edit_parmadd,'string',[s{sel} ' = ' val]);
+    set(H.edit_parmedit,'string',val);
   case 'change'
     newspec=CURRSPEC;
     u=uparm(sel);
@@ -1720,14 +1732,20 @@ switch action
     if numel(parts)==1 && length(CURRSPEC.cells)==1
       parts={CURRSPEC.cells(1).label,parts{1}};
     elseif numel(parts)==1
-      msgbox('improper syntax. use: compartment.parameter = value','syntax error','error');
-      return;
+      parts={'__all__',parts{1}};
+      %msgbox('improper syntax. use: compartment.parameter = value','syntax error','error');
+      %return;
     end
     param= strtrim(parts{2});
     tmpparts=splitstr(parts{1},'-');
     if numel(tmpparts)==1
       type='cells';
-      target=strcmp(strtrim(parts{1}),{CURRSPEC.cells.label});
+      if strcmp(parts{1},'__all__')
+        targets=1:length(CURRSPEC.cells);
+      else
+        target=find(strcmp(strtrim(parts{1}),{CURRSPEC.cells.label}));
+        targets=target;
+      end
     elseif numel(parts)==2
       type='connections';
       target=find(cellfun(@(x)isequal(strtrim(parts{1}),x),{CURRSPEC.connections.label}));
@@ -1736,17 +1754,21 @@ switch action
         dst=tmpparts{2}; dstind=find(strcmp(strtrim(dst),{CURRSPEC.cells.label}));
         target=sub2ind(size(CURRSPEC.connections),srcind,dstind);
       end
+      targets=target;
     end
-    tmp=newspec.(type)(target).parameters;
-    if ~iscell(tmp)
-      tmp={};
-    end
-    if ~isempty(tmp) && any(ismember(param,tmp(1:2:end))) % param already exists. just update it.
-      ind=2*find(strcmp(param,tmp(1:2:end)));
-      newspec.(type)(target).parameters{ind}=value;
-    else % new parameter. add it.
-      newspec.(type)(target).parameters{end+1}=param;
-      newspec.(type)(target).parameters{end+1}=value;
+    for i=1:length(targets)
+      target=targets(i);
+      tmp=newspec.(type)(target).parameters;
+      if ~iscell(tmp)
+        tmp={};
+      end
+      if ~isempty(tmp) && any(ismember(param,tmp(1:2:end))) % param already exists. just update it.
+        ind=2*find(strcmp(param,tmp(1:2:end)));
+        newspec.(type)(target).parameters{ind}=value;
+      else % new parameter. add it.
+        newspec.(type)(target).parameters{end+1}=param;
+        newspec.(type)(target).parameters{end+1}=value;
+      end
     end
     updatemodel(newspec);
     DrawUserParams;
@@ -2002,8 +2024,8 @@ global CURRSPEC H
 
 if ~isfield(H,'lst_notes') || ~ishandle(H.lst_notes)
   notes=[]; ids={};
-  H.lst_notes = uicontrol('units','normalized','position',[0 0 .2 1],'parent',H.phistory,'BackgroundColor',[.9 .9 .9],...
-    'style','listbox','value',1:min(3,length(notes)),'string',ids,'Max',100,'Callback',@UpdateHistory);
+  H.lst_notes = uicontrol('units','normalized','position',[0 0 .2 1],'parent',H.phistory,'BackgroundColor',[.9 .9 .9],'ToolTipString','Select notes and hit ''d'' to delete.',...
+    'style','listbox','value',1:min(3,length(notes)),'string',ids,'Max',100,'Callback',@UpdateHistory,'KeyPressFcn',@NoteKeyPress);
   H.edit_comparison = uicontrol('parent',H.pcomparison,'style','edit','units','normalized','tag','modelcomparison',...
   'position',[0 0 1 .85],'string','','FontName','Courier','FontSize',9,'HorizontalAlignment','Left','Max',100,'BackgroundColor',[.9 .9 .9]);
   jEdit = findjobj(H.edit_comparison);
@@ -2034,6 +2056,8 @@ sel = get(H.lst_notes,'value');
 sel = sel(1:min(length(sel),length(ids)));
 if numel(sel)<1
   sel = 1;
+elseif any(sel)>length(notes)
+  sel(sel>length(notes))=[];
 end
 set(H.lst_notes,'value',sel);
 notes = notes(sel);
@@ -2102,6 +2126,22 @@ end
 % notes(2).batch.space(1).variables = 'N';
 % notes(2).batch.space(1).values = '[1 2 3]';
 % notes(2).model = CURRSPEC;
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+function NoteKeyPress(src,evnt)
+switch evnt.Key
+  case {'delete','d'}
+    global CURRSPEC;
+    newspec=CURRSPEC;
+    s=get(src,'string');
+    v=get(src,'value');
+    newspec.history(v)=[];
+    s(v)=[];
+    set(src,'string',s,'value',[]);
+    updatemodel(newspec);
+    UpdateHistory;
+    %refresh;
+end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function GenerateReport(src,evnt)
@@ -2275,7 +2315,7 @@ end
 if isfield(tmp,'history')
   tmp = rmfield(tmp,'history');
 end
-if id>1 && isequal(CURRSPEC.history(end).spec.model,CURRSPEC.model)
+if id>1 && isequal(CURRSPEC.history(end).spec.cells,CURRSPEC.cells) && isequal(CURRSPEC.history(end).spec.connections,CURRSPEC.connections) % isequal(CURRSPEC.history(end).spec.model,CURRSPEC.model)
   note.id=id-1;
   note.spec=tmp;
   note.changes={};

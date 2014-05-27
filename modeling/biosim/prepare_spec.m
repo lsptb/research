@@ -162,6 +162,7 @@ cfg.T=(0:cfg.buffer-1)*cfg.dt; % ms
 cfg.V=linspace(-100,100,cfg.buffer); % mV
 cfg.colors  = 'kbrgmy';
 cfg.lntype  = {'-',':','-.','--'};
+cfg.newmechs={};
 
 LASTSPEC = net;
 CURRSPEC = net;

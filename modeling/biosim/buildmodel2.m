@@ -529,6 +529,9 @@ for m=1:nmech
   [f,o,t]=substitute(old,new,f,o,t);
   % prefixes: vars (Sg(E) => Sg(~E) => Sm(E) => S~m(E)): (odes, terms)
   E=unique(Ppop(Pmech==m));
+  if isempty(E) % added 26-May-2014
+    continue;
+  end
   old=Svars(Spop==E & (Smech==m | Stype==0),1); 
   new=Svars(Spop==E & (Smech==m | Stype==0),2); 
   old2={}; new2={}; old3={}; new3={};
