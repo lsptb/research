@@ -2159,27 +2159,33 @@ txt={};
 ids=[notes.id];
 uids=unique(ids);
 lastmodel=[];
-for i=1:length(uids)
+for i=1:length(uids) % loop over models
   id=uids(i);
   these=notes([notes.id]==id);
-  txt{end+1}=sprintf('Model %g',id);
-  for j=1:length(these)
-    note=these(j);
-    txt{end+1}=sprintf('\t%s: %s',note.date,note.text);
-    for k=1:length(note.batch.space)
-      b=note.batch.space(k);
-      txt{end+1}=sprintf('\t\t(%s).(%s)=%s',b.scope,b.variable,b.values);
-    end    
-  end
-  thismodel=note.spec;
+  thismodel=these(1).spec;
   if ~isempty(lastmodel)
     txt{end+1}=sprintf('diff(Model%g,Model%g): changes in Model%g compared to Model%g',uids(i-1),id,id,uids(i-1));
     txt=cat(2,txt,modeldiff(lastmodel,thismodel));
+    txt{end+1}='';
+  end  
+  txt{end+1}=sprintf('Model %g notes',id);
+  for j=1:length(these)
+    note=these(j);
+    txt{end+1}=sprintf('%s: %s',note.date,note.text);
+    if note.isbatch && ~isempty(note.batch.space)
+      for k=1:length(note.batch.space)
+        b=note.batch.space(k);
+        txt{end+1}=sprintf('\t(%s).(%s)=%s',b.scope,b.variable,b.values);
+      end    
+    end
   end
-  txt{end+1}='------------------------------------------------';    
+  if i < length(uids)
+    txt{end+1}='-----------------------------------------------------------------';    
+  else
+    txt{end+1}='';
+  end
   lastmodel=thismodel;
-end
-txt{end+1}='FINAL MODEL:';
+  end
 txt{end+1}=cfg.modeltext;
 
 h=figure('position',[70 120 930 580]);
@@ -2213,6 +2219,8 @@ else
   emailaddress=emailaddress{1};
 end
 txt=get(findobj('tag','report'),'string');
+if isempty(txt), return; end
+if iscell(txt{1}), txt=txt{end}; end
 str='';
 for i=1:length(txt)
   str=sprintf('%s%s\n',str,txt{i});
