@@ -41,6 +41,7 @@ BioSim user functions:
     scope = scope of thing to vary (cell or connection label; e.g., 'E', 'I-E', '(E,I)')
     variable = thing to vary (e.g., 'gNa'; reserved options: 'multiplicity', 'mechanisms')
     values = values of the thing to vary (e.g., [5:5:50], {'iNap','iK','iM'})
+      special case: variable mechanisms are concatenated/added to those in those in the base model.
     syntax (for arbitrary elements a,b,c):
       [a,b,c] = iterate over set
       (a,b,c) = group elements
