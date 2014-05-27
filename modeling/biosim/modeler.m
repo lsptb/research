@@ -2197,7 +2197,8 @@ uicontrol('parent',h,'style','pushbutton','fontsize',10,'string','email','callba
     'units','normalized','position',[.1 .9 .1 .05]);
 
 function WriteReport(src,evnt)
-[filename,pathname] = uiputfile({'*.txt;'},'Save as','report.txt');
+timestamp=datestr(now,'yyyymmdd-HHMMSS');
+[filename,pathname] = uiputfile({'*.txt;'},'Save as',['report_' timestamp '.txt']);
 if isequal(filename,0) || isequal(pathname,0)
   return;
 end
