@@ -2212,12 +2212,7 @@ fprintf('report written to file: %s\n',outfile);
 
 function EmailReport(src,evnt)
 global CURRSPEC
-emailaddress=inputdlg('Email address:','Enter email address');
-if isempty(emailaddress)
-  return; 
-else
-  emailaddress=emailaddress{1};
-end
+% prepare report text
 txt=get(findobj('tag','report'),'string');
 if isempty(txt), return; end
 if iscell(txt{1}), txt=txt{end}; end
@@ -2225,7 +2220,37 @@ str='';
 for i=1:length(txt)
   str=sprintf('%s%s\n',str,txt{i});
 end
-str=sprintf('Report generated at %s.\n\n%s',datestr(now,31),str);
+% get email address
+emailaddress=inputdlg('Email address:','Enter email address');
+if isempty(emailaddress)
+  return; 
+else
+  emailaddress=emailaddress{1};
+end
+% add system info to email content
+sysinfo='';
+[r, username] = system('echo $USER');
+if ~r
+  username=regexp(username,'\w+','match'); % remove new line characters
+  if ~isempty(username), username=username{1}; end
+  sysinfo=sprintf('%sUser: %s\n',sysinfo,username); 
+end
+[r, computername] = system('hostname');           % Uses linux system command to get the machine name of host. 
+if ~r, sysinfo=sprintf('%sHost: %s',sysinfo,computername); end
+sysinfo=sprintf('%sMatlab version: %s\n',sysinfo,version);
+if exist('BIOSIMROOT','var') % get unique id for this version of the git repo
+  cwd=pwd;
+  cd(BIOSIMROOT);
+  [r,m]=system('git log -1');
+  cd(cwd);
+else
+  [r,m]=system('git log -1');
+end
+if ~r
+  githash=strrep(regexp(m,'commit\s[\w\d]+','match','once'),'commit ','');
+  sysinfo=sprintf('%sDNSim Git hash: %s',sysinfo,githash);
+end
+str=sprintf('Report generated at %s.\n%s\n\n%s',datestr(now,31),sysinfo,str);
 timestamp=datestr(now,'yyyymmdd-HHMMSS');
 % create temporary file for attachment
 tmpfile=sprintf('model_%s.mat',timestamp);
