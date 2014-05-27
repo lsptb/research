@@ -417,6 +417,11 @@ if isfield(H,'p_comp_mechs')
 end
 DrawCellInfo(CURRSPEC); % Selection panel
 DrawNetGrid(CURRSPEC);  % Connection panel
+
+% cfg.pauseflag=1;
+% DrawSimPlots;
+% cfg.pauseflag=0;
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function DrawCellInfo(net)
 global H
@@ -855,14 +860,15 @@ while cfg.quitflag<0 && (length(IC)==length(CURRSPEC.model.IC))
         inds = 1:numcell;
       end
       %for j=1:length(inds)
+        list=get(H.lst_vars(k),'string');
+        vind=get(H.lst_vars(k),'value');
         if var_flag(k)==1 % plot state var
           for j=1:length(inds)
             set(H.simdat_alltrace(k,j),'ydata',cfg.record(plotvars{k}(inds(j)),:));
           end
+          %set(get(H.ax_state_plot(k),'title'),'string',sprintf('%s (n=%g/%g)',strrep(list{vind},'_','\_'),min(numcell,cfg.ncellshow),numcell));
         elseif var_flag(k)==0 % plot aux function
           % -----------------------------------------------------------
-          list=get(H.lst_vars(k),'string');
-          vind=get(H.lst_vars(k),'value');
           var = list{vind};% CURRSPEC.cells(this).ode_labels{1};          
           thisfunc=find(strcmp(var,functions(:,1)));
           basename=functions{thisfunc,3};
@@ -966,10 +972,11 @@ if isfield(H,'ax_state_plot')
   delete(H.simdat_alltrace(ishandle(H.simdat_alltrace)));
   delete(H.simdat_LFP(ishandle(H.simdat_LFP)));
   delete(H.ax_state_plot(ishandle(H.ax_state_plot)));
+  %delete(H.ax_state_title(ishandle(H.ax_state_title)));
   delete(H.simdat_LFP_power(ishandle(H.simdat_LFP_power)));
   delete(H.lst_vars(ishandle(H.lst_vars)));
   %delete(H.ax_state_power(ishandle(H.ax_state_power)));
-  H=rmfield(H,{'simdat_alltrace','simdat_LFP','ax_state_plot','simdat_LFP_power'});%,'ax_state_power'});
+  H=rmfield(H,{'simdat_alltrace','simdat_LFP','ax_state_plot','simdat_LFP_power'});%,'ax_state_title','ax_state_power'});
 end
 for i=1:length(show) % i=1:ncomp
   % get var labels
@@ -990,6 +997,7 @@ for i=1:length(show) % i=1:ncomp
   if i==length(show), xlabel('time (ms)'); end
   titlestr=sprintf('%s (n=%g/%g)',strrep(vars{vind},'_','\_'),min(numcells(sel(i)),cfg.ncellshow),numcells(sel(i)));
   title(titlestr);
+  %H.ax_state_title(i) = title(titlestr);
   %title(strrep(vars{vind},'_','\_'));%[show{i} '.V']);  %ylabel([show{i} '.V']);  
   %H.ax_state_power(i) = subplot('position',[.7 .7+(i-1)*dy .25 -.8*dy],'parent',H.psims); 
   H.simdat_LFP_power(i)=line('color','k','LineStyle','-','erase','background','xdata',cfg.f,'ydata',zeros(size(cfg.f)),'zdata',[],'linewidth',2);
@@ -1930,7 +1938,7 @@ DrawStudyInfo;
 
 function RunSimStudy(src,evnt)
 global cfg CURRSPEC H
-if isempty(CURRSPEC.cells) || isempty(cfg.study.scope), return; end
+if isempty(CURRSPEC.cells) || isempty([cfg.study.scope]), return; end
 scope = {cfg.study.scope};
 variable = {cfg.study.variable};
 values = {cfg.study.values};
@@ -2145,7 +2153,7 @@ end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function GenerateReport(src,evnt)
-global CURRSPEC
+global CURRSPEC cfg
 notes=CURRSPEC.history;
 txt={};
 ids=[notes.id];
@@ -2157,7 +2165,11 @@ for i=1:length(uids)
   txt{end+1}=sprintf('Model %g',id);
   for j=1:length(these)
     note=these(j);
-    txt{end+1}=sprintf('%s: %s',note.date,note.text);
+    txt{end+1}=sprintf('\t%s: %s',note.date,note.text);
+    for k=1:length(note.batch.space)
+      b=note.batch.space(k);
+      txt{end+1}=sprintf('\t\t(%s).(%s)=%s',b.scope,b.variable,b.values);
+    end    
   end
   thismodel=note.spec;
   if ~isempty(lastmodel)
@@ -2167,10 +2179,12 @@ for i=1:length(uids)
   txt{end+1}='------------------------------------------------';    
   lastmodel=thismodel;
 end
+txt{end+1}='FINAL MODEL:';
+txt{end+1}=cfg.modeltext;
 
-h=figure;
+h=figure('position',[70 120 930 580]);
 uicontrol('parent',h,'style','edit','units','normalized','position',[0 0 1 .85],'tag','report',...
-  'string',txt,'FontName','Courier','FontSize',9,'HorizontalAlignment','Left','Max',100,'BackgroundColor','w');
+  'string',txt,'FontName','Courier','FontSize',9,'HorizontalAlignment','Left','Max',100,'BackgroundColor','w'); % Courier Monospaced
 uicontrol('parent',h,'style','pushbutton','fontsize',10,'string','write','callback',@WriteReport,...
     'units','normalized','position',[0 .9 .1 .05]);
 uicontrol('parent',h,'style','pushbutton','fontsize',10,'string','email','callback',@EmailReport,...
