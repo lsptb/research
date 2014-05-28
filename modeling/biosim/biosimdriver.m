@@ -73,11 +73,12 @@ NOVERLAP=[];
 % spike rate parameters
 window_size = 30/1000;%50/1000;
 dW = 5/1000;
+spikethreshold=0;
 % cell characterization protocol mechanisms
 SimMech='iStepProtocol';
 
 % create directory for saving analysis results
-if analysis_flag && ~exist(fullfile(rootoutdir,'analysis'),'dir'), mkdir(fullfile(rootoutdir,'analysis')); end
+if analysis_flag && ~exist(fullfile(rootoutdir,'data'),'dir'), mkdir(fullfile(rootoutdir,'data')); end
 
 % -----------------------------------------------------
 
@@ -120,9 +121,9 @@ end
 
 % LFP data to lfp directory
 if parms.savepopavg_flag && ~isempty(vars)
-  if ~exist(fullfile(rootoutdir,'analysis','lfp'),'dir'), mkdir(fullfile(rootoutdir,'analysis','lfp')); end
+  if ~exist(fullfile(rootoutdir,'data','lfp'),'dir'), mkdir(fullfile(rootoutdir,'data','lfp')); end
   vars{end+1}='spec';
-  outfile = fullfile(rootoutdir,'analysis','lfp',[prefix '_sim_data_LFPs.mat']);
+  outfile = fullfile(rootoutdir,'data','lfp',[prefix '_sim_data_LFPs.mat']);
   save(outfile,vars{:});%,'-v7.3');
   fprintf('LFP data saved to %s\n',outfile);
   clear vars
@@ -133,12 +134,12 @@ end
 if parms.plotrates_flag || parms.savespikes_flag
   try
     [h3,rates,tmins,spiketimes,spikeinds]=plotspk(sim_data,spec,'plot_flag',parms.plotrates_flag,...
-                                    'window_size',window_size,'dW',dW); % firing rate(t) and FRH
+                                    'window_size',window_size,'dW',dW,'spikethreshold',spikethreshold); % firing rate(t) and FRH
     if parms.savespikes_flag
-      if ~exist(fullfile(rootoutdir,'analysis','spikes'),'dir'), mkdir(fullfile(rootoutdir,'analysis','spikes')); end
+      if ~exist(fullfile(rootoutdir,'data','spikes'),'dir'), mkdir(fullfile(rootoutdir,'data','spikes')); end
       % save spike data to spikes directory
-      outfile = fullfile(rootoutdir,'analysis','spikes',[prefix '_sim_data_spikes.mat']);
-      save(outfile,'rates','tmins','spiketimes','spikeinds','window_size','dW','spec');%,'-v7.3');  
+      outfile = fullfile(rootoutdir,'data','spikes',[prefix '_sim_data_spikes.mat']);
+      save(outfile,'rates','tmins','spiketimes','spikeinds','window_size','dW','spikethreshold','spec');%,'-v7.3');  
       fprintf('Spike data saved to %s\n',outfile);
     end
   catch err
@@ -213,7 +214,7 @@ if parms.savedata_flag && ismember(SimMech,spec.entities(1).mechanisms)
       inputs{i}.sim_data=sim_data(i);
       inputs{i}.spec=spec;
       inputs{i}.spec.entities = spec.entities(i);    
-      inputs{i}.rootoutdir=fullfile(rootoutdir,'analysis');
+      inputs{i}.rootoutdir=fullfile(rootoutdir,'data');
       inputs{i}.prefix=prefix;
     end
     [results,cellids,allparms,setfiles] = getcharacteristics(inputs,'sim');

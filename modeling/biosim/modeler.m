@@ -1954,60 +1954,58 @@ if strcmp(machine,'local')
 elseif strcmp(machine,'cluster')
   clusterflag = 1;
 end
-
-% record note
-if ~isfield(CURRSPEC,'history') || isempty(CURRSPEC.history)
-  id=1; 
-else
-  id=max([CURRSPEC.history.id])+1;
-end
-note.id=id;
-timestamp=datestr(now,'yyyymmdd-HHMMSS');
-note.date=timestamp;
-if strcmp(machine,'local')
-  note.text=sprintf('BATCH: machine=%s. ',machine);
-else
-  note.text=sprintf('BATCH: machine=%s. ',machine);% rootdir=%s',machine,dir);
-end
-tmp=CURRSPEC;
-if isfield(tmp.model,'eval')
-  tmp.model=rmfield(tmp.model,'eval');
-end
-if isfield(tmp,'history')
-  tmp = rmfield(tmp,'history');
-end
-if id>1 && isequal(CURRSPEC.history(end).spec.model,CURRSPEC.model)
-  note.id=id-1;
-  note.spec=tmp;
-  note.changes={};
-else
-  note.spec=tmp;
-  note.changes={'changes made'};
-end
-note.isbatch=1;  
-note.batch.space=cfg.study;
-note.batch.rootdir = dir;
-note.batch.machine = machine;
-% update controls
-s=get(H.lst_notes,'string');
-v=get(H.lst_notes,'value');
-s={s{:} num2str(note.id)};
-v=[v length(s)];
-set(H.lst_notes,'string',s,'value',v);
-set(H.edit_notes,'string','');
-if id==1
-  CURRSPEC.history = note;
-else
-  CURRSPEC.history(end+1) = note;
-end
-UpdateHistory;
-
-% submit to simstudy
 nrepeats=str2num(get(H.edit_repeats,'string'));
 for i=1:nrepeats
   if nrepeats>1
     fprintf('Submitting batch iteration %g of %g...\n',i,nrepeats);
   end
+  % record note
+  if ~isfield(CURRSPEC,'history') || isempty(CURRSPEC.history)
+    id=1; 
+  else
+    id=max([CURRSPEC.history.id])+1;
+  end
+  note.id=id;
+  timestamp=datestr(now,'yyyymmdd-HHMMSS');
+  note.date=timestamp;
+  if strcmp(machine,'local')
+    note.text=sprintf('BATCH: machine=%s. ',machine);
+  else
+    note.text=sprintf('BATCH: machine=%s. ',machine);% rootdir=%s',machine,dir);
+  end
+  tmp=CURRSPEC;
+  if isfield(tmp.model,'eval')
+    tmp.model=rmfield(tmp.model,'eval');
+  end
+  if isfield(tmp,'history')
+    tmp = rmfield(tmp,'history');
+  end
+  if id>1 && isequal(CURRSPEC.history(end).spec.model,CURRSPEC.model)
+    note.id=id-1;
+    note.spec=tmp;
+    note.changes={};
+  else
+    note.spec=tmp;
+    note.changes={'changes made'};
+  end
+  note.isbatch=1;  
+  note.batch.space=cfg.study;
+  note.batch.rootdir = dir;
+  note.batch.machine = machine;
+  % update controls
+  s=get(H.lst_notes,'string');
+  v=get(H.lst_notes,'value');
+  s={s{:} num2str(note.id)};
+  v=[v length(s)];
+  set(H.lst_notes,'string',s,'value',v);
+  set(H.edit_notes,'string','');
+  if id==1
+    CURRSPEC.history = note;
+  else
+    CURRSPEC.history(end+1) = note;
+  end
+  UpdateHistory;
+  % submit to simstudy
   [allspecs,timestamp]=simstudy(CURRSPEC,scope,variable,values,'dt',dt,'rootdir',dir,'memlimit',mem,...
     'timelimits',lims,'dsfact',dsfact,'sim_cluster_flag',clusterflag,'timestamp',timestamp,...
     'savedata_flag',get(H.chk_savedata,'value'),'savepopavg_flag',get(H.chk_savesum,'value'),'savespikes_flag',get(H.chk_savespikes,'value'),'saveplot_flag',get(H.chk_saveplots,'value'),...
