@@ -964,9 +964,9 @@ if parms.verbose
     %fprintf(fileID,'\t%-20s = %-40s\t%% (%-9s)\n',Hfunc{i,2},[Hfunc{i,3} ';'],functions{i,3});
     fprintf(fileID,'\t%-20s = %-40s\n',Hfunc{i,2},[Hfunc{i,3} ';']);
   end
-  fprintf(fileID,'\n%% ODE Handle, ICs, integration, and plotting:\nF = %s\n',model);
+  fprintf(fileID,'\n%% ODE Handle, ICs, integration, and plotting:\nmodel = %s\n',model);
   fprintf(fileID,'IC = [%s];\n',num2str(IC'));
-  fprintf(fileID,'\n[t,y]=ode23(F,[0 100],IC);   %% numerical integration\nfigure; plot(t,y);           %% plot all variables/functions\n');
+  fprintf(fileID,'\n[t,y]=ode23(model,[0 100],IC);   %% numerical integration\nfigure; plot(t,y);           %% plot all variables/functions\n');
   if nvar>=1,fprintf(fileID,'try legend(''%s''',strrep(Svars{1,2},'_','\_')); end
   if nvar>=2,for k=2:nvar,fprintf(fileID,',''%s''',strrep(Svars{k,2},'_','\_')); end; end
   if nvar>=1,fprintf(fileID,'); end\n'); end
@@ -1061,9 +1061,9 @@ if nargout>7
     %txt{end+1}=sprintf('\t%-20s = %-40s\t%% (%-9s)\n',Hfunc{i,2},[Hfunc{i,3} ';'],functions{i,3});
     txt{end+1}=sprintf('\t%-20s = %-40s\n',Hfunc{i,2},[Hfunc{i,3} ';']);
   end
-  txt{end+1}=sprintf('\n%% ODE Handle, ICs, integration, and plotting:\nF = %s\n',model);
+  txt{end+1}=sprintf('\n%% ODE Handle, ICs, integration, and plotting:\nmodel = %s\n',model);
   txt{end+1}=sprintf('IC = [%s];\n',num2str(IC'));
-  txt{end+1}=sprintf('\n[t,y]=ode23(F,[0 100],IC);   %% numerical integration\nfigure; plot(t,y);           %% plot all variables/functions\n');
+  txt{end+1}=sprintf('\n[t,y]=ode23(model,[0 100],IC);   %% numerical integration\nfigure; plot(t,y);           %% plot all variables/functions\n');
   if nvar>=1,txt{end+1}=sprintf('try legend(''%s''',strrep(Svars{1,2},'_','\_')); end
   if nvar>=2,for k=2:nvar,txt{end+1}=sprintf(',''%s''',strrep(Svars{k,2},'_','\_')); end; end
   if nvar>=1,txt{end+1}=sprintf('); end\n'); end
