@@ -148,7 +148,13 @@ for s = 1:length(spec.simulation.scope)
             if isempty(key)
               temp.simulation.variable{end+1} = fld;
               if strcmp(fld,'mechanisms')
-                if ischar(val), mechval={val}; else mechval=val; end
+                if ischar(val)
+                  mechval={val}; 
+                elseif iscell(val) && iscellstr(val{1})
+                  mechval=[val{:}];
+                else
+                  mechval=val; 
+                end
                 temp.(obj)(ind).(fld) = {base.(obj)(ind).(fld){:} mechval{:}};
               else
                 temp.(obj)(ind).(fld) = val;
@@ -178,6 +184,7 @@ for s = 1:length(spec.simulation.scope)
         elseif iscell(val), vs=['_' [val{:}]]; 
         elseif ischar(val), vs=['_' val]; 
         else vs=''; end
+        if iscell(vs), vs=[vs{:}]; end
         str = sprintf('%g_%s-%s%s',k,str1,str2,vs);
         str = strrep(strrep(str,'.','pt'),' ','');
         str(regexp(str,'[\(\)\[\]\{\}]+')) = 'o';
@@ -211,6 +218,9 @@ for s = 1:length(spec.simulation.scope)
             end
           end
           for ii=1:length(tmpstrs),if isnumeric(tmpstrs{ii}),tmpstrs{ii}=num2str(tmpstrs{ii}); end; end
+          if ~iscellstr(tmpstrs) && iscell(tmpstrs)
+            tmpstrs=[tmpstrs{:}];
+          end
           tmpstrs = unique(tmpstrs);
           tmpstr = '(';
           for ii=1:length(tmpstrs)
@@ -443,6 +453,13 @@ function list = parse_spec(type,str,spec)
             end
             list{l}{1} = tmp;
           end
+        case 'bracketed_strings'        % iterate over parameters
+          % get elements
+          elems = regexp(str,'[\w\.]+','match'); % '[X,Y,Z]' or '[X Y Z]' => {X,Y,Z}
+          % loop over elements
+          for k = 1:length(elems)
+            list{k}{1} = elems{k};
+          end          
         otherwise
       end
   end

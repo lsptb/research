@@ -672,7 +672,7 @@ end
 
 % plots
 H.ax_conn_img = subplot('position',[.55 0 .45 1],'parent',H.p_net_kernel); 
-H.img_connect = imagesc(auxmat); axis xy;
+H.img_connect = imagesc(auxmat); %axis xy;
 if lims(2)>lims(1), caxis(lims); end
 colorbar
 
