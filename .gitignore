@@ -1,0 +1,15 @@
+# globals
+*~
+#*#
+
+# octave files
+octave-core
+
+# these files got dumped for some reason
+core.*
+
+
+# Mac files
+*.DS_Store
+.DS_Store
+
